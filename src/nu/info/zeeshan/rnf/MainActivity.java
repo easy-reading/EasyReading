@@ -1,30 +1,44 @@
 package nu.info.zeeshan.rnf;
 
+import nu.info.zeeshan.rnf.FragmentMain.ViewHolder;
+import nu.info.zeeshan.utility.Utility;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.RelativeLayout;
 
 public class MainActivity extends Activity {
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
+	FragmentMain f1,f2;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		// Create the adapter that will return a fragment for each of the three
-		// primary sections of the activity.
-		mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
-
-		// Set up the ViewPager with the sections adapter.
-		mViewPager = (ViewPager) findViewById(R.id.container);
-		mViewPager.setAdapter(mSectionsPagerAdapter);
-		mViewPager.setOnPageChangeListener(mSectionsPagerAdapter);
+		if(savedInstanceState==null){
+			setContentView(R.layout.activity_main);
+			mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+			mViewPager = (ViewPager) findViewById(R.id.container);
+			mViewPager.setAdapter(mSectionsPagerAdapter);
+			mViewPager.setOnPageChangeListener(mSectionsPagerAdapter);
+			SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+		      SharedPreferences.Editor editor = settings.edit();
+		      editor.putString(getString(R.string.pref_facebookrss), "https://www.facebook.com/feeds/notifications.php?id=100004366590327&viewer=100004366590327&key=AWjLdGV4a_ncSjfj&format=rss20");
+		      editor.putString(getString(R.string.pref_newsrss), "http://www.thehindu.com/sci-tech/technology/?service=rss");
+		      editor.commit();
+		      Utility.log("MAIN", "reset All");
+		}
+		
+		
 	}
 
 	@Override
@@ -37,11 +51,16 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
-			return true;
+			Intent intent=new Intent(this,SettingsActivity.class);
+			startActivity(intent);
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+	public void reloadRss(View view){
+		ViewHolder holder=(ViewHolder)((RelativeLayout)(view.getParent().getParent())).getTag();
+		FragmentMain fragment=((FragmentMain)(mSectionsPagerAdapter.getItem(holder.position)));
+		fragment.load();
+	}
 	public class SectionsPagerAdapter extends FragmentPagerAdapter implements OnPageChangeListener{
 
 		public SectionsPagerAdapter(FragmentManager fm) {
@@ -53,18 +72,24 @@ public class MainActivity extends Activity {
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a PlaceholderFragment (defined as a static inner class
 			// below).
-			Fragment f=new FragmentMain();
-			Bundle b=new Bundle();
 			if(position==0){
-				b.putString("URL", "http://www.thehindu.com/sci-tech/technology/?service=rss");
-				
+				if(f1==null){
+					f1=new FragmentMain();
+					Bundle b=new Bundle();
+					b.putInt("position",position);
+					f1.setArguments(b);
+				}
+				return f1;
 			}
 			else{
-				b.putString("URL", "https://www.facebook.com/feeds/notifications.php?id=100004366590327&viewer=100004366590327&key=AWjLdGV4a_ncSjfj&format=rss20");
-				
+				if(f2==null){
+					f2=new FragmentMain();
+					Bundle b=new Bundle();
+					b.putInt("position",position);
+					f2.setArguments(b);
+				}
+				return f2;
 			}
-			f.setArguments(b);
-			return f;
 		}
 
 		@Override

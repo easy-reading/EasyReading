@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
@@ -9,4 +9,39 @@
         android:layout_height="wrap_content" >
     </ListView>
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true" />
+<LinearLayout
+    android:id="@+id/linearViewError" 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@color/white"
+    >
+    
+    <TextView
+        android:id="@+id/textViewError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_margin="10dp"
+        android:text="TextView" />
+
+    <Button
+        android:id="@+id/buttonRetry"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:minWidth="100dp"
+        android:onClick="reloadRss"
+        android:layout_height="wrap_content"
+        android:text="Retry" />
 </LinearLayout>
+    
+	
+</RelativeLayout>
