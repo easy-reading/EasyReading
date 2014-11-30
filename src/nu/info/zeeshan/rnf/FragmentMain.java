@@ -15,6 +15,7 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Html;
@@ -32,8 +33,9 @@ public class FragmentMain extends Fragment{
 		FeedAdapter adapter;
 		ViewHolder holder;
 		Bundle b;
-		static String newsfeed="http://www.thehindu.com/news/national/?service=rss";
-		static String facebookfeed="https://www.facebook.com/feeds/notifications.php?id=100004366590327&viewer=100004366590327&key=AWjLdGV4a_ncSjfj&format=rss20";
+		SharedPreferences spf;
+		static String newsfeed;//="https://news.google.co.in/news/feeds?pz=1&cf=all&ned=in&hl=en&topic=tc&output=rss";
+		static String facebookfeed;//="https://www.facebook.com/feeds/notifications.php?id=100004366590327&viewer=100004366590327&key=AWjLdGV4a_ncSjfj&format=rss20";
 		static int url_changed=-1;
 		static String errorMsg="Check RSS Feeds in settings";
 		@Override
@@ -49,7 +51,13 @@ public class FragmentMain extends Fragment{
 			rootView.setTag(holder);
 			b=this.getArguments();
 			holder.position=b.getInt("position");
-			load();
+			
+			spf=((MainActivity)getActivity()).getSharedPreferences(getString(R.string.pref_filename),Context.MODE_PRIVATE);
+			
+				facebookfeed=spf.getString(getString(R.string.pref_facebookrss), "nothing");
+				newsfeed=spf.getString(getString(R.string.pref_newsrss), "nothing");
+				load();
+			
 			return rootView;
 		}
 		
@@ -58,6 +66,9 @@ public class FragmentMain extends Fragment{
 		public void onResume() {
 			super.onResume();
 			hideError();
+			facebookfeed=spf.getString(getString(R.string.pref_facebookrss), "nothing");
+			newsfeed=spf.getString(getString(R.string.pref_newsrss), "nothing");
+			Utility.log("Main Fragment","resset urls "+facebookfeed+" "+newsfeed);
 				try {
 					if(url_changed==0 && holder.position==0){
 						Utility.log("RESET","NEWS"+newsfeed);
@@ -93,7 +104,7 @@ public class FragmentMain extends Fragment{
 				}
 			} catch (MalformedURLException e) {
 				showError(errorMsg);
-				Utility.log("mar gaye","yaha");
+				Utility.log((holder.position==0?"News":"Facebook")+" URL error",""+e.getMessage());
 			}
 		}
 		public void hideError(){

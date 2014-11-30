@@ -1,13 +1,10 @@
 package nu.info.zeeshan.rnf;
 
 import nu.info.zeeshan.rnf.FragmentMain.ViewHolder;
-import nu.info.zeeshan.utility.Utility;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -24,19 +21,20 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if(savedInstanceState==null){
+		
 			setContentView(R.layout.activity_main);
 			mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
 			mViewPager = (ViewPager) findViewById(R.id.container);
 			mViewPager.setAdapter(mSectionsPagerAdapter);
 			mViewPager.setOnPageChangeListener(mSectionsPagerAdapter);
-			SharedPreferences settings = getPreferences(Context.MODE_PRIVATE);
+		/*	SharedPreferences settings = getSharedPreferences(getString(R.string.pref_filename),Context.MODE_PRIVATE);
+			
 		      SharedPreferences.Editor editor = settings.edit();
-		      editor.putString(getString(R.string.pref_facebookrss), "https://www.facebook.com/feeds/notifications.php?id=100004366590327&viewer=100004366590327&key=AWjLdGV4a_ncSjfj&format=rss20");
-		      editor.putString(getString(R.string.pref_newsrss), "http://www.thehindu.com/sci-tech/technology/?service=rss");
+		      editor.putString(getString(R.string.pref_facebookrss), "nothing");
+		      editor.putString(getString(R.string.pref_newsrss), "nothing");
 		      editor.commit();
-		      Utility.log("MAIN", "reset All");
-		}
+		      Utility.log("MAIN", "reset All");*/
+		
 		
 		
 	}
