@@ -21,22 +21,11 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-			setContentView(R.layout.activity_main);
-			mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
-			mViewPager = (ViewPager) findViewById(R.id.container);
-			mViewPager.setAdapter(mSectionsPagerAdapter);
-			mViewPager.setOnPageChangeListener(mSectionsPagerAdapter);
-		/*	SharedPreferences settings = getSharedPreferences(getString(R.string.pref_filename),Context.MODE_PRIVATE);
-			
-		      SharedPreferences.Editor editor = settings.edit();
-		      editor.putString(getString(R.string.pref_facebookrss), "nothing");
-		      editor.putString(getString(R.string.pref_newsrss), "nothing");
-		      editor.commit();
-		      Utility.log("MAIN", "reset All");*/
-		
-		
-		
+		setContentView(R.layout.activity_main);
+		mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+		mViewPager = (ViewPager) findViewById(R.id.container);
+		mViewPager.setAdapter(mSectionsPagerAdapter);
+		mViewPager.setOnPageChangeListener(mSectionsPagerAdapter);
 	}
 
 	@Override
@@ -74,7 +63,7 @@ public class MainActivity extends Activity {
 				if(f1==null){
 					f1=new FragmentMain();
 					Bundle b=new Bundle();
-					b.putInt("position",position);
+					b.putInt(getString(R.string.bundle_arg_position),position);
 					f1.setArguments(b);
 				}
 				return f1;
@@ -83,7 +72,7 @@ public class MainActivity extends Activity {
 				if(f2==null){
 					f2=new FragmentMain();
 					Bundle b=new Bundle();
-					b.putInt("position",position);
+					b.putInt(getString(R.string.bundle_arg_position),position);
 					f2.setArguments(b);
 				}
 				return f2;
@@ -101,31 +90,29 @@ public class MainActivity extends Activity {
 			
 			switch (position) {
 			case 0:
-				getActionBar().setTitle("News");
-				return "News";
+				getActionBar().setTitle(getString(R.string.news_title));
+				return getString(R.string.news_title);
 			case 1:
-				getActionBar().setTitle("Facebook");
-				return "Facebook";
+				getActionBar().setTitle(getString(R.string.facebook_title));
+				return getString(R.string.facebook_title);
 			}
 			return null;
 		}
 		@Override
 		public void onPageSelected(int position){
 			if(position==0)
-				getActionBar().setTitle("News");
+				getActionBar().setTitle(getString(R.string.news_title));
 			else
-				getActionBar().setTitle("Facebook");
+				getActionBar().setTitle(getString(R.string.facebook_title));
 		}
 
 		@Override
 		public void onPageScrollStateChanged(int arg0) {
-			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
 		public void onPageScrolled(int arg0, float arg1, int arg2) {
-			// TODO Auto-generated method stub
 			
 		}
 	}

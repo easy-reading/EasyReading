@@ -7,10 +7,12 @@
         android:title="@string/facebook_title"
         android:key="@string/pref_facebookrss"
         android:summary="@string/facebook_summary"
+        android:inputType="textUri"
         ></EditTextPreference>
 	<EditTextPreference
         android:title="@string/news_title"
         android:key="@string/pref_newsrss"
         android:summary="@string/news_summary"
+        android:inputType="textUri"
         ></EditTextPreference>
 </PreferenceScreen>

@@ -34,9 +34,9 @@ public class FeedAdapter extends ArrayAdapter<Feed>{
 		else{
 			holder=(ViewHolder)convertView.getTag();
 		}
-		holder.title.setText(values.get(position).title);
-		holder.desc.setText(values.get(position).description);
-		holder.time.setText(values.get(position).time);
+		holder.title.setText(values.get(position).getTitle());
+		holder.desc.setText(values.get(position).getDesc());
+		holder.time.setText(values.get(position).getTime());
 		return convertView;
 	}
 	

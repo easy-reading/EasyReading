@@ -12,7 +12,15 @@
     <string name="facebook_summary">Your Facebook notification RSS Feed</string>
     <string name="news_summary">Your News Rss Feed</string>
     
-    <string name="facebook_title">Facebook feed</string>
-    <string name="news_title">News feed</string>
+    <string name="facebook_title">Facebook Feed</string>
+    <string name="news_title">News Feed</string>
     
+    <string name="invalid_input">Entered value is not valid</string>
+    
+    <string name="bundle_arg_position">position</string>
+    
+    <string name="error_feed">Check RSS Feeds in settings</string>
+    
+    <string name="empty_feed">http://www.engadget.com/rss.xml</string>
+   
 </resources>
