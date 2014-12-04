@@ -1,47 +1,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
-
-    <ListView
-        android:id="@+id/listViewFeed"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    </ListView>
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true" />
-<LinearLayout
-    android:id="@+id/linearViewError" 
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:background="@color/white"
-    >
-    
-    <TextView
-        android:id="@+id/textViewError"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_margin="10dp"
-        android:text="TextView" />
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="nu.info.zeeshan.rnf.MainActivity$PlaceholderFragment" >
 
-    <Button
-        android:id="@+id/buttonRetry"
-        style="?android:attr/buttonStyleSmall"
+    <TextView
         android:layout_width="wrap_content"
-        android:minWidth="100dp"
-        android:onClick="reloadRss"
         android:layout_height="wrap_content"
-        android:text="Retry" />
-</LinearLayout>
-    
-	
+        android:text="@string/hello_world" />
+
 </RelativeLayout>
