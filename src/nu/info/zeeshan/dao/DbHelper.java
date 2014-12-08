@@ -10,11 +10,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DbHelper extends SQLiteOpenHelper{
-	public static int DATABASE_VERSION=1;
+	public static int DATABASE_VERSION=2;
 	private static String TAG="nu.info.zeeshan..rnf.dao.DbHelper";
 	public static String DATABASE_NAME="nrf.db";
 	public DbHelper(Context context) {
-		super(context, DATABASE_NAME, null,1);
+		super(context, DATABASE_NAME, null,DATABASE_VERSION);
 	}
 	
 	@Override

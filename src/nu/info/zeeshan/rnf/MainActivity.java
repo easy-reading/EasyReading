@@ -1,6 +1,7 @@
 package nu.info.zeeshan.rnf;
 
 import nu.info.zeeshan.utility.ProcessFeed;
+import nu.info.zeeshan.utility.ProcessFeed.FeedInput;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -13,6 +14,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -57,7 +59,27 @@ public class MainActivity extends Activity {
 			return true;
 		case R.id.action_refresh:
 			//start fetching and inserting news active page
-			new ProcessFeed(getApplication()).execute(spf.getString(getString(R.string.pref_newsrss), getString(R.string.empty_feed)),spf.getString(getString(R.string.pref_facebookrss), getString(R.string.empty_feed)));
+			String fbfeed=spf.getString(getString(R.string.pref_facebookrss),null);
+			String newsfeed=spf.getString(getString(R.string.pref_newsrss),null);
+			String msg="";
+			if(fbfeed==null && newsfeed==null){
+				msg="News and Facebook feeds are empty!\n please set them first.";
+				Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+			}
+			else if(fbfeed==null){
+				msg="Loading News feeds!!\nFacebook feed is empty please set it.";
+				Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+				new ProcessFeed(getApplicationContext()).execute(new FeedInput(newsfeed,1));
+			}
+			else if(newsfeed==null){
+				msg="News feed is empty!\n please set It.";
+				Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+				new ProcessFeed(getApplicationContext()).execute(new FeedInput(fbfeed,2));
+			}
+			else{
+				new ProcessFeed(getApplicationContext()).execute(new FeedInput(newsfeed,1),new FeedInput(fbfeed,2));
+			}
+			
 		default:
 			return super.onOptionsItemSelected(item);
 		}

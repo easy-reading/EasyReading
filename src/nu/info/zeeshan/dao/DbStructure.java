@@ -5,7 +5,6 @@ import android.provider.BaseColumns;
 public class DbStructure {
 	public static abstract class FeedTable implements BaseColumns{
 		public final static String TABLE_NAME="feeds";
-		
 		public final static String COLUMN_TITLE="title";
 		public final static String COLUMN_TEXT="text";
 		public final static String COLUMN_TIME="time";

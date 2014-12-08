@@ -15,6 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import nu.info.zeeshan.dao.DbHelper;
 import nu.info.zeeshan.rnf.FragmentFacebook;
 import nu.info.zeeshan.rnf.FragmentNews;
+import nu.info.zeeshan.utility.ProcessFeed.FeedInput;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -40,7 +41,7 @@ import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.Syn
 import com.google.code.rome.android.repackaged.com.sun.syndication.io.SyndFeedInput;
 import com.google.code.rome.android.repackaged.com.sun.syndication.io.XmlReader;
 
-public class ProcessFeed extends AsyncTask<String, Void, Boolean> {
+public class ProcessFeed extends AsyncTask<FeedInput, Void, Boolean> {
 
 	private Context context;
 	private int type;
@@ -58,67 +59,53 @@ public class ProcessFeed extends AsyncTask<String, Void, Boolean> {
 		context = c;
 	}
 
+	public static class FeedInput {
+		public String url;
+		public int type;
+
+		public FeedInput(String str, int t) {
+			url = str;
+			type = t;
+		}
+	}
+
 	@Override
-	protected Boolean doInBackground(String... url) {
+	protected Boolean doInBackground(FeedInput... inputfeed) {
 		try {
 			// URL url=arg0[0];
 			ArrayList<Feed> feeds = new ArrayList<Feed>();
 			Feed f;
 			SyndFeedInput input = new SyndFeedInput();
-			SyndFeed feed = input.build(new XmlReader(new URL(url[0])));
-			List<SyndEntry> list = feed.getEntries();
-			for (SyndEntry e : list) {
-				try {
-					f = new Feed();
-					f.setTitle(e.getTitle());
-					f.setTime(dformat.format(e.getPublishedDate()));
-					Document doc = Jsoup.parse(e.getDescription().getValue());
-					f.setDesc(doc.text());
-					f.setLink(e.getLink());
-					f.setImage(doc.getElementsByTag("img").get(0).attr("src"));
-					feeds.add(f);
-				} catch (Exception ee) {
-					Utility.log(TAG, "skipped a entry" + e);
-				}
-			}
+			SyndFeed feed;// = input.build(new XmlReader(new URL(url[0])));
+			List<SyndEntry> list;// = feed.getEntries();
 			DbHelper dbh = new DbHelper(context);
-			dbh.fillFeed(feeds, 1);
-			feeds.clear();
-			input = new SyndFeedInput();
-			feed = input.build(new XmlReader(new URL(url[1])));
-			list = feed.getEntries();
-			for (SyndEntry e : list) {
-				try {
-					f = new Feed();
-					f.setTitle(e.getTitle());
-					f.setTime(dformat.format(e.getPublishedDate()));
-					Document doc = Jsoup.parse(e.getDescription().getValue());
-					f.setDesc(doc.text());
-					f.setLink(e.getLink());
-					feeds.add(f);
-				} catch (Exception ee) {
-					Utility.log(TAG, "Skipped a entry f" + e);
+			for (FeedInput fe : inputfeed) {
+				feeds.clear();
+				feed = input.build(new XmlReader(new URL(fe.url)));
+				list = feed.getEntries();
+				for (SyndEntry e : list) {
+					try {
+						f = new Feed();
+						f.setTitle(e.getTitle());
+						f.setTime(dformat.format(e.getPublishedDate()));
+						Document doc = Jsoup.parse(e.getDescription()
+								.getValue());
+						f.setDesc(doc.text());
+						f.setLink(e.getLink());
+						if (fe.type == 1)
+							f.setImage(doc.getElementsByTag("img").get(0)
+									.attr("src"));
+						feeds.add(f);
+					} catch (Exception ee) {
+						Utility.log(TAG, "skipped a entry" + e);
+					}
 				}
+				dbh.fillFeed(feeds, fe.type);
 			}
-			dbh.fillFeed(feeds, 2);
 			return true;
-			/*
-			 * Document doc=getDomElement(getXmlFromUrl(arg0[0])); NodeList
-			 * nodeList = doc.getElementsByTagName(TAG_CHANNEL); Element e =
-			 * (Element) nodeList.item(0); NodeList items =
-			 * e.getElementsByTagName(TAG_ITEM); int len=items.getLength();
-			 * for(int i = 0; i <len ; i++){ Element e1 = (Element)
-			 * items.item(i); feed=new Feed(); feed.setTitle(getValue(e1,
-			 * TAG_TITLE)); feed.setLink(getValue(e1, TAG_LINK));
-			 * feed.setDesc(getValue(e1, TAG_DESRIPTION));
-			 * feed.setTime(getValue(e1, TAG_PUB_DATE)); feeds.add(feed); }
-			 * 
-			 * //for(Feed f:feeds) //Utility.log(TAG,""+f.getLink());
-			 */
-
 		} catch (Exception e) {
 			Utility.log("doInBackgroud", "" + e + e.getLocalizedMessage());
-			
+
 			return false;
 		}
 
@@ -132,7 +119,8 @@ public class ProcessFeed extends AsyncTask<String, Void, Boolean> {
 			FragmentNews.updateAdapter(context);
 			FragmentFacebook.updateAdapter(context);
 		} else {
-			Toast.makeText(context, "Error occured while updating!", Toast.LENGTH_LONG);
+			Toast.makeText(context, "Error occured while updating!",
+					Toast.LENGTH_LONG);
 		}
 	}
 
