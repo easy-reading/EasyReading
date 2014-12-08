@@ -3,6 +3,7 @@ package nu.info.zeeshan.dao;
 import java.util.ArrayList;
 
 import nu.info.zeeshan.utility.Feed;
+import nu.info.zeeshan.utility.Utility;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,6 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DbHelper extends SQLiteOpenHelper{
 	public static int DATABASE_VERSION=1;
+	private static String TAG="nu.info.zeeshan..rnf.dao.DbHelper";
 	public static String DATABASE_NAME="nrf.db";
 	public DbHelper(Context context) {
 		super(context, DATABASE_NAME, null,1);
@@ -26,9 +28,9 @@ public class DbHelper extends SQLiteOpenHelper{
 	}
 	public void fillFeed(ArrayList<Feed> feeds,int type){
 		SQLiteDatabase db=this.getWritableDatabase();
-		db.delete(DbStructure.FeedTable.TABLE_NAME, null, null);
-		ContentValues values=new ContentValues();
+		ContentValues values;
 		for(Feed f:feeds){
+			values=new ContentValues();
 			values.put(DbStructure.FeedTable.COLUMN_TITLE, f.getTitle());
 			values.put(DbStructure.FeedTable.COLUMN_TEXT, f.getDesc());
 			values.put(DbStructure.FeedTable.COLUMN_TIME, f.getTime());
@@ -37,5 +39,6 @@ public class DbHelper extends SQLiteOpenHelper{
 			values.put(DbStructure.FeedTable.COLUMN_TYPE, type);
 			db.insert(DbStructure.FeedTable.TABLE_NAME, null, values);
 		}
+		Utility.log(TAG, "inserted type"+type+" values "+feeds.size());
 	}
 }

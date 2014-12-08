@@ -2,49 +2,58 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10dp"
+    android:padding="10dp"
     android:orientation="vertical" >
-
-    <TextView
-        android:id="@+id/textViewTitleNews"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Large Text"
-        android:gravity="center"
-        android:layout_margin="5dp"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-         >
+        android:background="@drawable/side_top_shade"
+        android:padding="@dimen/default_padding" >
 
         <ImageView
             android:id="@+id/imageViewNews"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            
             android:src="@drawable/ic_launcher" />
 
         <TextView
-            android:id="@+id/textViewDescNews"
+            android:id="@+id/textViewTitleNews"
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_marginLeft="5dp"
-            android:gravity="center"
             android:layout_height="wrap_content"
-            android:text="TextView" />
-
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/textViewDescNews"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/default_padding"
+        android:gravity="center"
+        android:background="@drawable/side_shade"
+        android:text="TextView" />
 
     <TextView
         android:id="@+id/textViewTimeNews"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:padding="@dimen/default_padding"
         android:gravity="center"
+        android:background="@drawable/side_shade"
         android:text="Time"
         android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/tooth_height"
+        android:layout_marginRight="2dp"
+        android:layout_marginLeft="2dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/zigzag" />
 
 </LinearLayout>

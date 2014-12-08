@@ -1,46 +1,43 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="@color/white"
+     >
 
     <ListView
         android:id="@+id/listViewFeed"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    </ListView>
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:indeterminate="true"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true" />
+        android:divider="@null"
+         >
+    </ListView>
 <LinearLayout
     android:id="@+id/linearViewError" 
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@color/white"
+    android:padding="@dimen/default_padding"
     >
     
     <TextView
         android:id="@+id/textViewError"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_margin="10dp"
-        android:text="TextView" />
-
-    <Button
-        android:id="@+id/buttonRetry"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:minWidth="100dp"
-        android:onClick="reloadRss"
-        android:layout_height="wrap_content"
-        android:text="Retry" />
+        android:background="@drawable/side_top_shade"
+        android:gravity="center"
+        android:padding="@dimen/default_padding"
+        android:text="@string/no_feeds_msg" />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/tooth_height"
+         android:layout_marginRight="2dp"
+        android:layout_marginLeft="2dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/zigzag" />
 </LinearLayout>
     
 	
