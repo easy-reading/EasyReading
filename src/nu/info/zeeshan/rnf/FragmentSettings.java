@@ -20,13 +20,6 @@ public class FragmentSettings extends PreferenceFragment  implements OnSharedPre
 			SharedPreferences ospf=getActivity().getSharedPreferences(getString(R.string.pref_filename), Context.MODE_PRIVATE);
 			ospf.edit().remove(key).commit();
 			ospf.edit().putString(key, spf.getString(key, "nothing")).commit();
-			
-			if(key.equalsIgnoreCase(getString(R.string.pref_facebookrss))){
-				FragmentMain.url_changed=1;
-			}
-			else{
-				FragmentMain.url_changed=0;
-			}
 		}
 		else{
 			Toast.makeText(getActivity(), getString(R.string.invalid_input), Toast.LENGTH_SHORT).show();

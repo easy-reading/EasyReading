@@ -1,6 +1,5 @@
 package nu.info.zeeshan.rnf;
 
-import nu.info.zeeshan.rnf.FragmentMain.ViewHolder;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -11,13 +10,16 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.RelativeLayout;
+
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 public class MainActivity extends Activity {
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
-	FragmentMain f1,f2;
+	static FragmentNews fnews;
+	static FragmentFacebook fface;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -26,6 +28,16 @@ public class MainActivity extends Activity {
 		mViewPager = (ViewPager) findViewById(R.id.container);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 		mViewPager.setOnPageChangeListener(mSectionsPagerAdapter);
+		DisplayImageOptions options = new DisplayImageOptions.Builder()
+		.cacheOnDisk(true)
+		.cacheInMemory(true)
+		.build();
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)
+		.diskCacheFileCount(100)
+		.diskCacheSize(50 * 1024 * 1024)
+		.defaultDisplayImageOptions(options)
+        .build();
+		ImageLoader.getInstance().init(config);
 	}
 
 	@Override
@@ -43,11 +55,7 @@ public class MainActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	public void reloadRss(View view){
-		ViewHolder holder=(ViewHolder)((RelativeLayout)(view.getParent().getParent())).getTag();
-		FragmentMain fragment=((FragmentMain)(mSectionsPagerAdapter.getItem(holder.position)));
-		fragment.load();
-	}
+
 	public class SectionsPagerAdapter extends FragmentPagerAdapter implements OnPageChangeListener{
 
 		public SectionsPagerAdapter(FragmentManager fm) {
@@ -60,22 +68,16 @@ public class MainActivity extends Activity {
 			// Return a PlaceholderFragment (defined as a static inner class
 			// below).
 			if(position==0){
-				if(f1==null){
-					f1=new FragmentMain();
-					Bundle b=new Bundle();
-					b.putInt(getString(R.string.bundle_arg_position),position);
-					f1.setArguments(b);
+				if(fnews==null){
+					fnews=new FragmentNews();
 				}
-				return f1;
+				return fnews;
 			}
 			else{
-				if(f2==null){
-					f2=new FragmentMain();
-					Bundle b=new Bundle();
-					b.putInt(getString(R.string.bundle_arg_position),position);
-					f2.setArguments(b);
+				if(fface==null){
+					fface=new FragmentFacebook();
 				}
-				return f2;
+				return fface;
 			}
 		}
 

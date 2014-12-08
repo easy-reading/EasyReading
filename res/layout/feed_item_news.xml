@@ -6,7 +6,7 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/textViewTitle"
+        android:id="@+id/textViewTitleNews"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Large Text"
@@ -14,15 +14,32 @@
         android:layout_margin="5dp"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <TextView
-        android:id="@+id/textViewDesc"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:text="TextView" />
+         >
+
+        <ImageView
+            android:id="@+id/imageViewNews"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            
+            android:src="@drawable/ic_launcher" />
+
+        <TextView
+            android:id="@+id/textViewDescNews"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="5dp"
+            android:gravity="center"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/textViewTime"
+        android:id="@+id/textViewTimeNews"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"

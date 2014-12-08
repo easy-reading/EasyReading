@@ -42,25 +42,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class FragmentMain extends Fragment{
-		public static ArrayList<Feed> feeds=new ArrayList<Feed>();
+		
 		public static final String TAG="nu.info.zeeshan.FragmentMain"; 
 		FeedAdapter adapter;
 		ViewHolder holder;
 		Bundle b;
-		SharedPreferences spf;
-		static Feed feed;
+		static SharedPreferences spf;
 		static String newsfeed;
 		static String facebookfeed;
 		static int url_changed=-1;
 		
-		private static String TAG_CHANNEL = "channel";
-	    private static String TAG_TITLE = "title";
-	    private static String TAG_LINK = "link";
-	    private static String TAG_DESRIPTION = "description";
-	    private static String TAG_LANGUAGE = "language";
-	    private static String TAG_ITEM = "item";
-	    private static String TAG_PUB_DATE = "pubDate";
-	    private static String TAG_GUID = "guid";
 	//	static String errorMsg="Check RSS Feeds in settings";
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
@@ -72,16 +63,13 @@ public class FragmentMain extends Fragment{
 			holder.list.setAdapter(adapter);
 			holder.errorMsg=(TextView)rootView.findViewById(R.id.textViewError);
 			holder.errorView=(LinearLayout)rootView.findViewById(R.id.linearViewError);
-			rootView.setTag(holder);
 			b=this.getArguments();
 			holder.position=b.getInt(getString(R.string.bundle_arg_position));
-			
+			rootView.setTag(holder);
 			spf=((MainActivity)getActivity()).getSharedPreferences(getString(R.string.pref_filename),Context.MODE_PRIVATE);
-			
-				facebookfeed=spf.getString(getString(R.string.pref_facebookrss), getString(R.string.empty_feed));
-				newsfeed=spf.getString(getString(R.string.pref_newsrss), getString(R.string.empty_feed));
-				load();
-			
+			facebookfeed=spf.getString(getString(R.string.pref_facebookrss), getString(R.string.empty_feed));
+			newsfeed=spf.getString(getString(R.string.pref_newsrss), getString(R.string.empty_feed));
+			load();
 			return rootView;
 		}
 		
@@ -109,7 +97,7 @@ public class FragmentMain extends Fragment{
 			holder.errorView.setVisibility(View.VISIBLE);
 
 		}
-		public void load(){
+		 public void load(){
 			hideError();
 			switch(holder.position){
 			case 0:
@@ -123,103 +111,14 @@ public class FragmentMain extends Fragment{
 		public void hideError(){
 			holder.errorView.setVisibility(View.GONE);
 			}
-		class LoadXML extends AsyncTask<String, Void, Boolean>{
-
-			@Override
-			protected Boolean doInBackground(String... arg0) {
-				try {
-					//URL url=arg0[0];
-					Document doc=getDomElement(getXmlFromUrl(arg0[0]));
-					NodeList nodeList = doc.getElementsByTagName(TAG_CHANNEL);
-					Element e = (Element) nodeList.item(0);
-	                NodeList items = e.getElementsByTagName(TAG_ITEM);
-	                int len=items.getLength();
-	                for(int i = 0; i <len ; i++){
-	                	Element e1 = (Element) items.item(i);
-	                    feed=new Feed();
-	                    feed.setTitle(getValue(e1, TAG_TITLE));
-	                    feed.setLink(getValue(e1, TAG_LINK));
-	                    feed.setDesc(getValue(e1, TAG_DESRIPTION));
-	                    feed.setTime(getValue(e1, TAG_PUB_DATE));
-	                    feeds.add(feed);
-	                }
-	                DbHelper dbh=new DbHelper(getActivity());
-	                dbh.fillFeed(feeds);
-	                //for(Feed f:feeds)
-	               	//Utility.log(TAG,""+f.getLink());
-				/*	HttpURLConnection conn=(HttpURLConnection)url.openConnection();
-					conn.setReadTimeout(10000 );
-	                  conn.setConnectTimeout(15000);
-	                  conn.setRequestMethod("GET");
-	                  conn.setDoInput(true);
-	                  conn.connect();
-	                  InputStream stream=conn.getInputStream();
-	                  
-	                  XmlPullParserFactory xmlFactoryObject = XmlPullParserFactory.newInstance();
-	                  XmlPullParser myparser = xmlFactoryObject.newPullParser();
-	                  myparser.setInput(stream, null);
-	                  int event;
-	                  String tmptext="",tagName;
-	                  Feed f=null;
-	                  event=myparser.getEventType();
-	                  feeds=new ArrayList<Feed>();
-	                  while (event != XmlPullParser.END_DOCUMENT) {
-	                	  tagName=myparser.getName();
-	                	  
-	                	  switch(event){
-	                	  	case XmlPullParser.TEXT:
-	                	  		tmptext = new String(myparser.getText());
-	                	  		break;
-		                    case XmlPullParser.END_TAG:
-		                    	if(tagName.equalsIgnoreCase("title")){
-		                    	//	Utility.log("NEW FEED", "NEW FEED");
-		                    		f=new Feed();
-		                    	 f.title=Html.fromHtml(tmptext).toString();
-		                    	// Utility.log("TITLE", ""+f.title);
-		                    	}
-		                    	else if(tagName.equalsIgnoreCase("pubDate")){
-		                    	 f.time=Html.fromHtml(tmptext).toString();
-		                    	// Utility.log("TIME", ""+f.time);
-		                    	 feeds.add(f);
-		                    	//	Utility.log("SIZE",""+feeds.size());
-		                    	}
-		                    	else if(tagName.equalsIgnoreCase("description")){
-		                    		f.description=Html.fromHtml(tmptext).toString();
-		                    		//Utility.log("PARSED DATA", ""+f.description);
-		                    		
-		                    	}
-		                    	break;
-	                	  }
-	                	  event=myparser.next();
-	                  }
-	                  */
-	                  
-	            return true;      
-				} catch (Exception e) {
-					feeds.clear();
-					Utility.log("doInBackgroud", ""+e+e.getLocalizedMessage());
-					return false;
-				}
-			
-			}
-			
-			@Override
-			protected void onPostExecute(Boolean res){
-				setAdapter();
-				if(res){
-					Utility.log("onPostExecute", "done downloading");
-				}
-				else{
-					showError(getString(R.string.error_feed));
-				}
-			}
-		}
-		public void setAdapter(){
-		//	Utility.log("SET", ""+feeds.size());
+		
+		
+		public static void setAdapter(){
+			Utility.log("SET", ""+feeds.size());
 			adapter.clear();
-		//	Utility.log("SET", ""+feeds.size());
+			Utility.log("SET", ""+feeds.size());
 			adapter.addAll(feeds);
-		//	Utility.log("SET", ""+adapter.getCount());
+			Utility.log("SET", ""+adapter.getCount());
 			adapter.notifyDataSetChanged();
 		}
 		static class ViewHolder{
@@ -229,77 +128,5 @@ public class FragmentMain extends Fragment{
 			TextView errorMsg;
 			int position;
 		}
-		 /**
-	     * Method to get xml content from url HTTP Get request
-	     * */
-	    public String getXmlFromUrl(String url) {
-	        String xml = null;
-	 
-	        try {
-	            // request method is GET
-	            DefaultHttpClient httpClient = new DefaultHttpClient();
-	            HttpGet httpGet = new HttpGet(url);
-	 
-	            HttpResponse httpResponse = httpClient.execute(httpGet);
-	            HttpEntity httpEntity = httpResponse.getEntity();
-	            xml = EntityUtils.toString(httpEntity);
-	 
-	        } catch (UnsupportedEncodingException e) {
-	            e.printStackTrace();
-	        } catch (ClientProtocolException e) {
-	            e.printStackTrace();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
-	        // return XML
-	        return xml;
-	    }
-	 
-		 public static final Document getDomElement(String xml) {
-		        Document doc = null;
-		        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		        try {
-		 
-		            DocumentBuilder db = dbf.newDocumentBuilder();
-		 
-		            InputSource is = new InputSource();
-		            is.setCharacterStream(new StringReader(xml));
-		            doc = (Document) db.parse(is);
-		 
-		        } catch (ParserConfigurationException e) {
-		            Log.e(TAG, e+e.getMessage());
-		            return null;
-		        } catch (SAXException e) {
-		            Log.e(TAG, e+e.getMessage());
-		            return null;
-		        } catch (IOException e) {
-		            Log.e(TAG, e+e.getMessage());
-		            return null;
-		        }
-		 
-		        return doc;
-		    }
-		 public String getValue(Element item, String str) {
-			 NodeList n = item.getElementsByTagName(str);
-			 return this.getElementValue(n.item(0));
-		 }
-		 /**
-		     * Getting node value
-		     * 
-		     * @param elem element
-		     */
-		    public final String getElementValue(Node elem) {
-		        Node child;
-		        if (elem != null) {
-		            if (elem.hasChildNodes()) {
-		                for (child = elem.getFirstChild(); child != null; child = child
-		                        .getNextSibling()) {
-		                    if (child.getNodeType() == Node.TEXT_NODE || ( child.getNodeType() == Node.CDATA_SECTION_NODE)) {
-		                        return child.getNodeValue();
-		                    }
-		                }
-		            }
-		        }
-		        return "";
-		    }
+		
 }

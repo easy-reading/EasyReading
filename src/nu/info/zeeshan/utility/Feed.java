@@ -6,6 +6,7 @@ public class Feed {
 	String time;
 	String description;
 	String link;
+	String image;
 	
 	public void setTitle(String data){
 		title=data;
@@ -26,7 +27,11 @@ public class Feed {
 	public void setLink(String data){
 		link=data;
 	}
-
+	
+	public void setImage(String url){
+		image=url;
+	}
+	
 	public String getTitle(){
 		return title;
 	}
@@ -45,5 +50,9 @@ public class Feed {
 	
 	public String getLink(){
 		return link;
+	}
+	
+	public String getImage(){
+		return image;
 	}
 }

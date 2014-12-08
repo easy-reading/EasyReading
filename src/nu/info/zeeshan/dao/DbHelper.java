@@ -24,7 +24,7 @@ public class DbHelper extends SQLiteOpenHelper{
 		db.execSQL(DbStructure.FeedTable.COMMAND_DROP);
 		onCreate(db);
 	}
-	public void fillFeed(ArrayList<Feed> feeds){
+	public void fillFeed(ArrayList<Feed> feeds,int type){
 		SQLiteDatabase db=this.getWritableDatabase();
 		db.delete(DbStructure.FeedTable.TABLE_NAME, null, null);
 		ContentValues values=new ContentValues();
@@ -33,6 +33,8 @@ public class DbHelper extends SQLiteOpenHelper{
 			values.put(DbStructure.FeedTable.COLUMN_TEXT, f.getDesc());
 			values.put(DbStructure.FeedTable.COLUMN_TIME, f.getTime());
 			values.put(DbStructure.FeedTable.COLUMN_LINK, f.getLink());
+			values.put(DbStructure.FeedTable.COLUMN_IMAGE, f.getImage());
+			values.put(DbStructure.FeedTable.COLUMN_TYPE, type);
 			db.insert(DbStructure.FeedTable.TABLE_NAME, null, values);
 		}
 	}
