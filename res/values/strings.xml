@@ -21,7 +21,7 @@
     
     <string name="error_feed">Check RSS Feeds in settings</string>
     
-    <string name="empty_feed">http://www.engadget.com/rss.xml</string>
+    
     
    <string name="no_feeds_msg">No feeds Available!!\nTry setting feed URL in settings and press refresh icon.</string>
    

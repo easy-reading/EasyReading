@@ -19,7 +19,6 @@ import android.widget.TextView;
 
 public class FragmentNews extends Fragment {
 	SharedPreferences spf;
-	String feed_url;
 	static ViewHolder holder;
 	static NewsAdapter adapter;
 	static SQLiteDatabase db;
@@ -30,8 +29,6 @@ public class FragmentNews extends Fragment {
 				false);
 		spf = ((MainActivity) getActivity()).getSharedPreferences(
 				getString(R.string.pref_filename), Context.MODE_PRIVATE);
-		feed_url = spf.getString(getString(R.string.pref_newsrss),
-				getString(R.string.empty_feed));
 		db = new DbHelper(getActivity()).getReadableDatabase();
 		updateAdapter(getActivity());
 		holder = new ViewHolder();

@@ -18,5 +18,10 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
--dontwarn org.jdom.**
+-dontwarn java.awt.**
+-dontwarn org.jaxen.**
 -dontwarn com.google.code.rome.**
+-keep class com.google** {*;}
+-keep class org.jdom** {*;}
+-keep class org.jsoup** {*;}
+-keep class com.nostra13** {*;}

@@ -19,7 +19,7 @@ import android.widget.TextView;
 
 public class FragmentFacebook extends Fragment {
 	SharedPreferences spf;
-	String feed_url;
+
 	static ViewHolder holder;
 	public static FbAdapter adapter;
 	static SQLiteDatabase db;
@@ -30,8 +30,6 @@ public class FragmentFacebook extends Fragment {
 				false);
 		spf = ((MainActivity) getActivity()).getSharedPreferences(
 				getString(R.string.pref_filename), Context.MODE_PRIVATE);
-		feed_url = spf.getString(getString(R.string.pref_facebookrss),
-				getString(R.string.empty_feed));
 		db = new DbHelper(getActivity()).getReadableDatabase();
 		updateAdapter(getActivity());
 		holder = new ViewHolder();
