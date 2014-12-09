@@ -1,6 +1,7 @@
 package nu.info.zeeshan.rnf;
 
 import nu.info.zeeshan.adapters.FbAdapter;
+import nu.info.zeeshan.dao.DbConstants;
 import nu.info.zeeshan.dao.DbHelper;
 import nu.info.zeeshan.dao.DbStructure;
 import nu.info.zeeshan.utility.Utility;
@@ -50,7 +51,7 @@ public class FragmentFacebook extends Fragment {
 				DbStructure.FeedTable.COLUMN_TIME,
 				DbStructure.FeedTable.COLUMN_LINK, };
 		Cursor c = db.query(DbStructure.FeedTable.TABLE_NAME, select, "type=2",
-				null, null, null, DbStructure.FeedTable.COLUMN_TIME);
+				null, null, null, DbStructure.FeedTable.COLUMN_TIME+DbConstants.DESC);
 		if (adapter == null)
 			adapter = new FbAdapter(context, c);
 		else

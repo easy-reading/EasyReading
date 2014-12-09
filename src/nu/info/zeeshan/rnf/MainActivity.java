@@ -26,15 +26,22 @@ public class MainActivity extends Activity {
 	static FragmentNews fnews;
 	static FragmentFacebook fface;
 	static SharedPreferences spf;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
-		mViewPager = (ViewPager) findViewById(R.id.container);
-		mViewPager.setAdapter(mSectionsPagerAdapter);
-		mViewPager.setOnPageChangeListener(mSectionsPagerAdapter);
-		spf=getSharedPreferences(getString(R.string.pref_filename), Context.MODE_PRIVATE);
+		if (mSectionsPagerAdapter == null)
+			mSectionsPagerAdapter = new SectionsPagerAdapter(
+					getFragmentManager());
+		if (mViewPager == null) {
+			mViewPager = (ViewPager) findViewById(R.id.container);
+			mViewPager.setAdapter(mSectionsPagerAdapter);
+			mViewPager.setOnPageChangeListener(mSectionsPagerAdapter);
+		}
+		if (spf == null)
+			spf = getSharedPreferences(getString(R.string.pref_filename),
+					Context.MODE_PRIVATE);
 		DisplayImageOptions options = new DisplayImageOptions.Builder()
 				.cacheOnDisk(true).cacheInMemory(true).build();
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
@@ -51,35 +58,40 @@ public class MainActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		
-		switch(item.getItemId()){
+
+		switch (item.getItemId()) {
 		case R.id.action_settings:
-			Intent intent=new Intent(this,SettingsActivity.class);
+			Intent intent = new Intent(this, SettingsActivity.class);
 			startActivity(intent);
 			return true;
 		case R.id.action_refresh:
-			//start fetching and inserting news active page
-			String fbfeed=spf.getString(getString(R.string.pref_facebookrss),null);
-			String newsfeed=spf.getString(getString(R.string.pref_newsrss),null);
-			String msg="";
-			if(fbfeed==null && newsfeed==null){
-				msg="News and Facebook feeds are empty!\n please set them first.";
-				Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+			// start fetching and inserting news active page
+			String fbfeed = spf.getString(getString(R.string.pref_facebookrss),
+					null);
+			String newsfeed = spf.getString(getString(R.string.pref_newsrss),
+					null);
+			String msg = "";
+			if (fbfeed == null && newsfeed == null) {
+				msg = "News and Facebook feeds are empty!\n please set them first.";
+				Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
+						.show();
+			} else if (fbfeed == null) {
+				msg = "Loading News feeds!!\nFacebook feed is empty please set it.";
+				Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
+						.show();
+				new ProcessFeed(getApplicationContext()).execute(new FeedInput(
+						newsfeed, 1));
+			} else if (newsfeed == null) {
+				msg = "News feed is empty!\n please set It.";
+				Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
+						.show();
+				new ProcessFeed(getApplicationContext()).execute(new FeedInput(
+						fbfeed, 2));
+			} else {
+				new ProcessFeed(getApplicationContext()).execute(new FeedInput(
+						newsfeed, 1), new FeedInput(fbfeed, 2));
 			}
-			else if(fbfeed==null){
-				msg="Loading News feeds!!\nFacebook feed is empty please set it.";
-				Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-				new ProcessFeed(getApplicationContext()).execute(new FeedInput(newsfeed,1));
-			}
-			else if(newsfeed==null){
-				msg="News feed is empty!\n please set It.";
-				Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-				new ProcessFeed(getApplicationContext()).execute(new FeedInput(fbfeed,2));
-			}
-			else{
-				new ProcessFeed(getApplicationContext()).execute(new FeedInput(newsfeed,1),new FeedInput(fbfeed,2));
-			}
-			
+
 		default:
 			return super.onOptionsItemSelected(item);
 		}

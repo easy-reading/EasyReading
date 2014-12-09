@@ -1,6 +1,7 @@
 package nu.info.zeeshan.rnf;
 
 import nu.info.zeeshan.adapters.NewsAdapter;
+import nu.info.zeeshan.dao.DbConstants;
 import nu.info.zeeshan.dao.DbHelper;
 import nu.info.zeeshan.dao.DbStructure;
 import nu.info.zeeshan.utility.Utility;
@@ -50,7 +51,7 @@ public class FragmentNews extends Fragment {
 				DbStructure.FeedTable.COLUMN_IMAGE,
 				DbStructure.FeedTable.COLUMN_LINK, };
 		Cursor c = db.query(DbStructure.FeedTable.TABLE_NAME, select, "type=1",
-				null, null, null, DbStructure.FeedTable.COLUMN_TIME);
+				null, null, null, DbStructure.FeedTable.COLUMN_TIME+DbConstants.DESC);
 		if (adapter == null)
 			adapter = new NewsAdapter(context, c);
 		else

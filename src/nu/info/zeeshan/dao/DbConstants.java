@@ -13,6 +13,7 @@ public class DbConstants {
 	public static final String TYPE_REAL=" REAL";
 	public static final String CONSTRAIN_PRIMARY_KEY=" PRIMARY KEY";
 	public static final String UNIQUE=" UNIQUE";
+	public static final String DESC=" DESC";
 	public static final String CONFLICT_POLICY=" ON CONFLICT REPLACE";
 	
 }
