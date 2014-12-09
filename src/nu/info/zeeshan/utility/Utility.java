@@ -1,17 +1,7 @@
 package nu.info.zeeshan.utility;
 
-import java.util.ArrayList;
-
-import nu.info.zeeshan.dao.DbHelper;
-import nu.info.zeeshan.rnf.R;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 
 public class Utility {

@@ -1,44 +1,42 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
     android:background="@color/white"
-     >
+    android:orientation="vertical" >
 
     <ListView
         android:id="@+id/listViewFeed"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="@null"
-         >
+        android:divider="@null" >
     </ListView>
-<LinearLayout
-    android:id="@+id/linearViewError" 
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:padding="@dimen/default_padding"
-    >
-    
-    <TextView
-        android:id="@+id/textViewError"
+
+    <LinearLayout
+        android:id="@+id/linearViewError"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:background="@drawable/side_top_shade"
         android:gravity="center"
-        android:padding="@dimen/default_padding"
-        android:text="@string/no_feeds_msg" />
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/tooth_height"
-         android:layout_marginRight="2dp"
-        android:layout_marginLeft="2dp"
-        android:adjustViewBounds="true"
-        android:scaleType="fitXY"
-        android:src="@drawable/zigzag" />
-</LinearLayout>
-    
-	
+        android:orientation="vertical"
+        android:padding="@dimen/default_padding" >
+
+        <TextView
+            android:id="@+id/textViewError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/side_top_shade"
+            android:gravity="center"
+            android:padding="@dimen/default_padding"
+            android:text="@string/no_feeds_msg"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tooth_height"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/zigzag" />
+    </LinearLayout>
+
 </RelativeLayout>

@@ -60,15 +60,6 @@ public class FragmentFacebook extends Fragment {
 		Utility.log(TAG,"dataset updated facebook");
 	}
 
-	public void showError(String msg) {
-		holder.errorMsg.setText(msg);
-		holder.errorView.setVisibility(View.VISIBLE);
-	}
-
-	public void hideError() {
-		holder.errorView.setVisibility(View.GONE);
-	}
-
 	static class ViewHolder {
 		ListView list;
 		LinearLayout errorView;

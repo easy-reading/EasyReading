@@ -2,43 +2,50 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/default_padding"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/low_padding"
+    android:paddingLeft="@dimen/medium_padding"
+    android:paddingRight="@dimen/medium_padding"
+    android:paddingTop="@dimen/low_padding" >
 
     <TextView
         android:id="@+id/textViewTitleFb"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Large Text"
-        android:gravity="center"
         android:background="@drawable/side_top_shade"
-        android:padding="@dimen/default_padding"
+        android:gravity="center"
+        android:padding="@dimen/medium_padding"
+        android:text="Large Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:id="@+id/textViewDescFb"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/default_padding"
-        android:gravity="center"
         android:background="@drawable/side_shade"
+        android:gravity="center"
+        android:paddingBottom="@dimen/medium_padding"
+        android:paddingLeft="@dimen/medium_padding"
+        android:paddingRight="@dimen/medium_padding"
         android:text="TextView" />
 
     <TextView
         android:id="@+id/textViewTimeFb"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/default_padding"
-        android:gravity="center"
         android:background="@drawable/side_shade"
+        android:gravity="center"
+        android:paddingBottom="@dimen/medium_padding"
+        android:paddingLeft="@dimen/medium_padding"
+        android:paddingRight="@dimen/medium_padding"
         android:text="Time"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="@dimen/tooth_height"
-         android:layout_marginRight="2dp"
         android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
         android:adjustViewBounds="true"
         android:scaleType="fitXY"
         android:src="@drawable/zigzag" />
