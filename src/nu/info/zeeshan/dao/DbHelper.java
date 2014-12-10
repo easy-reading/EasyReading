@@ -6,13 +6,14 @@ import nu.info.zeeshan.utility.Feed;
 import nu.info.zeeshan.utility.Utility;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DbHelper extends SQLiteOpenHelper{
-	public static int DATABASE_VERSION=2;
+	public static int DATABASE_VERSION=5;
 	private static String TAG="nu.info.zeeshan..rnf.dao.DbHelper";
-	public static String DATABASE_NAME="nrf.db";
+	public static String DATABASE_NAME="redb.db";
 	public DbHelper(Context context) {
 		super(context, DATABASE_NAME, null,DATABASE_VERSION);
 	}
@@ -25,6 +26,21 @@ public class DbHelper extends SQLiteOpenHelper{
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		db.execSQL(DbStructure.FeedTable.COMMAND_DROP);
 		onCreate(db);
+	}
+	public int feedRead(int id){
+		int res;
+		SQLiteDatabase db=this.getWritableDatabase();
+		//ContentValues value=new ContentValues();
+		//value.put(DbStructure.FeedTable.COLUMN_STATE, 1);
+		//db.update(DbStructure.FeedTable.TABLE_NAME, values, whereClause, whereArgs);
+		db.execSQL("update feeds set state=1-state where _id="+id);//DbConstants.UPDATE+DbStructure.FeedTable.TABLE_NAME+DbConstants.SET+DbStructure.FeedTable.COLUMN_STATE+DbConstants.EQUALS+DbConstants.ONE,null);
+		Cursor c=db.rawQuery("select state from feeds where _id="+id,null);
+		if(c.moveToFirst())
+			res=c.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_STATE));
+		else 
+			res=0;
+		c.close();
+		return res;
 	}
 	public void fillFeed(ArrayList<Feed> feeds,int type){
 		SQLiteDatabase db=this.getWritableDatabase();

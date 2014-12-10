@@ -3,6 +3,9 @@ package nu.info.zeeshan.utility;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class Utility {
 	private static ProgressDialog progress_dialog;
@@ -26,7 +29,20 @@ public class Utility {
 		}
 	}
 	
+	public interface Filter{
+		int UNREAD=1;
+		int READ=2;
+		int ALL=3;
+	}
 	
-	
-	
+	public static class ViewHolder {
+		public TextView title;
+		public TextView desc;
+		public TextView time;
+		public ImageView image;
+		public ImageButton check;
+		public int id;
+		public int state;
+		public int type;
+	}
 }

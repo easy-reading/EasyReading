@@ -1,8 +1,8 @@
 package nu.info.zeeshan.utility;
 
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import nu.info.zeeshan.dao.DbHelper;
@@ -12,7 +12,9 @@ import nu.info.zeeshan.utility.ProcessFeed.FeedInput;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.xml.sax.InputSource;
 
+import android.app.LauncherActivity.ListItem;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
@@ -20,7 +22,6 @@ import android.widget.Toast;
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndEntry;
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndFeed;
 import com.google.code.rome.android.repackaged.com.sun.syndication.io.SyndFeedInput;
-import com.google.code.rome.android.repackaged.com.sun.syndication.io.XmlReader;
 
 public class ProcessFeed extends AsyncTask<FeedInput, Void, Boolean> {
 
@@ -57,19 +58,34 @@ public class ProcessFeed extends AsyncTask<FeedInput, Void, Boolean> {
 			SyndFeedInput input = new SyndFeedInput();
 			SyndFeed feed;// = input.build(new XmlReader(new URL(url[0])));
 			List<SyndEntry> list;// = feed.getEntries();
+			InputSource inputSource;
 			DbHelper dbh = new DbHelper(context);
+			Date pubdate;
+			Document doc;
 			for (FeedInput fe : inputfeed) {
 				feeds.clear();
-				feed = input.build(new XmlReader(new URL(fe.url)));
+
+				inputSource = new InputSource(fe.url);
+				inputSource.setEncoding("UTF-8");
+				feed = input.build(inputSource);
 				list = feed.getEntries();
 				for (SyndEntry e : list) {
 					try {
 						f = new Feed();
 						f.setTitle(e.getTitle());
-						f.setTime(dformat.format(e.getPublishedDate()));
-						Document doc = Jsoup.parse(e.getDescription()
-								.getValue());
+						doc = Jsoup.parse(e.getDescription().getValue());
 						f.setDesc(doc.text());
+						// Utility.log(TAG,doc.text());
+						pubdate = e.getPublishedDate();
+						if (pubdate == null) {
+							f.setTime(dformat.format(new Date())); // set
+																	// Current
+																	// date
+							Utility.log(TAG, "PUBDATE is " + e.toString());
+							// need to fetch whatever in the pubdate tag
+						} else {
+							f.setTime(dformat.format(pubdate));
+						}
 						f.setLink(e.getLink());
 						if (fe.type == 1) {
 							str = doc.getElementsByTag(TAG_IMG).get(0)
@@ -79,7 +95,7 @@ public class ProcessFeed extends AsyncTask<FeedInput, Void, Boolean> {
 						}
 						feeds.add(f);
 					} catch (Exception ee) {
-						Utility.log(TAG, "skipped a entry" + e);
+						Utility.log(TAG, "skipped a entry " + ee);
 					}
 				}
 				dbh.fillFeed(feeds, fe.type);

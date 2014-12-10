@@ -1,7 +1,10 @@
 package nu.info.zeeshan.rnf;
 
+import nu.info.zeeshan.dao.DbHelper;
 import nu.info.zeeshan.utility.ProcessFeed;
 import nu.info.zeeshan.utility.ProcessFeed.FeedInput;
+import nu.info.zeeshan.utility.Utility;
+import nu.info.zeeshan.utility.Utility.ViewHolder;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -14,6 +17,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -21,12 +27,14 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 public class MainActivity extends Activity {
+	private static final String TAG = "nu.info.zeeshan.utility.MainActivity";
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
 	static FragmentNews fnews;
 	static FragmentFacebook fface;
 	static SharedPreferences spf;
-
+	static DbHelper dbhelper;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,6 +56,7 @@ public class MainActivity extends Activity {
 				this).diskCacheFileCount(100).diskCacheSize(50 * 1024 * 1024)
 				.defaultDisplayImageOptions(options).build();
 		ImageLoader.getInstance().init(config);
+		dbhelper = new DbHelper(getApplicationContext());
 	}
 
 	@Override
@@ -91,10 +100,31 @@ public class MainActivity extends Activity {
 				new ProcessFeed(getApplicationContext()).execute(new FeedInput(
 						newsfeed, 1), new FeedInput(fbfeed, 2));
 			}
-
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	public void read(View view) {
+		Utility.log(TAG, "feed deleted");
+		// change state of feed
+		// update button
+		ViewHolder holder = (ViewHolder) (((LinearLayout) (view.getParent()
+				.getParent())).getTag());
+		if ((holder.state = dbhelper.feedRead(holder.id)) == 1)
+			((ImageButton) view).setImageDrawable(getResources().getDrawable(
+					R.drawable.ic_action_read_active));
+		else
+			((ImageButton) view).setImageDrawable(getResources().getDrawable(
+					R.drawable.ic_action_read));
+
+		if (holder.type == 1)
+			FragmentNews.updateAdapter(getApplicationContext());
+		else
+			FragmentFacebook.updateAdapter(getApplicationContext());
+		
+		Toast.makeText(getApplicationContext(), (holder.type==1?"News":"Notification")+" marked as"+(holder.state==0?" unread":" read"),Toast.LENGTH_SHORT).show();	
 	}
 
 	public class SectionsPagerAdapter extends FragmentPagerAdapter implements

@@ -2,16 +2,19 @@ package nu.info.zeeshan.adapters;
 
 import nu.info.zeeshan.dao.DbStructure;
 import nu.info.zeeshan.rnf.R;
+import nu.info.zeeshan.utility.Utility;
+import nu.info.zeeshan.utility.Utility.ViewHolder;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class FbAdapter extends CursorAdapter {
-
+	private static final String TAG = "nu.info.zeeshan.dao.adapters.FbAdapter";
 	Cursor c;
 	Context context;
 	ViewHolder holder;
@@ -31,6 +34,20 @@ public class FbAdapter extends CursorAdapter {
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TIME)));
 		holder.desc.setText(c.getString(c
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TEXT)));
+		holder.id=c.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable._ID));
+		holder.state=c
+				.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_STATE));
+		holder.type=c
+				.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TYPE));
+		if(holder.state==1){
+			holder.check.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_read_active));
+			Utility.log(TAG,holder.id+" is checked");
+		}
+		else{
+			holder.check.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_read));
+			Utility.log(TAG,holder.id+" is unchecked");
+		}
+		view.setTag(holder);
 	}
 
 	@Override
@@ -42,7 +59,7 @@ public class FbAdapter extends CursorAdapter {
 		holder.title = (TextView) view.findViewById(R.id.textViewTitleFb);
 		holder.desc = (TextView) view.findViewById(R.id.textViewDescFb);
 		holder.time = (TextView) view.findViewById(R.id.textViewTimeFb);
-		
+		holder.check=(ImageButton)view.findViewById(R.id.imageButtonReadFb);
 
 		holder.title.setText(c.getString(c
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TITLE)));
@@ -50,13 +67,20 @@ public class FbAdapter extends CursorAdapter {
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TIME)));
 		holder.desc.setText(c.getString(c
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TEXT)));
+		holder.id=c.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable._ID));
+		holder.state=c
+				.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_STATE));
+		holder.type=c
+				.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TYPE));
+		if(holder.state==1){
+			holder.check.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_read_active));
+			Utility.log(TAG,holder.id+" is checked");
+		}
+		else{
+			holder.check.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_read));
+			Utility.log(TAG,holder.id+" is unchecked");
+		}
 		view.setTag(holder);
 		return view;
-	}
-
-	static class ViewHolder {
-		TextView title;
-		TextView desc;
-		TextView time;
 	}
 }

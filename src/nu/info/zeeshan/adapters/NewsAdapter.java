@@ -1,21 +1,23 @@
 package nu.info.zeeshan.adapters;
 
-import java.net.URL;
-
 import nu.info.zeeshan.dao.DbStructure;
 import nu.info.zeeshan.rnf.R;
+import nu.info.zeeshan.utility.Utility;
+import nu.info.zeeshan.utility.Utility.ViewHolder;
 import android.content.Context;
 import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class NewsAdapter extends CursorAdapter {
+	private static final String TAG = "nu.info.zeeshan.dao.adapters.NewsAdapter";
 	Cursor c;
 	Context context;
 	ViewHolder holder;
@@ -37,15 +39,31 @@ public class NewsAdapter extends CursorAdapter {
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TEXT)));
 		holder.image.setImageDrawable(context.getResources().getDrawable(
 				R.drawable.default_news));
+		holder.id = c
+				.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable._ID));
+		holder.state=c
+				.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_STATE));
+		holder.type=c
+				.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TYPE));
+		if(holder.state==1){
+			holder.check.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_read_active));
+			Utility.log(TAG,holder.id+" is checked");
+		}
+		else{
+			holder.check.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_read));
+			Utility.log(TAG,holder.id+" is unchecked");
+		}
+		view.setTag(holder);
 		String imgsrc = c.getString(c
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_IMAGE));
-		if (imgsrc!=null && !imgsrc.trim().isEmpty())
+		if (imgsrc != null && !imgsrc.trim().isEmpty())
 			ImageLoader
 					.getInstance()
 					.displayImage(
 							c.getString(c
 									.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_IMAGE)),
 							holder.image);
+		
 
 	}
 
@@ -59,7 +77,8 @@ public class NewsAdapter extends CursorAdapter {
 		holder.desc = (TextView) view.findViewById(R.id.textViewDescNews);
 		holder.time = (TextView) view.findViewById(R.id.textViewTimeNews);
 		holder.image = (ImageView) view.findViewById(R.id.imageViewNews);
-
+		holder.check=(ImageButton) view.findViewById(R.id.imageButtonReadNews);
+				
 		holder.title.setText(c.getString(c
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TITLE)));
 		holder.time.setText(c.getString(c
@@ -68,18 +87,28 @@ public class NewsAdapter extends CursorAdapter {
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TEXT)));
 		holder.image.setImageDrawable(context.getResources().getDrawable(
 				R.drawable.default_news));
+		
 		String imgsrc = c.getString(c
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_IMAGE));
-		if (imgsrc!=null && !imgsrc.trim().isEmpty())
+		if (imgsrc != null && !imgsrc.trim().isEmpty())
 			ImageLoader.getInstance().displayImage(imgsrc, holder.image);
+		holder.id = c
+				.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable._ID));
+		holder.state=c
+				.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_STATE));
+		holder.type=c
+				.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TYPE));
+		if(holder.state==1){
+			holder.check.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_read_active));
+			Utility.log(TAG,holder.id+" is checked");
+		}
+		else{
+			holder.check.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_read));
+			Utility.log(TAG,holder.id+" is unchecked");
+		}
 		view.setTag(holder);
 		return view;
 	}
 
-	static class ViewHolder {
-		TextView title;
-		TextView desc;
-		TextView time;
-		ImageView image;
-	}
+	
 }
