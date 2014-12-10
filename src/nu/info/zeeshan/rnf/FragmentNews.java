@@ -21,10 +21,11 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class FragmentNews extends Fragment {
 	SharedPreferences spf;
-	static ViewHolder holder;
+	ViewHolder holder;
 	static NewsAdapter adapter;
 	static SQLiteDatabase db;
 	static String TAG = "nu.info.zeeshan.rnf.FragmentNews";
@@ -33,23 +34,30 @@ public class FragmentNews extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+
 		View rootView = inflater.inflate(R.layout.fragment_main, container,
 				false);
-		spf = ((MainActivity) getActivity()).getSharedPreferences(
-				getString(R.string.pref_filename), Context.MODE_PRIVATE);
-		db = new DbHelper(getActivity()).getReadableDatabase();
-		updateAdapter(getActivity());
-		holder = new ViewHolder();
-		holder.list = (ListView) rootView.findViewById(R.id.listViewFeed);
-		holder.list.setEmptyView(rootView.findViewById(R.id.linearViewError));
-		holder.list.setAdapter(adapter);
-		holder.errorMsg = (TextView) rootView.findViewById(R.id.textViewError);
-		holder.errorView = (LinearLayout) rootView
-				.findViewById(R.id.linearViewError);
-		rootView.setTag(holder);
-		setHasOptionsMenu(true);
 		if (filter == 0)
 			filter = Filter.UNREAD;
+		if (spf == null)
+			spf = ((MainActivity) getActivity()).getSharedPreferences(
+					getString(R.string.pref_filename), Context.MODE_PRIVATE);
+		if (db == null)
+			db = new DbHelper(getActivity()).getReadableDatabase();
+		updateAdapter(getActivity());
+		if (holder == null) {
+			holder = new ViewHolder();
+			holder.list = (ListView) rootView.findViewById(R.id.listViewFeed);
+			holder.list.setEmptyView(rootView
+					.findViewById(R.id.linearViewError));
+			holder.list.setAdapter(adapter);
+			holder.errorMsg = (TextView) rootView
+					.findViewById(R.id.textViewError);
+			holder.errorView = (LinearLayout) rootView
+					.findViewById(R.id.linearViewError);
+		}
+		rootView.setTag(holder);
+		setHasOptionsMenu(true);
 		return rootView;
 	}
 
@@ -81,25 +89,32 @@ public class FragmentNews extends Fragment {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		String msg;
 		switch (item.getItemId()) {
 		case R.id.action_newsfilter:
 			switch (filter) {
 			case Filter.UNREAD:
 				item.setIcon(getResources().getDrawable(
 						R.drawable.ic_action_read_active));
+				msg=getString(R.string.toast_msg_read);
 				filter = Filter.READ;
 				break;
 			case Filter.READ:
 				item.setIcon(getResources().getDrawable(
 						R.drawable.ic_action_all_white));
+				msg=getString(R.string.toast_msg_all);
 				filter = Filter.ALL;
 				break;
 			case Filter.ALL:
 				item.setIcon(getResources().getDrawable(
 						R.drawable.ic_action_read_white));
+				msg=getString(R.string.toast_msg_unread);
 				filter = Filter.UNREAD;
 				break;
+			default:
+				msg=getString(R.string.toast_msg_error);
 			}
+			Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
 			updateAdapter(getActivity());
 			return true;
 		default:
@@ -116,23 +131,23 @@ public class FragmentNews extends Fragment {
 				DbStructure.FeedTable.COLUMN_STATE,
 				DbStructure.FeedTable.COLUMN_IMAGE,
 				DbStructure.FeedTable.COLUMN_LINK, };
-		Cursor c = db
-				.query(DbStructure.FeedTable.TABLE_NAME,
-						select,
-						DbStructure.FeedTable.COLUMN_TYPE
-								+ DbConstants.EQUALS
-								+ DbConstants.Type.NEWS
-								+ ((filter == Filter.READ || filter == Filter.UNREAD) ? (DbConstants.AND
-										+ DbStructure.FeedTable.COLUMN_STATE
-										+ DbConstants.EQUALS + (filter - 1))
-										: ""), null, null, null,
-						DbStructure.FeedTable.COLUMN_TIME + DbConstants.DESC);
+		String where = DbStructure.FeedTable.COLUMN_TYPE
+				+ DbConstants.EQUALS
+				+ DbConstants.Type.NEWS
+				+ ((filter == Filter.READ || filter == Filter.UNREAD) ? (DbConstants.AND
+						+ DbStructure.FeedTable.COLUMN_STATE
+						+ DbConstants.EQUALS + (filter - 1))
+						: "");
+		Cursor c = db.query(DbStructure.FeedTable.TABLE_NAME, select, where,
+				null, null, null, DbStructure.FeedTable.COLUMN_TIME
+						+ DbConstants.DESC);
 		if (adapter == null)
 			adapter = new NewsAdapter(context, c);
 		else
 			adapter.changeCursor(c);
 		adapter.notifyDataSetChanged();
-		Utility.log(TAG, "dataset updated news");
+		Utility.log(TAG,
+				"dataset updated news " + where + " count is " + c.getCount());
 	}
 
 	static class ViewHolder {

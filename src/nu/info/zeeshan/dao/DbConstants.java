@@ -18,9 +18,6 @@ public class DbConstants {
 	public static final String UNIQUE=" UNIQUE";
 	public static final String DESC=" DESC";
 	public static final String DEFAULT=" DEFAULT ";
-//	public static final String ZERO=" 0";
-//	public static final String ONE=" 1";
-//	public static final String TWO=" 2";
 	public static final String AND=" AND ";
 	public static final String CONFLICT_POLICY=" ON CONFLICT IGNORE";
 	public interface State{

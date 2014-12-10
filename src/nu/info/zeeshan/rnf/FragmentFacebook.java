@@ -21,11 +21,12 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class FragmentFacebook extends Fragment {
 	SharedPreferences spf;
 	static int filter;
-	static ViewHolder holder;
+	ViewHolder holder;
 	public static FbAdapter adapter;
 	static SQLiteDatabase db;
 	static String TAG = "nu.info.zeeshan.rnf.FragmentFacebook";
@@ -34,72 +35,84 @@ public class FragmentFacebook extends Fragment {
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_main, container,
 				false);
-		spf = ((MainActivity) getActivity()).getSharedPreferences(
-				getString(R.string.pref_filename), Context.MODE_PRIVATE);
-		db = new DbHelper(getActivity()).getReadableDatabase();
-		updateAdapter(getActivity());
-		holder = new ViewHolder();
-		holder.list = (ListView) rootView.findViewById(R.id.listViewFeed);
-		holder.list.setEmptyView(rootView.findViewById(R.id.linearViewError));
-		holder.list.setAdapter(adapter);
-		holder.errorMsg = (TextView) rootView.findViewById(R.id.textViewError);
-		holder.errorView = (LinearLayout) rootView
-				.findViewById(R.id.linearViewError);
-		rootView.setTag(holder);
-		setHasOptionsMenu(true);
 		if (filter == 0)
 			filter = Filter.UNREAD;
+		if (spf == null)
+			spf = ((MainActivity) getActivity()).getSharedPreferences(
+					getString(R.string.pref_filename), Context.MODE_PRIVATE);
+		if (db == null)
+			db = new DbHelper(getActivity()).getReadableDatabase();
+		updateAdapter(getActivity());
+		if (holder == null) {
+			holder = new ViewHolder();
+			holder.list = (ListView) rootView.findViewById(R.id.listViewFeed);
+			holder.list.setEmptyView(rootView
+					.findViewById(R.id.linearViewError));
+			holder.list.setAdapter(adapter);
+			holder.errorMsg = (TextView) rootView
+					.findViewById(R.id.textViewError);
+			holder.errorView = (LinearLayout) rootView
+					.findViewById(R.id.linearViewError);
+		}
+		rootView.setTag(holder);
+		setHasOptionsMenu(true);
 		return rootView;
 	}
 
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.fb_menu, menu);
-		menu.getItem(0).setIcon(
-				getResources().getDrawable(R.drawable.ic_action_read_white));
 	}
 
 	public void onPrepareOptionsMenu(Menu menu) {
 		switch (filter) {
-		case 1:
+		case Filter.UNREAD:
 			menu.findItem(R.id.action_fbfilter)
 					.setIcon(
 							getResources().getDrawable(
 									R.drawable.ic_action_read_white));
 			break;
-		case 2:
+		case Filter.READ:
 			menu.findItem(R.id.action_fbfilter).setIcon(
 					getResources()
 							.getDrawable(R.drawable.ic_action_read_active));
 			break;
-		case 3:
+		case Filter.ALL:
 			menu.findItem(R.id.action_fbfilter).setIcon(
 					getResources().getDrawable(R.drawable.ic_action_all_white));
 			break;
 		}
+		super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		String msg;
 		switch (item.getItemId()) {
 		case R.id.action_fbfilter:
 			switch (filter) {
 			case Filter.UNREAD:
 				item.setIcon(getResources().getDrawable(
 						R.drawable.ic_action_read_active));
+				msg=getString(R.string.toast_msg_read);
 				filter = Filter.READ;
 				break;
 			case Filter.READ:
 				item.setIcon(getResources().getDrawable(
 						R.drawable.ic_action_all_white));
+				msg=getString(R.string.toast_msg_all);
 				filter = Filter.ALL;
 				break;
 			case Filter.ALL:
 				item.setIcon(getResources().getDrawable(
 						R.drawable.ic_action_read_white));
+				msg=getString(R.string.toast_msg_unread);
 				filter = Filter.UNREAD;
 				break;
+			default:
+				msg=getString(R.string.toast_msg_error);
 			}
-			updateAdapter(getActivity());
+			Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();;
+			FragmentFacebook.updateAdapter(getActivity());
 			return true;
 		default:
 			return false;
@@ -114,13 +127,14 @@ public class FragmentFacebook extends Fragment {
 				DbStructure.FeedTable.COLUMN_TIME,
 				DbStructure.FeedTable.COLUMN_STATE,
 				DbStructure.FeedTable.COLUMN_LINK, };
-		Cursor c = db.query(DbStructure.FeedTable.TABLE_NAME, select,
-				DbStructure.FeedTable.COLUMN_TYPE
-						+ DbConstants.EQUALS
-						+ DbConstants.Type.FB
-						+ (((filter == Filter.READ || filter == Filter.UNREAD) ? DbConstants.AND
-								+ DbStructure.FeedTable.COLUMN_STATE
-								+ DbConstants.EQUALS + (filter - 1) : "")),
+		String where = DbStructure.FeedTable.COLUMN_TYPE
+				+ DbConstants.EQUALS
+				+ DbConstants.Type.FB
+				+ (((filter == Filter.READ || filter == Filter.UNREAD) ? DbConstants.AND
+						+ DbStructure.FeedTable.COLUMN_STATE
+						+ DbConstants.EQUALS + (filter - 1)
+						: ""));
+		Cursor c = db.query(DbStructure.FeedTable.TABLE_NAME, select, where,
 				null, null, null, DbStructure.FeedTable.COLUMN_TIME
 						+ DbConstants.DESC);
 		if (adapter == null)
@@ -128,7 +142,10 @@ public class FragmentFacebook extends Fragment {
 		else
 			adapter.changeCursor(c);
 		adapter.notifyDataSetChanged();
-		Utility.log(TAG, "dataset updated facebook");
+		Utility.log(
+				TAG,
+				"dataset updated facebook" + where + " count is "
+						+ c.getCount());
 	}
 
 	static class ViewHolder {

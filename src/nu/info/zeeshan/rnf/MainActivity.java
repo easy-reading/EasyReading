@@ -81,25 +81,22 @@ public class MainActivity extends Activity {
 					null);
 			String msg = "";
 			if (fbfeed == null && newsfeed == null) {
-				msg = "News and Facebook feeds are empty!\n please set them first.";
-				Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
-						.show();
+				msg = getString(R.string.toast_msg_nofeedok);
 			} else if (fbfeed == null) {
-				msg = "Loading News feeds!!\nFacebook feed is empty please set it.";
-				Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
-						.show();
+				msg = getString(R.string.toast_msg_feednewsok);
 				new ProcessFeed(getApplicationContext()).execute(new FeedInput(
 						newsfeed, 1));
 			} else if (newsfeed == null) {
-				msg = "News feed is empty!\n please set It.";
-				Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
-						.show();
+				msg = getString(R.string.toast_msg_feedfbok);
 				new ProcessFeed(getApplicationContext()).execute(new FeedInput(
 						fbfeed, 2));
 			} else {
+				msg= getString(R.string.toast_msg_bothfeedok);
 				new ProcessFeed(getApplicationContext()).execute(new FeedInput(
 						newsfeed, 1), new FeedInput(fbfeed, 2));
 			}
+			Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
+			.show();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

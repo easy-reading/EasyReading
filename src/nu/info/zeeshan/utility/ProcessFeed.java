@@ -14,7 +14,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.xml.sax.InputSource;
 
-import android.app.LauncherActivity.ListItem;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
@@ -78,10 +77,7 @@ public class ProcessFeed extends AsyncTask<FeedInput, Void, Boolean> {
 						// Utility.log(TAG,doc.text());
 						pubdate = e.getPublishedDate();
 						if (pubdate == null) {
-							f.setTime(dformat.format(new Date())); // set
-																	// Current
-																	// date
-							Utility.log(TAG, "PUBDATE is " + e.toString());
+							f.setTime(dformat.format(new Date())); // set current date
 							// need to fetch whatever in the pubdate tag
 						} else {
 							f.setTime(dformat.format(pubdate));
@@ -115,7 +111,7 @@ public class ProcessFeed extends AsyncTask<FeedInput, Void, Boolean> {
 			Utility.log("onPostExecute", "done downloading and processing");
 			FragmentNews.updateAdapter(context);
 			FragmentFacebook.updateAdapter(context);
-			Toast.makeText(context, "updated sucessfully!", Toast.LENGTH_LONG)
+			Toast.makeText(context,"updated sucessfully!", Toast.LENGTH_LONG)
 					.show();
 			;
 		} else {
