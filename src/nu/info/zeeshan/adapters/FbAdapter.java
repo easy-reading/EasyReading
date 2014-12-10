@@ -1,5 +1,7 @@
 package nu.info.zeeshan.adapters;
 
+import java.util.Date;
+
 import nu.info.zeeshan.dao.DbStructure;
 import nu.info.zeeshan.rnf.R;
 import nu.info.zeeshan.utility.Utility;
@@ -18,6 +20,7 @@ public class FbAdapter extends CursorAdapter {
 	Cursor c;
 	Context context;
 	ViewHolder holder;
+	Date date=new Date();
 
 	public FbAdapter(Context contxt, Cursor cc) {
 		super(contxt, cc, 1);
@@ -30,22 +33,25 @@ public class FbAdapter extends CursorAdapter {
 		holder = (ViewHolder) view.getTag();
 		holder.title.setText(c.getString(c
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TITLE)));
-		holder.time.setText(c.getString(c
+		date.setTime(c.getLong(c
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TIME)));
+		holder.time.setText(Utility.dformat.format(date));
 		holder.desc.setText(c.getString(c
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TEXT)));
-		holder.id=c.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable._ID));
-		holder.state=c
-				.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_STATE));
-		holder.type=c
-				.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TYPE));
-		if(holder.state==1){
-			holder.check.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_read_active));
-			Utility.log(TAG,holder.id+" is checked");
-		}
-		else{
-			holder.check.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_read));
-			Utility.log(TAG,holder.id+" is unchecked");
+		holder.id = c
+				.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable._ID));
+		holder.state = c.getInt(c
+				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_STATE));
+		holder.type = c.getInt(c
+				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TYPE));
+		if (holder.state == 1) {
+			holder.check.setImageDrawable(context.getResources().getDrawable(
+					R.drawable.ic_action_read_active));
+			Utility.log(TAG, holder.id + " is checked");
+		} else {
+			holder.check.setImageDrawable(context.getResources().getDrawable(
+					R.drawable.ic_action_read));
+			Utility.log(TAG, holder.id + " is unchecked");
 		}
 		view.setTag(holder);
 	}
@@ -59,26 +65,29 @@ public class FbAdapter extends CursorAdapter {
 		holder.title = (TextView) view.findViewById(R.id.textViewTitleFb);
 		holder.desc = (TextView) view.findViewById(R.id.textViewDescFb);
 		holder.time = (TextView) view.findViewById(R.id.textViewTimeFb);
-		holder.check=(ImageButton)view.findViewById(R.id.imageButtonReadFb);
+		holder.check = (ImageButton) view.findViewById(R.id.imageButtonReadFb);
 
 		holder.title.setText(c.getString(c
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TITLE)));
-		holder.time.setText(c.getString(c
+		date.setTime(c.getLong(c
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TIME)));
+		holder.time.setText(Utility.dformat.format(date));
 		holder.desc.setText(c.getString(c
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TEXT)));
-		holder.id=c.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable._ID));
-		holder.state=c
-				.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_STATE));
-		holder.type=c
-				.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TYPE));
-		if(holder.state==1){
-			holder.check.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_read_active));
-			Utility.log(TAG,holder.id+" is checked");
-		}
-		else{
-			holder.check.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_action_read));
-			Utility.log(TAG,holder.id+" is unchecked");
+		holder.id = c
+				.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable._ID));
+		holder.state = c.getInt(c
+				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_STATE));
+		holder.type = c.getInt(c
+				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TYPE));
+		if (holder.state == 1) {
+			holder.check.setImageDrawable(context.getResources().getDrawable(
+					R.drawable.ic_action_read_active));
+			Utility.log(TAG, holder.id + " is checked");
+		} else {
+			holder.check.setImageDrawable(context.getResources().getDrawable(
+					R.drawable.ic_action_read));
+			Utility.log(TAG, holder.id + " is unchecked");
 		}
 		view.setTag(holder);
 		return view;

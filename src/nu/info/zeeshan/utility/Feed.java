@@ -2,7 +2,7 @@ package nu.info.zeeshan.utility;
 
 public class Feed {
 	private String title;
-	private String time;
+	private long time;
 	private String description;
 	private String link;
 	private String image;
@@ -13,7 +13,7 @@ public class Feed {
 	
 	
 
-	public void setTime(String data){
+	public void setTime(long data){
 		time=data;
 	}
 	
@@ -34,7 +34,7 @@ public class Feed {
 	}
 	
 	
-	public String getTime(){
+	public long getTime(){
 		return time;
 	}
 	

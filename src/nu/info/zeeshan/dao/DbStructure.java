@@ -19,7 +19,7 @@ public class DbStructure {
 				+COLUMN_TYPE+DbConstants.TYPE_INT+DbConstants.COMMA
 				+COLUMN_STATE+DbConstants.TYPE_INT+DbConstants.DEFAULT+DbConstants.State.UNREAD+DbConstants.COMMA
 				+COLUMN_IMAGE+DbConstants.TYPE_TEXT+DbConstants.COMMA
-				+COLUMN_TIME+DbConstants.TYPE_TEXT+DbConstants.COMMA
+				+COLUMN_TIME+DbConstants.TYPE_INT+DbConstants.COMMA
 				+DbConstants.UNIQUE+DbConstants.BRACES_OPEN+COLUMN_TITLE+DbConstants.COMMA+COLUMN_TIME+DbConstants.BRACES_CLOSE
 				+DbConstants.CONFLICT_POLICY+DbConstants.BRACES_CLOSE;
 		public final static String COMMAND_DROP="drop table "+TABLE_NAME;

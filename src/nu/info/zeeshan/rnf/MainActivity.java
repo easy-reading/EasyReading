@@ -5,16 +5,16 @@ import nu.info.zeeshan.utility.ProcessFeed;
 import nu.info.zeeshan.utility.ProcessFeed.FeedInput;
 import nu.info.zeeshan.utility.Utility;
 import nu.info.zeeshan.utility.Utility.ViewHolder;
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +26,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
-public class MainActivity extends Activity {
+public class MainActivity extends ActionBarActivity {
 	private static final String TAG = "nu.info.zeeshan.utility.MainActivity";
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
@@ -34,14 +34,15 @@ public class MainActivity extends Activity {
 	static FragmentFacebook fface;
 	static SharedPreferences spf;
 	static DbHelper dbhelper;
-	
+	public static boolean updating;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		if (mSectionsPagerAdapter == null)
 			mSectionsPagerAdapter = new SectionsPagerAdapter(
-					getFragmentManager());
+					getSupportFragmentManager());
 		if (mViewPager == null) {
 			mViewPager = (ViewPager) findViewById(R.id.container);
 			mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -75,28 +76,35 @@ public class MainActivity extends Activity {
 			return true;
 		case R.id.action_refresh:
 			// start fetching and inserting news active page
-			String fbfeed = spf.getString(getString(R.string.pref_facebookrss),
-					null);
-			String newsfeed = spf.getString(getString(R.string.pref_newsrss),
-					null);
-			String msg = "";
-			if (fbfeed == null && newsfeed == null) {
-				msg = getString(R.string.toast_msg_nofeedok);
-			} else if (fbfeed == null) {
-				msg = getString(R.string.toast_msg_feednewsok);
-				new ProcessFeed(getApplicationContext()).execute(new FeedInput(
-						newsfeed, 1));
-			} else if (newsfeed == null) {
-				msg = getString(R.string.toast_msg_feedfbok);
-				new ProcessFeed(getApplicationContext()).execute(new FeedInput(
-						fbfeed, 2));
-			} else {
-				msg= getString(R.string.toast_msg_bothfeedok);
-				new ProcessFeed(getApplicationContext()).execute(new FeedInput(
-						newsfeed, 1), new FeedInput(fbfeed, 2));
+			String msg;
+			if (!updating) {
+				updating=true;
+				String fbfeed = spf.getString(
+						getString(R.string.pref_facebookrss), null);
+				String newsfeed = spf.getString(
+						getString(R.string.pref_newsrss), null);
+
+				if (fbfeed == null && newsfeed == null) {
+					msg = getString(R.string.toast_msg_nofeedok);
+				} else if (fbfeed == null) {
+					msg = getString(R.string.toast_msg_feednewsok);
+					new ProcessFeed(getApplicationContext())
+							.execute(new FeedInput(newsfeed, 1));
+				} else if (newsfeed == null) {
+					msg = getString(R.string.toast_msg_feedfbok);
+					new ProcessFeed(getApplicationContext())
+							.execute(new FeedInput(fbfeed, 2));
+				} else {
+					msg = getString(R.string.toast_msg_bothfeedok);
+					new ProcessFeed(getApplicationContext()).execute(
+							new FeedInput(newsfeed, 1),
+							new FeedInput(fbfeed, 2));
+				}
 			}
+			else
+				msg=getString(R.string.toast_msg_wait);
 			Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
-			.show();
+					.show();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -120,15 +128,19 @@ public class MainActivity extends Activity {
 			FragmentNews.updateAdapter(getApplicationContext());
 		else
 			FragmentFacebook.updateAdapter(getApplicationContext());
-		
-		Toast.makeText(getApplicationContext(), (holder.type==1?"News":"Notification")+" marked as"+(holder.state==0?" unread":" read"),Toast.LENGTH_SHORT).show();	
+
+		Toast.makeText(
+				getApplicationContext(),
+				(holder.type == 1 ? "News" : "Notification") + " marked as"
+						+ (holder.state == 0 ? " unread" : " read"),
+				Toast.LENGTH_SHORT).show();
 	}
 
 	public class SectionsPagerAdapter extends FragmentPagerAdapter implements
 			OnPageChangeListener {
 
-		public SectionsPagerAdapter(FragmentManager fm) {
-			super(fm);
+		public SectionsPagerAdapter(FragmentManager fragmentManager) {
+			super(fragmentManager);
 		}
 
 		@Override
@@ -159,10 +171,11 @@ public class MainActivity extends Activity {
 		public CharSequence getPageTitle(int position) {
 			switch (position) {
 			case 0:
-				getActionBar().setTitle(getString(R.string.news_title));
+				getSupportActionBar().setTitle(getString(R.string.news_title));
 				return getString(R.string.news_title);
 			case 1:
-				getActionBar().setTitle(getString(R.string.facebook_title));
+				getSupportActionBar().setTitle(
+						getString(R.string.facebook_title));
 				return getString(R.string.facebook_title);
 			}
 			return null;
@@ -171,9 +184,10 @@ public class MainActivity extends Activity {
 		@Override
 		public void onPageSelected(int position) {
 			if (position == 0)
-				getActionBar().setTitle(getString(R.string.news_title));
+				getSupportActionBar().setTitle(getString(R.string.news_title));
 			else
-				getActionBar().setTitle(getString(R.string.facebook_title));
+				getSupportActionBar().setTitle(
+						getString(R.string.facebook_title));
 		}
 
 		@Override

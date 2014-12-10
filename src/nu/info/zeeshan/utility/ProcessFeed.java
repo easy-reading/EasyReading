@@ -8,6 +8,7 @@ import java.util.List;
 import nu.info.zeeshan.dao.DbHelper;
 import nu.info.zeeshan.rnf.FragmentFacebook;
 import nu.info.zeeshan.rnf.FragmentNews;
+import nu.info.zeeshan.rnf.MainActivity;
 import nu.info.zeeshan.utility.ProcessFeed.FeedInput;
 
 import org.jsoup.Jsoup;
@@ -26,7 +27,6 @@ public class ProcessFeed extends AsyncTask<FeedInput, Void, Boolean> {
 
 	private Context context;
 	private static String TAG = "nu.info.zeeshan.ProcessFeed";
-	private static SimpleDateFormat dformat = new SimpleDateFormat("E, d MMM y");
 	private static String PROTOCOL = "http:";
 	private static String TAG_ATTR_SRC = "src";
 	private static String TAG_IMG = "img";
@@ -77,10 +77,10 @@ public class ProcessFeed extends AsyncTask<FeedInput, Void, Boolean> {
 						// Utility.log(TAG,doc.text());
 						pubdate = e.getPublishedDate();
 						if (pubdate == null) {
-							f.setTime(dformat.format(new Date())); // set current date
+							f.setTime(new Date().getTime()); // set current date
 							// need to fetch whatever in the pubdate tag
 						} else {
-							f.setTime(dformat.format(pubdate));
+							f.setTime(pubdate.getTime());
 						}
 						f.setLink(e.getLink());
 						if (fe.type == 1) {
@@ -119,5 +119,6 @@ public class ProcessFeed extends AsyncTask<FeedInput, Void, Boolean> {
 			Toast.makeText(context, "Error occured while updating!",
 					Toast.LENGTH_LONG).show();
 		}
+		MainActivity.updating=false;
 	}
 }
