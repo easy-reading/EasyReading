@@ -38,13 +38,13 @@ public class FragmentFacebook extends Fragment {
 				false);
 		if (filter == 0)
 			filter = Filter.UNREAD;
-
+		// if (spf == null)
 		spf = ((MainActivity) getActivity()).getSharedPreferences(
 				getString(R.string.pref_filename), Context.MODE_PRIVATE);
-
+		// if (db == null)
 		db = new DbHelper(getActivity()).getReadableDatabase();
 		updateAdapter(getActivity());
-
+		// if (holder == null) {
 		holder = new ViewHolder();
 		holder.list = (ListView) rootView.findViewById(R.id.listViewFeed);
 		holder.list.setEmptyView(rootView.findViewById(R.id.linearViewError));
@@ -52,7 +52,7 @@ public class FragmentFacebook extends Fragment {
 		holder.errorMsg = (TextView) rootView.findViewById(R.id.textViewError);
 		holder.errorView = (LinearLayout) rootView
 				.findViewById(R.id.linearViewError);
-
+		// }
 		rootView.setTag(holder);
 		setHasOptionsMenu(true);
 		return rootView;
@@ -120,6 +120,8 @@ public class FragmentFacebook extends Fragment {
 	}
 
 	public static void updateAdapter(Context context) {
+		if (db == null)
+			db = new DbHelper(context).getReadableDatabase();
 		String[] select = { DbStructure.FeedTable._ID,
 				DbStructure.FeedTable.COLUMN_TITLE,
 				DbStructure.FeedTable.COLUMN_TEXT,

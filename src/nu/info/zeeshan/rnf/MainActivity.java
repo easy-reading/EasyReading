@@ -34,28 +34,36 @@ public class MainActivity extends ActionBarActivity {
 	static FragmentFacebook fface;
 	static SharedPreferences spf;
 	static DbHelper dbhelper;
+	static boolean IMG_LDR_INIT;
 	public static boolean updating;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		mSectionsPagerAdapter = new SectionsPagerAdapter(
-				getSupportFragmentManager());
-
-		mViewPager = (ViewPager) findViewById(R.id.container);
-		mViewPager.setAdapter(mSectionsPagerAdapter);
-		mViewPager.setOnPageChangeListener(mSectionsPagerAdapter);
-
-		spf = getSharedPreferences(getString(R.string.pref_filename),
-				Context.MODE_PRIVATE);
-		DisplayImageOptions options = new DisplayImageOptions.Builder()
-				.cacheOnDisk(true).cacheInMemory(true).build();
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-				this).diskCacheFileCount(100).diskCacheSize(50 * 1024 * 1024)
-				.defaultDisplayImageOptions(options).build();
-		ImageLoader.getInstance().init(config);
-		dbhelper = new DbHelper(getApplicationContext());
+		if (mSectionsPagerAdapter == null)
+			mSectionsPagerAdapter = new SectionsPagerAdapter(
+					getSupportFragmentManager());
+		if (mViewPager == null) {
+			mViewPager = (ViewPager) findViewById(R.id.container);
+			mViewPager.setAdapter(mSectionsPagerAdapter);
+			mViewPager.setOnPageChangeListener(mSectionsPagerAdapter);
+		}
+		if (spf == null)
+			spf = getSharedPreferences(getString(R.string.pref_filename),
+					Context.MODE_PRIVATE);
+		if (IMG_LDR_INIT == false) {
+			DisplayImageOptions options = new DisplayImageOptions.Builder()
+					.cacheOnDisk(true).cacheInMemory(true).build();
+			ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
+					this).diskCacheFileCount(100)
+					.diskCacheSize(50 * 1024 * 1024)
+					.defaultDisplayImageOptions(options).build();
+			ImageLoader.getInstance().init(config);
+			IMG_LDR_INIT = true;
+		}
+		if (dbhelper == null)
+			dbhelper = new DbHelper(getApplicationContext());
 	}
 
 	@Override
