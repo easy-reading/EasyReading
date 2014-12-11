@@ -40,17 +40,15 @@ public class MainActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		if (mSectionsPagerAdapter == null)
-			mSectionsPagerAdapter = new SectionsPagerAdapter(
-					getSupportFragmentManager());
-		if (mViewPager == null) {
-			mViewPager = (ViewPager) findViewById(R.id.container);
-			mViewPager.setAdapter(mSectionsPagerAdapter);
-			mViewPager.setOnPageChangeListener(mSectionsPagerAdapter);
-		}
-		if (spf == null)
-			spf = getSharedPreferences(getString(R.string.pref_filename),
-					Context.MODE_PRIVATE);
+		mSectionsPagerAdapter = new SectionsPagerAdapter(
+				getSupportFragmentManager());
+
+		mViewPager = (ViewPager) findViewById(R.id.container);
+		mViewPager.setAdapter(mSectionsPagerAdapter);
+		mViewPager.setOnPageChangeListener(mSectionsPagerAdapter);
+
+		spf = getSharedPreferences(getString(R.string.pref_filename),
+				Context.MODE_PRIVATE);
 		DisplayImageOptions options = new DisplayImageOptions.Builder()
 				.cacheOnDisk(true).cacheInMemory(true).build();
 		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
@@ -78,7 +76,7 @@ public class MainActivity extends ActionBarActivity {
 			// start fetching and inserting news active page
 			String msg;
 			if (!updating) {
-				updating=true;
+				updating = true;
 				String fbfeed = spf.getString(
 						getString(R.string.pref_facebookrss), null);
 				String newsfeed = spf.getString(
@@ -100,9 +98,8 @@ public class MainActivity extends ActionBarActivity {
 							new FeedInput(newsfeed, 1),
 							new FeedInput(fbfeed, 2));
 				}
-			}
-			else
-				msg=getString(R.string.toast_msg_wait);
+			} else
+				msg = getString(R.string.toast_msg_wait);
 			Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
 					.show();
 			return true;

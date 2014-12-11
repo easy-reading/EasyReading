@@ -33,27 +33,26 @@ public class FragmentFacebook extends Fragment {
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		// null checks creating empty fragments
 		View rootView = inflater.inflate(R.layout.fragment_main, container,
 				false);
 		if (filter == 0)
 			filter = Filter.UNREAD;
-		if (spf == null)
-			spf = ((MainActivity) getActivity()).getSharedPreferences(
-					getString(R.string.pref_filename), Context.MODE_PRIVATE);
-		if (db == null)
-			db = new DbHelper(getActivity()).getReadableDatabase();
+
+		spf = ((MainActivity) getActivity()).getSharedPreferences(
+				getString(R.string.pref_filename), Context.MODE_PRIVATE);
+
+		db = new DbHelper(getActivity()).getReadableDatabase();
 		updateAdapter(getActivity());
-		if (holder == null) {
-			holder = new ViewHolder();
-			holder.list = (ListView) rootView.findViewById(R.id.listViewFeed);
-			holder.list.setEmptyView(rootView
-					.findViewById(R.id.linearViewError));
-			holder.list.setAdapter(adapter);
-			holder.errorMsg = (TextView) rootView
-					.findViewById(R.id.textViewError);
-			holder.errorView = (LinearLayout) rootView
-					.findViewById(R.id.linearViewError);
-		}
+
+		holder = new ViewHolder();
+		holder.list = (ListView) rootView.findViewById(R.id.listViewFeed);
+		holder.list.setEmptyView(rootView.findViewById(R.id.linearViewError));
+		holder.list.setAdapter(adapter);
+		holder.errorMsg = (TextView) rootView.findViewById(R.id.textViewError);
+		holder.errorView = (LinearLayout) rootView
+				.findViewById(R.id.linearViewError);
+
 		rootView.setTag(holder);
 		setHasOptionsMenu(true);
 		return rootView;
@@ -93,25 +92,26 @@ public class FragmentFacebook extends Fragment {
 			case Filter.UNREAD:
 				item.setIcon(getResources().getDrawable(
 						R.drawable.ic_action_read_active));
-				msg=getString(R.string.toast_msg_read);
+				msg = getString(R.string.toast_msg_read);
 				filter = Filter.READ;
 				break;
 			case Filter.READ:
 				item.setIcon(getResources().getDrawable(
 						R.drawable.ic_action_all_white));
-				msg=getString(R.string.toast_msg_all);
+				msg = getString(R.string.toast_msg_all);
 				filter = Filter.ALL;
 				break;
 			case Filter.ALL:
 				item.setIcon(getResources().getDrawable(
 						R.drawable.ic_action_read_white));
-				msg=getString(R.string.toast_msg_unread);
+				msg = getString(R.string.toast_msg_unread);
 				filter = Filter.UNREAD;
 				break;
 			default:
-				msg=getString(R.string.toast_msg_error);
+				msg = getString(R.string.toast_msg_error);
 			}
-			Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();;
+			Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+			;
 			FragmentFacebook.updateAdapter(getActivity());
 			return true;
 		default:
