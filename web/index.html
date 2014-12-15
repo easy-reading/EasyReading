@@ -1,5 +1,23 @@
-<html>
-<body>
-hello read me page
-</body>
-</html>
+---
+layout: default
+---
+
+<div class="home">
+
+  <h1 class="post-heading">Easy Reading</h1>
+
+  <ul class="post-list">
+    {% for post in site.posts %}
+      <li>
+        <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
+        <hr class="divider"/>
+          {{ post.content }}
+      </li>
+    {% endfor %}
+  </ul>
+  
+
+  <p>Got doubts, or request features on zkhan1093@gmail.com</p>
+  
+	<hr class="divider"/>
+</div>
