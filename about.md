@@ -3,7 +3,7 @@ layout: page
 title: About Developer
 permalink: /about/
 ---
-<img class="center" width="200" src="{{site.url}}/assets/images/developer.jpg"/>
+<img class="center" width="200" src="{{site.baseurl}}/assets/images/developer.jpg"/>
 
 
 Zeeshan Khan is a B.Tech final year student who loves technology and hate studies, lives in Allahabad, India
