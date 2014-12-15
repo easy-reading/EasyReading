@@ -50,7 +50,7 @@ Easy Reading is a small, simple yet powerfull application that let you access Ne
 ![Filter read feeds]({{site.baseurl}}/assets/images/showread.png)![Filter unread feeds]({{site.baseurl}}/assets/images/showunread.png)![Filter all feeds]({{site.baseurl}}/assets/images/showall.png)
 
 
-source code of Easy Reading at: [github.com/zkhan1093](https://github.com/zkhan1093/EasyReading)
+source code of Easy Reading at: [github.com/{{site.github_username}}](https://github.com/{{site.github_username}}/EasyReading)
 
 
 [playlink]:    https://play.google.com/store/apps/details?id=nu.info.zeeshan.rnf

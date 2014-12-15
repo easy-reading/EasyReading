@@ -7,6 +7,4 @@ permalink: /about/
 
 
 Zeeshan Khan is a B.Tech final year student who loves technology and hate studies, lives in Allahabad, India
- you can find him on [Facebook](http://facebook.com/zeeshankhan.1001) or [Twitter](http://www.tritter.com/zkhan1093)
-
-
+ you can find him on [Facebook](http://facebook.com/zeeshankhan.1001) or [Twitter](http://www.twitter.com/zkhan1093)
