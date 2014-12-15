@@ -1,0 +1,45 @@
+<footer class="site-footer">
+
+  <div class="wrapper">
+
+        <div class="footer-col-wrapper">
+
+<div class="footer-col  footer-col-1">
+
+		  <img class="img-round" src="{{site.url}}/assets/images/developer.jpg"/>
+      
+</div>
+<div class="footer-col  footer-col-2">
+
+		   <h2 class="footer-heading">{{ site.title }}</h2>
+		   <hr/>
+		   <br/>
+        <p class="text">{{ site.description }}</p>
+        
+        <ul class="social-media-list">
+          {% if site.github_username %}
+          <li>
+            <a  href="https://github.com/{{ site.github_username }}">
+              <span class="icon  icon--github">
+                <img src="{{ "/assets/images/icon-github.png" | prepend: site.baseurl }}" border="0" alt="Github" />
+				   <span class="footer-link">@{{ site.github_username }}</span>
+              </span>
+            </a>
+          </li>
+          {% endif %}
+
+          {% if site.twitter_username %}
+          <li>
+			  <a href="https://twitter.com/{{ site.twitter_username }}" target="_blank" class="about-body-link">
+				  <img src="{{ "/assets/images/icon-twitter.png" | prepend: site.baseurl }}" border="0" alt="Twitter" />
+				   <span class="footer-link">@{{ site.twitter_username }}</span>
+				</a>
+			</li>
+                   
+          {% endif %}
+        </ul>
+      </div>
+  
+</div>
+  </div>
+</footer>
