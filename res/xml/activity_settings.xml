@@ -15,4 +15,10 @@
         android:summary="@string/news_summary"
         android:inputType="textUri"
         ></EditTextPreference>
+	<EditTextPreference
+        android:title="@string/limit_title"
+        android:key="@string/pref_limit"
+        android:summary="@string/limit_summary"
+        android:inputType="number"
+        ></EditTextPreference>
 </PreferenceScreen>

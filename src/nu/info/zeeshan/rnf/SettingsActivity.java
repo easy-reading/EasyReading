@@ -1,5 +1,6 @@
 package nu.info.zeeshan.rnf;
 
+import nu.info.zeeshan.utility.Constants;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -13,7 +14,7 @@ public class SettingsActivity extends PreferenceActivity implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//setContentView(R.layout.activity_settings);
+		// setContentView(R.layout.activity_settings);
 		addPreferencesFromResource(R.xml.activity_settings);
 		// getSupportedFragmentManager().beginTransaction().replace(R.id.setting_fragment_holder,new
 		// FragmentSettings()).commit();
@@ -28,14 +29,24 @@ public class SettingsActivity extends PreferenceActivity implements
 
 	@Override
 	public void onSharedPreferenceChanged(SharedPreferences spf, String key) {
-		if (valid(spf.getString(key, ""))) {
-			SharedPreferences ospf = getApplicationContext().getSharedPreferences(
-					getString(R.string.pref_filename), Context.MODE_PRIVATE);
+		SharedPreferences ospf = getApplicationContext().getSharedPreferences(
+				getString(R.string.pref_filename), Context.MODE_PRIVATE);
+		if (key.equalsIgnoreCase(getString(R.string.pref_limit))) {
+			ospf.edit()
+					.putString(key,
+							spf.getString(key, Constants.DEFAULT_FEED_LIMIT))
+					.commit();
+		} else if (valid(spf.getString(key, ""))) {
+
 			ospf.edit().remove(key).commit();
-			ospf.edit().putString(key, spf.getString(key, "nothing")).commit();
+			ospf.edit()
+					.putString(key, spf.getString(key, Constants.EMPTY_FEED))
+					.commit();
+
 		} else {
-			Toast.makeText(getApplicationContext(), getString(R.string.invalid_input),
-					Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(),
+					getString(R.string.invalid_input), Toast.LENGTH_SHORT)
+					.show();
 		}
 	}
 

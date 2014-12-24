@@ -30,8 +30,8 @@ public class MainActivity extends ActionBarActivity {
 	private static final String TAG = "nu.info.zeeshan.utility.MainActivity";
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
-	static FragmentNews fnews;
-	static FragmentFacebook fface;
+	public static FragmentNews fnews;
+	public static FragmentFacebook fface;
 	static SharedPreferences spf;
 	static DbHelper dbhelper;
 	static boolean IMG_LDR_INIT;
@@ -130,9 +130,9 @@ public class MainActivity extends ActionBarActivity {
 					R.drawable.ic_action_read));
 
 		if (holder.type == 1)
-			FragmentNews.updateAdapter(getApplicationContext());
+			fnews.updateAdapter(getApplicationContext());
 		else
-			FragmentFacebook.updateAdapter(getApplicationContext());
+			fface.updateAdapter(getApplicationContext());
 
 		Toast.makeText(
 				getApplicationContext(),

@@ -4,8 +4,10 @@ import nu.info.zeeshan.adapters.NewsAdapter;
 import nu.info.zeeshan.dao.DbConstants;
 import nu.info.zeeshan.dao.DbHelper;
 import nu.info.zeeshan.dao.DbStructure;
+import nu.info.zeeshan.utility.Constants;
 import nu.info.zeeshan.utility.Utility;
 import nu.info.zeeshan.utility.Utility.Filter;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -26,10 +28,20 @@ import android.widget.Toast;
 public class FragmentNews extends Fragment {
 	SharedPreferences spf;
 	ViewHolder holder;
-	static NewsAdapter adapter;
-	static SQLiteDatabase db;
+	NewsAdapter adapter;
+	SQLiteDatabase db;
 	static String TAG = "nu.info.zeeshan.rnf.FragmentNews";
-	static int filter;
+	int filter;
+	Activity activity;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		activity = getActivity();
+		spf = ((MainActivity) getActivity()).getSharedPreferences(
+				getString(R.string.pref_filename), Context.MODE_PRIVATE);
+		db = new DbHelper(getActivity()).getWritableDatabase();
+		super.onCreate(savedInstanceState);
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,11 +51,11 @@ public class FragmentNews extends Fragment {
 				false);
 		// if (filter == 0)
 		filter = Filter.UNREAD;
-		// if (spf == null)
-		spf = ((MainActivity) getActivity()).getSharedPreferences(
-				getString(R.string.pref_filename), Context.MODE_PRIVATE);
-		// if (db == null)
-		db = new DbHelper(getActivity()).getReadableDatabase();
+		if (spf == null)
+			spf = ((MainActivity) getActivity()).getSharedPreferences(
+					getString(R.string.pref_filename), Context.MODE_PRIVATE);
+		if (db == null)
+			db = new DbHelper(getActivity()).getWritableDatabase();
 		updateAdapter(getActivity());
 		// if (holder == null) {
 		holder = new ViewHolder();
@@ -56,6 +68,7 @@ public class FragmentNews extends Fragment {
 		// }
 		rootView.setTag(holder);
 		setHasOptionsMenu(true);
+		activity = getActivity();
 		return rootView;
 	}
 
@@ -120,9 +133,31 @@ public class FragmentNews extends Fragment {
 		}
 	}
 
-	public static void updateAdapter(Context context) {
+	public void updateAdapter(Context context) {
 		if (db == null)
-			db = new DbHelper(context).getReadableDatabase();
+			db = new DbHelper(context).getWritableDatabase();
+		Cursor c = db.rawQuery("select count(*) from feeds where "
+				+ DbStructure.FeedTable.COLUMN_TYPE + DbConstants.EQUALS
+				+ DbConstants.Type.NEWS + DbConstants.AND
+				+ DbStructure.FeedTable.COLUMN_STATE + DbConstants.EQUALS
+				+ DbConstants.State.READ, null);
+		if (c.moveToFirst()) {
+			int limit = Integer.parseInt(spf.getString(
+					activity.getString(R.string.pref_limit),
+					Constants.DEFAULT_FEED_LIMIT));
+			if (c.getInt(0) > limit) {
+				// delete extra feeds
+				db.execSQL("delete from feeds where type="
+						+ DbConstants.Type.NEWS + " and state="
+						+ DbConstants.State.READ
+						+ " and _id NOT IN (select _id from feeds where type="
+						+ DbConstants.Type.NEWS + " and state="
+						+ DbConstants.State.READ + " order by time desc limit "
+						+ limit + ")");
+
+			}
+		}
+		c.close();
 		String[] select = { DbStructure.FeedTable._ID,
 				DbStructure.FeedTable.COLUMN_TITLE,
 				DbStructure.FeedTable.COLUMN_TEXT,
@@ -138,8 +173,8 @@ public class FragmentNews extends Fragment {
 						+ DbStructure.FeedTable.COLUMN_STATE
 						+ DbConstants.EQUALS + (filter - 1))
 						: "");
-		Cursor c = db.query(DbStructure.FeedTable.TABLE_NAME, select, where,
-				null, null, null, DbStructure.FeedTable.COLUMN_TIME
+		c = db.query(DbStructure.FeedTable.TABLE_NAME, select, where, null,
+				null, null, DbStructure.FeedTable.COLUMN_TIME
 						+ DbConstants.DESC);
 		if (adapter == null)
 			adapter = new NewsAdapter(context, c);

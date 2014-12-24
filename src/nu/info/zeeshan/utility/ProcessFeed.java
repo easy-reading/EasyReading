@@ -108,8 +108,8 @@ public class ProcessFeed extends AsyncTask<FeedInput, Void, Boolean> {
 		// setAdapter();
 		if (res) {
 			Utility.log("onPostExecute", "done downloading and processing");
-			FragmentNews.updateAdapter(context);
-			FragmentFacebook.updateAdapter(context);
+			MainActivity.fface.updateAdapter(context);
+			MainActivity.fnews.updateAdapter(context);
 			Toast.makeText(context,"updated sucessfully!", Toast.LENGTH_LONG)
 					.show();
 			;

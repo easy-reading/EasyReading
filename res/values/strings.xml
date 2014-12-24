@@ -10,12 +10,15 @@
     <string name="pref_filename">nu.info.zeeshan.preference_file</string>
     <string name="pref_facebookrss">facebook_rss</string>
     <string name="pref_newsrss">news_rss</string>
+    <string name="pref_limit">feed_limit</string>
     
     <string name="facebook_summary">Your Facebook notification RSS Feed</string>
     <string name="news_summary">Your News Rss Feed</string>
+    <string name="limit_summary">Maximum feeds to keep of each type</string>
     
     <string name="facebook_title">Facebook Feed</string>
     <string name="news_title">News Feed</string>
+    <string name="limit_title">Maximum Feeds</string>
     
     <string name="invalid_input">Entered value is not valid</string>
     
