@@ -1,9 +1,11 @@
 package nu.info.zeeshan.rnf;
 
+import it.neokree.materialtabs.MaterialTab;
+import it.neokree.materialtabs.MaterialTabHost;
+import it.neokree.materialtabs.MaterialTabListener;
 import nu.info.zeeshan.dao.DbHelper;
 import nu.info.zeeshan.utility.ProcessFeed;
 import nu.info.zeeshan.utility.ProcessFeed.FeedInput;
-import nu.info.zeeshan.utility.Utility;
 import nu.info.zeeshan.utility.Utility.ViewHolder;
 import android.content.Context;
 import android.content.Intent;
@@ -26,7 +28,8 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements
+		MaterialTabListener {
 	private static final String TAG = "nu.info.zeeshan.utility.MainActivity";
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
@@ -36,6 +39,7 @@ public class MainActivity extends ActionBarActivity {
 	static DbHelper dbhelper;
 	static boolean IMG_LDR_INIT;
 	public static boolean updating;
+	MaterialTabHost tabHost;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +52,12 @@ public class MainActivity extends ActionBarActivity {
 			mViewPager = (ViewPager) findViewById(R.id.container);
 			mViewPager.setAdapter(mSectionsPagerAdapter);
 			mViewPager.setOnPageChangeListener(mSectionsPagerAdapter);
+		}
+		tabHost = (MaterialTabHost) this.findViewById(R.id.tabHost);
+		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+			tabHost.addTab(tabHost.newTab()
+					.setText(mSectionsPagerAdapter.getPageTitle(i))
+					.setTabListener(this));
 		}
 		if (spf == null)
 			spf = getSharedPreferences(getString(R.string.pref_filename),
@@ -117,14 +127,14 @@ public class MainActivity extends ActionBarActivity {
 	}
 
 	public void read(View view) {
-		Utility.log(TAG, "feed deleted");
+
 		// change state of feed
 		// update button
 		ViewHolder holder = (ViewHolder) (((LinearLayout) (view.getParent()
 				.getParent())).getTag());
 		if ((holder.state = dbhelper.feedRead(holder.id)) == 1)
 			((ImageButton) view).setImageDrawable(getResources().getDrawable(
-					R.drawable.ic_action_read_active));
+					R.drawable.ic_action_new));
 		else
 			((ImageButton) view).setImageDrawable(getResources().getDrawable(
 					R.drawable.ic_action_read));
@@ -134,11 +144,11 @@ public class MainActivity extends ActionBarActivity {
 		else
 			fface.updateAdapter(getApplicationContext());
 
-		Toast.makeText(
-				getApplicationContext(),
-				(holder.type == 1 ? "News" : "Notification") + " marked as"
-						+ (holder.state == 0 ? " unread" : " read"),
-				Toast.LENGTH_SHORT).show();
+		/*
+		 * Toast.makeText( getApplicationContext(), (holder.type == 1 ? "News" :
+		 * "Notification") + " marked as" + (holder.state == 0 ? " unread" :
+		 * " read"), Toast.LENGTH_SHORT).show();
+		 */
 	}
 
 	public class SectionsPagerAdapter extends FragmentPagerAdapter implements
@@ -193,6 +203,7 @@ public class MainActivity extends ActionBarActivity {
 			else
 				getSupportActionBar().setTitle(
 						getString(R.string.facebook_title));
+			tabHost.setSelectedNavigationItem(position);
 		}
 
 		@Override
@@ -204,6 +215,24 @@ public class MainActivity extends ActionBarActivity {
 		public void onPageScrolled(int arg0, float arg1, int arg2) {
 
 		}
+	}
+
+	@Override
+	public void onTabSelected(MaterialTab tab) {
+		// TODO Auto-generated method stub
+		mViewPager.setCurrentItem(tab.getPosition());
+	}
+
+	@Override
+	public void onTabReselected(MaterialTab tab) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onTabUnselected(MaterialTab tab) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

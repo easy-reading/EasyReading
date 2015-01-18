@@ -36,7 +36,7 @@
     <string name="toast_msg_all">All</string>
     <string name="toast_msg_error">Error occurred!!</string>
     <string name="toast_msg_updated">Update Successfully</string>
-    <string name="toast_msg_wait">Updation in progress!</string>
+    <string name="toast_msg_wait">Waiting for last action to complete!</string>
     
    <string name="no_feeds_msg">No feeds Available!!\nCheck Settings and/or filter option</string>
    

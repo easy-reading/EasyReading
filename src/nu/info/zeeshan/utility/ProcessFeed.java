@@ -73,7 +73,6 @@ public class ProcessFeed extends AsyncTask<FeedInput, Void, Boolean> {
 						f.setTitle(e.getTitle());
 						doc = Jsoup.parse(e.getDescription().getValue());
 						f.setDesc(doc.text());
-						// Utility.log(TAG,doc.text());
 						pubdate = e.getPublishedDate();
 						if (pubdate == null) {
 							f.setTime(new Date().getTime()); // set current date
