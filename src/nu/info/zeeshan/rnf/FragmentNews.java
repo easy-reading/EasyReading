@@ -20,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -62,6 +63,7 @@ public class FragmentNews extends Fragment {
 		holder.list = (ListView) rootView.findViewById(R.id.listViewFeed);
 		holder.list.setEmptyView(rootView.findViewById(R.id.linearViewError));
 		holder.list.setAdapter(adapter);
+		holder.list.setOnScrollListener((OnScrollListener) activity);
 		holder.errorMsg = (TextView) rootView.findViewById(R.id.textViewError);
 		holder.errorView = (LinearLayout) rootView
 				.findViewById(R.id.linearViewError);
@@ -190,4 +192,5 @@ public class FragmentNews extends Fragment {
 		LinearLayout errorView;
 		TextView errorMsg;
 	}
+
 }

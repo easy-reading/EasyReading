@@ -51,11 +51,11 @@ public class NewsAdapter extends CursorAdapter {
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TYPE));
 		if (holder.state == 1) {
 			holder.check.setImageDrawable(context.getResources().getDrawable(
-					R.drawable.ic_action_new));
+					R.drawable.ic_action_read_white));
 			//Utility.log(TAG, holder.id + " is checked");
 		} else {
 			holder.check.setImageDrawable(context.getResources().getDrawable(
-					R.drawable.ic_action_read));
+					R.drawable.ic_action_read_active));
 			//Utility.log(TAG, holder.id + " is unchecked");
 		}
 		view.setTag(holder);
@@ -106,11 +106,11 @@ public class NewsAdapter extends CursorAdapter {
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TYPE));
 		if (holder.state == 1) {
 			holder.check.setImageDrawable(context.getResources().getDrawable(
-					R.drawable.ic_action_new));
+					R.drawable.ic_action_read_white));
 			//Utility.log(TAG, holder.id + " is checked");
 		} else {
 			holder.check.setImageDrawable(context.getResources().getDrawable(
-					R.drawable.ic_action_read));
+					R.drawable.ic_action_read_active));
 			//Utility.log(TAG, holder.id + " is unchecked");
 		}
 		view.setTag(holder);

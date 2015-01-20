@@ -7,5 +7,8 @@
     <dimen name="medium_padding">10dp</dimen>
     <dimen name="low_padding">5dp</dimen>
     <dimen name="tooth_height">10dp</dimen>
+    
+    <dimen name="tab_host_height">48dp</dimen>
+    <dimen name="toolbar_height">48dp</dimen>
 
 </resources>

@@ -16,7 +16,8 @@
         android:gravity="center"
         android:padding="@dimen/medium_padding"
         android:text="Large Text"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#000" />
 
     <TextView
         android:id="@+id/textViewDescFb"
@@ -27,30 +28,36 @@
         android:paddingBottom="@dimen/medium_padding"
         android:paddingLeft="@dimen/medium_padding"
         android:paddingRight="@dimen/medium_padding"
-        android:text="TextView" />
-<LinearLayout
+        android:text="TextView"
+        android:textColor="#000" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/side_shade"
         android:paddingBottom="@dimen/medium_padding"
         android:paddingLeft="@dimen/medium_padding"
         android:paddingRight="@dimen/medium_padding" >
-    <TextView
-        android:id="@+id/textViewTimeFb"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.9"
-        android:gravity="center"
-        android:text="Time"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-    <ImageButton
+
+        <TextView
+            android:id="@+id/textViewTimeFb"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.9"
+            android:gravity="center"
+            android:text="Time"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#000" />
+
+        <ImageButton
             android:id="@+id/imageButtonReadFb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@null"
+            android:background="@drawable/circle_background"
             android:onClick="read"
-            android:src="@drawable/ic_action_read" />
-</LinearLayout>
+            android:src="@drawable/ic_action_read_active" />
+    </LinearLayout>
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="@dimen/tooth_height"
