@@ -10,5 +10,6 @@
     
     <dimen name="tab_host_height">48dp</dimen>
     <dimen name="toolbar_height">48dp</dimen>
+    <dimen name="toolbar_height_large">56dp</dimen>
 
 </resources>

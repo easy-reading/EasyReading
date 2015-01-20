@@ -7,6 +7,7 @@
         <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryDark">@color/primary_color</item>
         <item name="android:windowActionBarOverlay">true</item>
+        
     </style>
 
 </resources>

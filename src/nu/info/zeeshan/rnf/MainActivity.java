@@ -95,8 +95,7 @@ public class MainActivity extends ActionBarActivity implements
 		if (dbhelper == null)
 			dbhelper = new DbHelper(getApplicationContext());
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
-		toolbar.setBackgroundColor(getResources().getColor(
-				R.color.primary_color));
+		
 		setSupportActionBar(toolbar);
 
 	}

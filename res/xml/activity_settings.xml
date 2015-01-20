@@ -1,24 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    android:title="@string/action_settings"
-    
-     >
-    <EditTextPreference
-        android:title="@string/facebook_title"
-        android:key="@string/pref_facebookrss"
-        android:summary="@string/facebook_summary"
-        android:inputType="textUri"
-        ></EditTextPreference>
-	<EditTextPreference
-        android:title="@string/news_title"
-        android:key="@string/pref_newsrss"
-        android:summary="@string/news_summary"
-        android:inputType="textUri"
-        ></EditTextPreference>
-	<EditTextPreference
-        android:title="@string/limit_title"
-        android:key="@string/pref_limit"
-        android:summary="@string/limit_summary"
-        android:inputType="number"
-        ></EditTextPreference>
+    android:title="@string/action_settings" >
+
+    <PreferenceCategory
+        android:key="pref_key_storage_settings"
+        android:title="@string/pref_cat_facebook" >
+        <EditTextPreference
+            android:inputType="textUri"
+            android:key="@string/pref_facebookrss"
+            android:summary="@string/facebook_summary"
+            android:title="@string/facebook_title" >
+        </EditTextPreference>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="pref_key_storage_settings"
+        android:title="@string/pref_cat_news" >
+        <EditTextPreference
+            android:inputType="textUri"
+            android:key="@string/pref_newsrss"
+            android:summary="@string/news_summary"
+            android:title="@string/news_title" >
+        </EditTextPreference>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="pref_key_storage_settings"
+        android:title="@string/pref_cat_general" >
+        <EditTextPreference
+            android:inputType="number"
+            android:key="@string/pref_limit"
+            android:summary="@string/limit_summary"
+            android:title="@string/limit_title" >
+        </EditTextPreference>
+    </PreferenceCategory>
+
 </PreferenceScreen>

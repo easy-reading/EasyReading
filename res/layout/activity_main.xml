@@ -9,7 +9,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"
-        app:primaryColor="@color/primary_color" />
+        android:background="@color/primary_color" />
 
     <it.neokree.materialtabs.MaterialTabHost
         android:id="@+id/tabHost"

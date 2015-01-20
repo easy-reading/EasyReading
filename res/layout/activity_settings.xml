@@ -1,6 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/setting_fragment_holder"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-</FrameLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/nu.info.zeeshan.rnf"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height_large"
+        android:background="@color/primary_color"
+        app:navigationIcon="@drawable/ic_action_back"
+        app:title="@string/action_settings" />
+
+    <FrameLayout
+        android:id="@+id/setting_fragment_holder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </FrameLayout>
+
+</LinearLayout>
