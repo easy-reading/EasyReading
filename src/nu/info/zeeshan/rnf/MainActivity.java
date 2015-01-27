@@ -25,6 +25,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ImageButton;
@@ -38,6 +40,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 public class MainActivity extends ActionBarActivity implements
 		MaterialTabListener, OnScrollListener {
 	private static final String TAG = "nu.info.zeeshan.utility.MainActivity";
+	private static boolean SCROLL_IGNORE = false;
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
 	public static FragmentNews fnews;
@@ -46,15 +49,17 @@ public class MainActivity extends ActionBarActivity implements
 	static DbHelper dbhelper;
 	static boolean IMG_LDR_INIT;
 	public static boolean updating;
+	public static int TRANSITION_TIME = 200;
 	MaterialTabHost tabHost;
 	Toolbar toolbar;
-	int tabhost_height, collapsedH, expandedH;
+	static int tabhost_height, collapsedH, expandedH;
 	int pvisibleitemindex, pScollY, cScrollY;
-	static boolean toolbar_hidden = false, tabBarMoving, HeightIcrmented,
+	static boolean toolbar_hidden = false, tabBarMoving, paddingunset,
 			toolbarShown = true, SETUP;
 	ChangeToolbarState toolbarStateUpdater;
-	private static int SCROLL_THRESHOLD = 20, toolbarHeight;
-
+	private static int SCROLL_THRESHOLD = 25, toolbarHeight;
+	ViewPagerAnimation anim;
+	Intent intent;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -77,7 +82,6 @@ public class MainActivity extends ActionBarActivity implements
 			tabHost.addTab(tabHost.newTab()
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
-
 		}
 		if (spf == null)
 			spf = getSharedPreferences(getString(R.string.pref_filename),
@@ -95,9 +99,9 @@ public class MainActivity extends ActionBarActivity implements
 		if (dbhelper == null)
 			dbhelper = new DbHelper(getApplicationContext());
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
-		
+		SETUP = false;
 		setSupportActionBar(toolbar);
-
+		anim = new ViewPagerAnimation(mViewPager, true);
 	}
 
 	@Override
@@ -110,7 +114,8 @@ public class MainActivity extends ActionBarActivity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.action_settings:
-			Intent intent = new Intent(this, SettingsActivity.class);
+			intent = new Intent(this, SettingsActivity.class);
+			intent.putExtra("name", "setting");
 			startActivity(intent);
 			return true;
 		case R.id.action_refresh:
@@ -143,6 +148,11 @@ public class MainActivity extends ActionBarActivity implements
 				msg = getString(R.string.toast_msg_wait);
 			Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
 					.show();
+			return true;
+		case R.id.action_about:
+			intent = new Intent(this, SettingsActivity.class);
+			intent.putExtra("name", "about");
+			startActivity(intent);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -242,59 +252,84 @@ public class MainActivity extends ActionBarActivity implements
 
 	}
 
-	private void hideActionBar() {
+	private boolean setup() {
 		if (!SETUP) {
-			collapsedH = mViewPager.getHeight();
 			toolbarHeight = toolbar.getHeight();
-			expandedH = collapsedH + toolbarHeight;
 			SETUP = true;
+			// Log.d(TAG, "collapse " + collapsedH + " expanded " + expandedH);
 		}
-		if (!tabBarMoving) {
+		return SETUP;
+	}
 
-			mViewPager.getLayoutParams().height = expandedH;
-			mViewPager.requestLayout();
-			HeightIcrmented = true;
+	private void hideActionBar() {
 
-			tabHost.animate().translationY(-toolbarHeight).setDuration(100)
-					.start();
-
-			mViewPager.animate().translationY(-toolbarHeight).setDuration(100)
-					.start();
-
+		if (!tabBarMoving && setup()) {
+			mViewPager.animate().cancel();
+			anim.is_expanding = true;
+			mViewPager.startAnimation(anim);
+			paddingunset = true;
+			tabHost.animate().translationY(-toolbarHeight)
+					.setDuration(TRANSITION_TIME).start();
 			toolbarShown = false;
 		}
-
 	}
 
 	private void showActionBar() {
-		if (!tabBarMoving) {
-			// collapse with animation
-			tabHost.animate().translationY(0).setDuration(100).start();
 
-			mViewPager.animate().translationY(0).setDuration(100).start();
-			new CollapseView().execute();
+		if (!tabBarMoving && setup()) {
+			// collapse with animation
+			tabHost.animate().translationY(0).setDuration(TRANSITION_TIME)
+					.start();
+			mViewPager.animate().cancel();
+			anim.is_expanding = false;
+			mViewPager.startAnimation(anim);
 			toolbarShown = true;
-			HeightIcrmented = false;
+			paddingunset = false;
 		}
 	}
 
-	private class CollapseView extends AsyncTask<Void, Void, Void> {
+	private static class ViewPagerAnimation extends Animation {
+		boolean is_expanding;
+		View view;
 
-		@Override
-		protected Void doInBackground(Void... params) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-
-			}
-			return null;
+		public ViewPagerAnimation(View v, boolean expand) {
+			view = v;
+			is_expanding = expand;
+			this.setDuration(TRANSITION_TIME);
 		}
 
 		@Override
-		protected void onPostExecute(Void result) {
-			mViewPager.getLayoutParams().height = collapsedH;
-			mViewPager.requestLayout();
-			super.onPostExecute(result);
+		protected void applyTransformation(float interpolatedTime,
+				Transformation t) {
+			if (is_expanding) {
+				view.setPadding(0, toolbarHeight
+						- (int) (toolbarHeight * interpolatedTime), 0, 0);
+			} else {
+				view.setPadding(0, (int) (toolbarHeight * interpolatedTime), 0,
+						0);
+			}
+
+		}
+
+		@Override
+		public void cancel() {
+			if (is_expanding) {
+				view.setPadding(0, 0, 0, 0);
+			} else {
+				view.setPadding(0, 0, toolbarHeight, 0);
+			}
+			super.cancel();
+		}
+
+		@Override
+		public void initialize(int width, int height, int parentWidth,
+				int parentHeight) {
+			super.initialize(width, height, parentWidth, parentHeight);
+		}
+
+		@Override
+		public boolean willChangeBounds() {
+			return true;
 		}
 	}
 
@@ -303,19 +338,23 @@ public class MainActivity extends ActionBarActivity implements
 			int visibleItemCount, int totalItemCount) {
 
 		View v = view.getChildAt(0);
-		cScrollY = (v == null) ? 0 : (v.getTop() - view.getPaddingTop());
+		cScrollY = (v == null) ? 0 : (v.getTop());
 
-		if ((Math.abs(pScollY - cScrollY) > SCROLL_THRESHOLD)
-				&& (firstVisibleItem == pvisibleitemindex)) {
-			if (pScollY < cScrollY) {
+		if ((((Math.abs(pScollY - cScrollY) > SCROLL_THRESHOLD) && (firstVisibleItem == pvisibleitemindex)) || (firstVisibleItem != pvisibleitemindex))
+				&& !SCROLL_IGNORE) {
+			// Log.d(TAG, "scrolled condition");
+			SCROLL_IGNORE = true;
+			new WaitAndChange().execute();
+			if ((pvisibleitemindex == firstVisibleItem && pScollY < cScrollY)
+					|| (pvisibleitemindex > firstVisibleItem)) {
 
 				/**
 				 * Scrolling downwards translate back tab bar Translate back
 				 * ViewPager dec height of ViewPager
 				 * 
 				 */
-				if (!toolbarShown && HeightIcrmented && !tabBarMoving) {
-					Log.d(TAG, "show toolbar");
+				if (!toolbarShown && paddingunset && !tabBarMoving) {
+					Log.d(TAG, "showing acrionbar");
 					showActionBar();
 				}
 
@@ -325,8 +364,8 @@ public class MainActivity extends ActionBarActivity implements
 				 * Scrolling upwards hide actionbar translate ViewPager IncHight
 				 * of ViewPager
 				 */
-				if (toolbarShown && !HeightIcrmented && !tabBarMoving) {
-					Log.d(TAG, "hide toolbar");
+				if (toolbarShown && !paddingunset && !tabBarMoving) {
+					Log.d(TAG, "hiding acrionbar");
 					hideActionBar();
 				}
 			}
@@ -340,7 +379,23 @@ public class MainActivity extends ActionBarActivity implements
 
 	}
 
-	public static class ChangeToolbarState implements AnimatorListener {
+	static class WaitAndChange extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			try {
+				Thread.sleep(TRANSITION_TIME);
+			} catch (InterruptedException e) {
+
+			} finally {
+				SCROLL_IGNORE = false;
+			}
+			return null;
+		}
+
+	}
+
+	static class ChangeToolbarState implements AnimatorListener {
 
 		@Override
 		public void onAnimationCancel(Animator animation) {

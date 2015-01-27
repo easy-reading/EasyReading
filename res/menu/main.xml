@@ -18,5 +18,11 @@
         android:icon="@drawable/ic_action_settings"
         android:title="@string/action_settings"
         />
-
+	<item
+        android:id="@+id/action_about"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        android:icon="@drawable/ic_action_info"
+        android:title="@string/action_about"
+        />
 </menu>

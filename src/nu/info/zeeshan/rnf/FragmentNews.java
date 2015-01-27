@@ -75,7 +75,7 @@ public class FragmentNews extends Fragment {
 	}
 
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		Utility.log(TAG, "creating fragment menu");
+		//Utility.log(TAG, "creating fragment menu");
 		inflater.inflate(R.menu.news_menu, menu);
 	}
 
