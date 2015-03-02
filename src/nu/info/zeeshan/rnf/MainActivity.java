@@ -144,7 +144,7 @@ public class MainActivity extends ActionBarActivity implements
 						getString(R.string.pref_newsrss), null);
 				ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
 				NetworkInfo ni = cm.getActiveNetworkInfo();
-				if (ni.isConnected()) {
+				if (ni != null && ni.isConnected()) {
 					if (fbfeed == null && newsfeed == null) {
 						msg = getString(R.string.toast_msg_nofeedok);
 					} else {
@@ -164,11 +164,12 @@ public class MainActivity extends ActionBarActivity implements
 											fbfeed, 2));
 						}
 					}
-				} else
-					msg = getString(R.string.toast_msg_wait);
-			} else {
-				msg = getString(R.string.no_internet);
-			}
+				} else {
+					msg = getString(R.string.no_internet);
+				}
+			} else
+				msg = getString(R.string.toast_msg_wait);
+
 			Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
 					.show();
 			return true;
