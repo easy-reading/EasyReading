@@ -5,15 +5,21 @@ import nu.info.zeeshan.rnf.dao.DbConstants;
 import nu.info.zeeshan.rnf.dao.DbHelper;
 import nu.info.zeeshan.rnf.dao.DbStructure;
 import nu.info.zeeshan.rnf.utility.Constants;
+import nu.info.zeeshan.rnf.utility.ProcessFeed;
 import nu.info.zeeshan.rnf.utility.Utility;
+import nu.info.zeeshan.rnf.utility.ProcessFeed.FeedInput;
 import nu.info.zeeshan.rnf.utility.Utility.Filter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,14 +31,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class FragmentFacebook extends Fragment {
+public class FragmentFacebook extends Fragment implements OnRefreshListener {
 	SharedPreferences spf;
 	Activity activity;
 	static int filter;
 	ViewHolder holder;
-	public FbAdapter adapter;
+	FbAdapter adapter;
 	SQLiteDatabase db;
+
 	static String TAG = "nu.info.zeeshan.rnf.FragmentFacebook";
+	public static SwipeRefreshLayout refreshlayout;
+	public static boolean updating;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -69,6 +78,9 @@ public class FragmentFacebook extends Fragment {
 		rootView.setTag(holder);
 		setHasOptionsMenu(true);
 		activity = getActivity();
+		refreshlayout = (SwipeRefreshLayout) rootView
+				.findViewById(R.id.refreshLayout);
+		refreshlayout.setOnRefreshListener(this);
 		return rootView;
 	}
 
@@ -189,5 +201,45 @@ public class FragmentFacebook extends Fragment {
 		ListView list;
 		LinearLayout errorView;
 		TextView errorMsg;
+	}
+
+	/**
+	 * called on refresh action performed by SwipeRefreshLayout
+	 */
+	@Override
+	public void onRefresh() {
+		String msg;
+		if (!updating) {
+			updating = true;
+			String fbfeed = spf.getString(getString(R.string.pref_facebookrss),
+					null);
+
+			getActivity();
+			ConnectivityManager cm = (ConnectivityManager) getActivity()
+					.getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo ni = cm.getActiveNetworkInfo();
+			if (ni != null && ni.isConnected()) {
+				if (fbfeed == null) {
+					msg = null;
+					refreshlayout.setRefreshing(false);
+					updating = false;
+				} else {
+					msg = getString(R.string.toast_msg_fbfeedok);
+					new ProcessFeed(getActivity()).execute(new FeedInput(
+							fbfeed, 2));
+				}
+			} else {
+				msg = getString(R.string.no_internet);
+				refreshlayout.setRefreshing(false);
+				updating = false;
+			}
+		} else {
+			msg = getString(R.string.toast_msg_wait);
+			refreshlayout.setRefreshing(false);
+			updating = false;
+		}
+		if (msg != null)
+			Toast.makeText(getActivity(), msg, Toast.LENGTH_LONG).show();
+
 	}
 }

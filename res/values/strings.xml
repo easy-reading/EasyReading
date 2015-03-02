@@ -35,10 +35,12 @@
     <string name="error_feed">Check RSS Feeds in settings</string>
     
     
-    <string name="toast_msg_feednewsok">Loading News feeds\nFacebook feed is empty!</string>
-    <string name="toast_msg_feedfbok">Updating Facebook feeds\nNews feed is empty!</string>
-    <string name="toast_msg_bothfeedok">Updating News and Facebook feeds</string>
-    <string name="toast_msg_nofeedok">Nothing to update News and Facebook feeds are empty!</string>
+    <string name="toast_msg_newsfeedok">Loading News feeds</string>
+    <string name="toast_msg_fbfeedok">Loading Facebook feeds</string>
+    
+    <string name="toast_msg_nofbfeed">Facebook source feed is empty!</string>
+    <string name="toast_msg_nonewsfeed">News source feed is empty!</string>
+    
     <string name="toast_msg_read">Read</string>
     <string name="toast_msg_unread">Unread</string>
     <string name="toast_msg_all">All</string>

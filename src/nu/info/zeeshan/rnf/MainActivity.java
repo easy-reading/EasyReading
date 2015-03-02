@@ -5,16 +5,13 @@ import it.neokree.materialtabs.MaterialTabHost;
 import it.neokree.materialtabs.MaterialTabListener;
 import nu.info.zeeshan.rnf.dao.DbHelper;
 import nu.info.zeeshan.rnf.utility.Constants;
-import nu.info.zeeshan.rnf.utility.ProcessFeed;
-import nu.info.zeeshan.rnf.utility.ProcessFeed.FeedInput;
+import nu.info.zeeshan.rnf.utility.Utility;
 import nu.info.zeeshan.rnf.utility.Utility.ViewHolder;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.Fragment;
@@ -29,7 +26,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -46,10 +42,10 @@ public class MainActivity extends ActionBarActivity implements
 	static SharedPreferences spf;
 	static DbHelper dbhelper;
 	static boolean IMG_LDR_INIT;
-	public static boolean updating;
 	public static int TRANSITION_TIME = 200;
 	MaterialTabHost tabHost;
 	Toolbar toolbar;
+	//
 	static int tabhost_height, collapsedH, expandedH;
 
 	static boolean toolbar_hidden = false, tabBarMoving, paddingunset,
@@ -112,7 +108,7 @@ public class MainActivity extends ActionBarActivity implements
 		super.onResume();
 		long minutes = Integer.parseInt(spf.getString(
 				getString(R.string.pref_update_interval),
-				Constants.DEFAULT_UPDATE_INTERVAL_IN_HOURS)) * 60;
+				Constants.DEFAULT_UPDATE_INTERVAL_IN_HOURS));
 		AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
 		Intent intent = new Intent(this, NewsService.class);
 		PendingIntent pi = PendingIntent.getService(this, 0, intent, 0);
@@ -122,6 +118,7 @@ public class MainActivity extends ActionBarActivity implements
 			am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
 					SystemClock.elapsedRealtime() + minutes * 60 * 1000,
 					minutes * 60 * 1000, pi);
+			Utility.log(TAG, "alarm set");
 		}
 	}
 
@@ -133,46 +130,12 @@ public class MainActivity extends ActionBarActivity implements
 			intent.putExtra("name", "setting");
 			startActivity(intent);
 			return true;
-		case R.id.action_refresh:
-			// start fetching and inserting news active page
-			String msg;
-			if (!updating) {
-				updating = true;
-				String fbfeed = spf.getString(
-						getString(R.string.pref_facebookrss), null);
-				String newsfeed = spf.getString(
-						getString(R.string.pref_newsrss), null);
-				ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-				NetworkInfo ni = cm.getActiveNetworkInfo();
-				if (ni != null && ni.isConnected()) {
-					if (fbfeed == null && newsfeed == null) {
-						msg = getString(R.string.toast_msg_nofeedok);
-					} else {
-
-						if (fbfeed == null) {
-							msg = getString(R.string.toast_msg_feednewsok);
-							new ProcessFeed(getApplicationContext())
-									.execute(new FeedInput(newsfeed, 1));
-						} else if (newsfeed == null) {
-							msg = getString(R.string.toast_msg_feedfbok);
-							new ProcessFeed(getApplicationContext())
-									.execute(new FeedInput(fbfeed, 2));
-						} else {
-							msg = getString(R.string.toast_msg_bothfeedok);
-							new ProcessFeed(getApplicationContext()).execute(
-									new FeedInput(newsfeed, 1), new FeedInput(
-											fbfeed, 2));
-						}
-					}
-				} else {
-					msg = getString(R.string.no_internet);
-				}
-			} else
-				msg = getString(R.string.toast_msg_wait);
-
-			Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
-					.show();
-			return true;
+			/*
+			 * case R.id.action_refresh: // start fetching and inserting news
+			 * active page
+			 * 
+			 * return true;
+			 */
 		case R.id.action_about:
 			intent = new Intent(this, SettingsActivity.class);
 			intent.putExtra("name", "about");
@@ -200,6 +163,21 @@ public class MainActivity extends ActionBarActivity implements
 			fnews.updateAdapter(getApplicationContext());
 		else
 			fface.updateAdapter(getApplicationContext());
+
+	}
+
+	@Override
+	public void onTabSelected(MaterialTab tab) {
+		mViewPager.setCurrentItem(tab.getPosition());
+	}
+
+	@Override
+	public void onTabReselected(MaterialTab tab) {
+
+	}
+
+	@Override
+	public void onTabUnselected(MaterialTab tab) {
 
 	}
 
@@ -260,20 +238,4 @@ public class MainActivity extends ActionBarActivity implements
 				int positionOffsetPixels) {
 		}
 	}
-
-	@Override
-	public void onTabSelected(MaterialTab tab) {
-		mViewPager.setCurrentItem(tab.getPosition());
-	}
-
-	@Override
-	public void onTabReselected(MaterialTab tab) {
-
-	}
-
-	@Override
-	public void onTabUnselected(MaterialTab tab) {
-
-	}
-
 }

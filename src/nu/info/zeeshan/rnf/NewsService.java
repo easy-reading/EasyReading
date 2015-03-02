@@ -13,16 +13,20 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.xml.sax.InputSource;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.support.v4.app.NotificationCompat;
 
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndEntry;
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndFeed;
@@ -35,6 +39,7 @@ public class NewsService extends Service {
 	private static String TAG_ATTR_SRC = "src";
 	private static String TAG_IMG = "img";
 	private static String DOUBLE_SLASH = "//";
+	private static int NOTIFICATION_ID = 0;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -45,7 +50,7 @@ public class NewsService extends Service {
 		PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
 		wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
 		wakelock.acquire();
-
+		Utility.log(TAG, "m on work :D");
 		ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
 		NetworkInfo ni = cm.getActiveNetworkInfo();
 		if (ni == null || !ni.isConnected()) {
@@ -57,11 +62,19 @@ public class NewsService extends Service {
 		// handle intent
 		SharedPreferences spf = getSharedPreferences(
 				getString(R.string.pref_filename), Context.MODE_PRIVATE);
-		new FetchNews().execute(
-				new FeedInput(spf.getString(getString(R.string.pref_newsrss),
-						""), 1),
-				new FeedInput(spf.getString(
-						getString(R.string.pref_facebookrss), ""), 0));
+		String fbfeed = spf.getString(getString(R.string.pref_facebookrss),
+				null);
+		String newsfeed = spf.getString(getString(R.string.pref_newsrss), null);
+		if (fbfeed == null && newsfeed == null) {
+			stopSelf(); // no feeds to process
+		} else if (fbfeed == null) {
+			new FetchNews().execute(new FeedInput(newsfeed, 1));
+		} else if (newsfeed == null) {
+			new FetchNews().execute(new FeedInput(fbfeed, 2));
+		} else {
+			new FetchNews().execute(new FeedInput(newsfeed, 1), new FeedInput(
+					fbfeed, 2));
+		}
 	}
 
 	@Override
@@ -142,7 +155,25 @@ public class NewsService extends Service {
 
 		@Override
 		protected void onPostExecute(Void result) {
-			Utility.log(TAG, "done fetching data by service :D");
+			Context context = getApplicationContext();
+			NotificationCompat.Builder builder = new NotificationCompat.Builder(
+					context)
+					.setSmallIcon(R.drawable.ic_launcher)
+					.setContentTitle("Feeds for you")
+					.setAutoCancel(true)
+					.setSound(
+							RingtoneManager
+									.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+					.setContentText("Click to see new feeds");
+
+			Intent intent = new Intent(context, MainActivity.class);
+			PendingIntent pintent = PendingIntent.getActivity(context, 0,
+					intent, PendingIntent.FLAG_UPDATE_CURRENT);
+			builder.setContentIntent(pintent);
+
+			NotificationManager notifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+			// Builds the notification and issues it.
+			notifyMgr.notify(NOTIFICATION_ID, builder.build());
 			stopSelf();
 		}
 	}
