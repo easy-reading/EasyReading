@@ -57,16 +57,16 @@ public class FragmentNews extends Fragment {
 		if (db == null)
 			db = new DbHelper(getActivity()).getWritableDatabase();
 		updateAdapter(getActivity());
-		// if (holder == null) {
+
 		holder = new ViewHolder();
 		holder.list = (ListView) rootView.findViewById(R.id.listViewFeed);
 		holder.list.setEmptyView(rootView.findViewById(R.id.linearViewError));
 		holder.list.setAdapter(adapter);
-	//	holder.list.setOnScrollListener((OnScrollListener) activity);
+
 		holder.errorMsg = (TextView) rootView.findViewById(R.id.textViewError);
 		holder.errorView = (LinearLayout) rootView
 				.findViewById(R.id.linearViewError);
-		// }
+
 		rootView.setTag(holder);
 		setHasOptionsMenu(true);
 		activity = getActivity();

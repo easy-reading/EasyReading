@@ -13,7 +13,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.Fragment;
@@ -36,8 +37,8 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 public class MainActivity extends ActionBarActivity implements
 		MaterialTabListener {
-	private static final String TAG = "nu.info.zeeshan.utility.MainActivity";
-//	private static boolean SCROLL_IGNORE = false;
+	public static final String TAG = "nu.info.zeeshan.utility.MainActivity";
+
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
 	public static FragmentNews fnews;
@@ -50,12 +51,10 @@ public class MainActivity extends ActionBarActivity implements
 	MaterialTabHost tabHost;
 	Toolbar toolbar;
 	static int tabhost_height, collapsedH, expandedH;
-	//int pvisibleitemindex, pScollY, cScrollY;
+
 	static boolean toolbar_hidden = false, tabBarMoving, paddingunset,
 			toolbarShown = true, SETUP;
-	//ChangeToolbarState toolbarStateUpdater;
-	//private static int SCROLL_THRESHOLD = 25, toolbarHeight;
-	//ViewPagerAnimation anim;
+
 	Intent intent;
 
 	@Override
@@ -71,11 +70,11 @@ public class MainActivity extends ActionBarActivity implements
 			mViewPager.setOnPageChangeListener(mSectionsPagerAdapter);
 
 		}
-		//toolbarStateUpdater = new ChangeToolbarState();
+
 		tabHost = (MaterialTabHost) this.findViewById(R.id.tabHost);
 		tabhost_height = (int) getResources().getDimension(
 				R.dimen.tab_host_height);
-		//tabHost.animate().setListener(toolbarStateUpdater);
+
 		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
 			tabHost.addTab(tabHost.newTab()
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
@@ -99,7 +98,7 @@ public class MainActivity extends ActionBarActivity implements
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		SETUP = false;
 		setSupportActionBar(toolbar);
-		//anim = new ViewPagerAnimation(mViewPager, true);
+
 	}
 
 	@Override
@@ -139,33 +138,37 @@ public class MainActivity extends ActionBarActivity implements
 			String msg;
 			if (!updating) {
 				updating = true;
-
 				String fbfeed = spf.getString(
 						getString(R.string.pref_facebookrss), null);
 				String newsfeed = spf.getString(
 						getString(R.string.pref_newsrss), null);
-
-				if (fbfeed == null && newsfeed == null) {
-					msg = getString(R.string.toast_msg_nofeedok);
-				} else {
-
-					if (fbfeed == null) {
-						msg = getString(R.string.toast_msg_feednewsok);
-						new ProcessFeed(getApplicationContext())
-								.execute(new FeedInput(newsfeed, 1));
-					} else if (newsfeed == null) {
-						msg = getString(R.string.toast_msg_feedfbok);
-						new ProcessFeed(getApplicationContext())
-								.execute(new FeedInput(fbfeed, 2));
+				ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+				NetworkInfo ni = cm.getActiveNetworkInfo();
+				if (ni.isConnected()) {
+					if (fbfeed == null && newsfeed == null) {
+						msg = getString(R.string.toast_msg_nofeedok);
 					} else {
-						msg = getString(R.string.toast_msg_bothfeedok);
-						new ProcessFeed(getApplicationContext()).execute(
-								new FeedInput(newsfeed, 1), new FeedInput(
-										fbfeed, 2));
+
+						if (fbfeed == null) {
+							msg = getString(R.string.toast_msg_feednewsok);
+							new ProcessFeed(getApplicationContext())
+									.execute(new FeedInput(newsfeed, 1));
+						} else if (newsfeed == null) {
+							msg = getString(R.string.toast_msg_feedfbok);
+							new ProcessFeed(getApplicationContext())
+									.execute(new FeedInput(fbfeed, 2));
+						} else {
+							msg = getString(R.string.toast_msg_bothfeedok);
+							new ProcessFeed(getApplicationContext()).execute(
+									new FeedInput(newsfeed, 1), new FeedInput(
+											fbfeed, 2));
+						}
 					}
-				}
-			} else
-				msg = getString(R.string.toast_msg_wait);
+				} else
+					msg = getString(R.string.toast_msg_wait);
+			} else {
+				msg = getString(R.string.no_internet);
+			}
 			Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG)
 					.show();
 			return true;
@@ -271,177 +274,5 @@ public class MainActivity extends ActionBarActivity implements
 	public void onTabUnselected(MaterialTab tab) {
 
 	}
-/*
-	private boolean setup() {
-		if (!SETUP) {
-			toolbarHeight = toolbar.getHeight();
-			SETUP = true;
-			// Log.d(TAG, "collapse " + collapsedH + " expanded " + expandedH);
-		}
-		return SETUP;
-	}
-*/
-	/*
-	private void hideActionBar() {
-
-		if (!tabBarMoving && setup()) {
-			mViewPager.animate().cancel();
-			anim.is_expanding = true;
-			mViewPager.startAnimation(anim);
-			paddingunset = true;
-			tabHost.animate().translationY(-toolbarHeight)
-					.setDuration(TRANSITION_TIME).start();
-			toolbarShown = false;
-		}
-	}
-*/
-	/*
-	private void showActionBar() {
-
-		if (!tabBarMoving && setup()) {
-			// collapse with animation
-			tabHost.animate().translationY(0).setDuration(TRANSITION_TIME)
-					.start();
-			mViewPager.animate().cancel();
-			anim.is_expanding = false;
-			mViewPager.startAnimation(anim);
-			toolbarShown = true;
-			paddingunset = false;
-		}
-	}
-*/
-	/*
-	private static class ViewPagerAnimation extends Animation {
-		boolean is_expanding;
-		View view;
-
-		public ViewPagerAnimation(View v, boolean expand) {
-			view = v;
-			is_expanding = expand;
-			this.setDuration(TRANSITION_TIME);
-		}
-
-		@Override
-		protected void applyTransformation(float interpolatedTime,
-				Transformation t) {
-			if (is_expanding) {
-				view.setPadding(0, toolbarHeight
-						- (int) (toolbarHeight * interpolatedTime), 0, 0);
-			} else {
-				view.setPadding(0, (int) (toolbarHeight * interpolatedTime), 0,
-						0);
-			}
-
-		}
-
-		@Override
-		public void cancel() {
-			if (is_expanding) {
-				view.setPadding(0, 0, 0, 0);
-			} else {
-				view.setPadding(0, 0, toolbarHeight, 0);
-			}
-			super.cancel();
-		}
-
-		@Override
-		public void initialize(int width, int height, int parentWidth,
-				int parentHeight) {
-			super.initialize(width, height, parentWidth, parentHeight);
-		}
-
-		@Override
-		public boolean willChangeBounds() {
-			return true;
-		}
-	}
-	*/
-/*
-	@Override
-	public void onScroll(AbsListView view, int firstVisibleItem,
-			int visibleItemCount, int totalItemCount) {
-
-		View v = view.getChildAt(0);
-		cScrollY = (v == null) ? 0 : (v.getTop());
-
-		if ((((Math.abs(pScollY - cScrollY) > SCROLL_THRESHOLD) && (firstVisibleItem == pvisibleitemindex)) || (firstVisibleItem != pvisibleitemindex))
-				&& !SCROLL_IGNORE) {
-			// Log.d(TAG, "scrolled condition");
-			SCROLL_IGNORE = true;
-			new WaitAndChange().execute();
-			if ((pvisibleitemindex == firstVisibleItem && pScollY < cScrollY)
-					|| (pvisibleitemindex > firstVisibleItem)) {
-
-				**
-				 * Scrolling downwards translate back tab bar Translate back
-				 * ViewPager dec height of ViewPager
-				 * 
-				 *
-				if (!toolbarShown && paddingunset && !tabBarMoving) {
-					Log.d(TAG, "showing acrionbar");
-					showActionBar();
-				}
-
-			} else {
-
-				**
-				 * Scrolling upwards hide actionbar translate ViewPager IncHight
-				 * of ViewPager
-				 *
-				if (toolbarShown && !paddingunset && !tabBarMoving) {
-					Log.d(TAG, "hiding acrionbar");
-					hideActionBar();
-				}
-			}
-		}
-		pScollY = cScrollY;
-		pvisibleitemindex = firstVisibleItem;
-	}
-
-	@Override
-	public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-	}
-*/
-	/*
-	static class WaitAndChange extends AsyncTask<Void, Void, Void> {
-
-		@Override
-		protected Void doInBackground(Void... params) {
-			try {
-				Thread.sleep(TRANSITION_TIME);
-			} catch (InterruptedException e) {
-
-			} finally {
-				SCROLL_IGNORE = false;
-			}
-			return null;
-		}
-
-	}*/
-/*
-	static class ChangeToolbarState implements AnimatorListener {
-
-		@Override
-		public void onAnimationCancel(Animator animation) {
-			tabBarMoving = false;
-		}
-
-		@Override
-		public void onAnimationEnd(Animator animation) {
-			tabBarMoving = false;
-		}
-
-		@Override
-		public void onAnimationRepeat(Animator animation) {
-			tabBarMoving = true;
-		}
-
-		@Override
-		public void onAnimationStart(Animator animation) {
-			tabBarMoving = true;
-		}
-
-	}*/
 
 }
