@@ -137,7 +137,6 @@ public class FragmentFacebook extends Fragment implements OnRefreshListener {
 				msg = getString(R.string.toast_msg_error);
 			}
 			Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
-			;
 			updateAdapter(getActivity());
 			return true;
 		default:
@@ -213,8 +212,6 @@ public class FragmentFacebook extends Fragment implements OnRefreshListener {
 			updating = true;
 			String fbfeed = spf.getString(getString(R.string.pref_facebookrss),
 					null);
-
-			getActivity();
 			ConnectivityManager cm = (ConnectivityManager) getActivity()
 					.getSystemService(Context.CONNECTIVITY_SERVICE);
 			NetworkInfo ni = cm.getActiveNetworkInfo();

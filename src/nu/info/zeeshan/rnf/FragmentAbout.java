@@ -13,6 +13,7 @@ public class FragmentAbout extends Fragment {
 			@Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.about_fragment, container,
 				false);
+		((SettingsActivity)getActivity()).getSupportActionBar().setTitle(R.string.action_about);
 		return rootView;
 	}
 }

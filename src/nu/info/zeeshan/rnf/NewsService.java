@@ -39,6 +39,7 @@ public class NewsService extends Service {
 	private static String TAG_ATTR_SRC = "src";
 	private static String TAG_IMG = "img";
 	private static String DOUBLE_SLASH = "//";
+	private static String NEW_LINE = "\n";
 	private static int NOTIFICATION_ID = 0;
 
 	@Override
@@ -93,12 +94,15 @@ public class NewsService extends Service {
 		wakelock.release();
 	}
 
-	private class FetchNews extends AsyncTask<FeedInput, Void, Void> {
+	private class FetchNews extends
+			AsyncTask<FeedInput, Void, ArrayList<String>> {
 
 		@Override
-		protected Void doInBackground(FeedInput... inputfeed) {
+		protected ArrayList<String> doInBackground(FeedInput... inputfeed) {
+			ArrayList<String> title_noti = new ArrayList<String>();
 			try {
 				// URL url=arg0[0];
+
 				ArrayList<Feed> feeds = new ArrayList<Feed>();
 				Feed f;
 				String str;
@@ -120,6 +124,7 @@ public class NewsService extends Service {
 						try {
 							f = new Feed();
 							f.setTitle(e.getTitle());
+							title_noti.add(e.getTitle());
 							doc = Jsoup.parse(e.getDescription().getValue());
 							f.setDesc(doc.text());
 							pubdate = e.getPublishedDate();
@@ -149,31 +154,42 @@ public class NewsService extends Service {
 				Utility.log("doInBackgroud", "" + e + e.getLocalizedMessage());
 
 			}
-			return null;
+			return title_noti;
 
 		}
 
 		@Override
-		protected void onPostExecute(Void result) {
-			Context context = getApplicationContext();
-			NotificationCompat.Builder builder = new NotificationCompat.Builder(
-					context)
-					.setSmallIcon(R.drawable.ic_launcher)
-					.setContentTitle("Feeds for you")
-					.setAutoCancel(true)
-					.setSound(
-							RingtoneManager
-									.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-					.setContentText("Click to see new feeds");
+		protected void onPostExecute(ArrayList<String> result) {
+			NotificationCompat.Builder builder = null;
+			int size = result.size();
+			if (size > 0) {
+				Context context = getApplicationContext();
+				builder = new NotificationCompat.Builder(context)
+						.setSmallIcon(R.drawable.ic_notification)
+						.setContentTitle("New feed")
+						.setAutoCancel(true)
+						.setSound(
+								RingtoneManager
+										.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+						.setContentText(result.get(0));
 
-			Intent intent = new Intent(context, MainActivity.class);
-			PendingIntent pintent = PendingIntent.getActivity(context, 0,
-					intent, PendingIntent.FLAG_UPDATE_CURRENT);
-			builder.setContentIntent(pintent);
+				if (size > 1) {
+					NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+					inboxStyle.setBigContentTitle("New Feeds");
+					for (String str : result) {
+						inboxStyle.addLine(str);
+					}
+					builder.setStyle(inboxStyle);
+				}
+				Intent intent = new Intent(context, MainActivity.class);
+				PendingIntent pintent = PendingIntent.getActivity(context, 0,
+						intent, PendingIntent.FLAG_UPDATE_CURRENT);
+				builder.setContentIntent(pintent);
 
-			NotificationManager notifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-			// Builds the notification and issues it.
-			notifyMgr.notify(NOTIFICATION_ID, builder.build());
+				NotificationManager notifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+				// Builds the notification and issues it.
+				notifyMgr.notify(NOTIFICATION_ID, builder.build());
+			}
 			stopSelf();
 		}
 	}

@@ -36,6 +36,7 @@ public class FragmentNews extends Fragment implements OnRefreshListener {
 	ViewHolder holder;
 	NewsAdapter adapter;
 	SQLiteDatabase db;
+
 	static String TAG = "nu.info.zeeshan.rnf.FragmentNews";
 	int filter;
 	Activity activity;
@@ -57,8 +58,8 @@ public class FragmentNews extends Fragment implements OnRefreshListener {
 		// null checks creating empty fragments
 		View rootView = inflater.inflate(R.layout.fragment_main, container,
 				false);
-		// if (filter == 0)
-		filter = Filter.UNREAD;
+		if (filter == 0)
+			filter = Filter.UNREAD;
 		if (spf == null)
 			spf = ((MainActivity) getActivity()).getSharedPreferences(
 					getString(R.string.pref_filename), Context.MODE_PRIVATE);
@@ -91,18 +92,18 @@ public class FragmentNews extends Fragment implements OnRefreshListener {
 
 	public void onPrepareOptionsMenu(Menu menu) {
 		switch (filter) {
-		case 1:
+		case Filter.UNREAD:
 			menu.findItem(R.id.action_newsfilter)
 					.setIcon(
 							getResources().getDrawable(
 									R.drawable.ic_action_read_white));
 			break;
-		case 2:
+		case Filter.READ:
 			menu.findItem(R.id.action_newsfilter).setIcon(
 					getResources()
 							.getDrawable(R.drawable.ic_action_read_active));
 			break;
-		case 3:
+		case Filter.ALL:
 			menu.findItem(R.id.action_newsfilter).setIcon(
 					getResources().getDrawable(R.drawable.ic_action_all_white));
 			break;
