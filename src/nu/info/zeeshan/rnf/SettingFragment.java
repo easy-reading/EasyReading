@@ -1,6 +1,6 @@
 package nu.info.zeeshan.rnf;
 
-import nu.info.zeeshan.utility.Constants;
+import nu.info.zeeshan.rnf.utility.Constants;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -49,7 +49,14 @@ public class SettingFragment extends PreferenceFragment implements
 					.putString(key,
 							spf.getString(key, Constants.DEFAULT_FEED_LIMIT))
 					.commit();
-		} else if (valid(spf.getString(key, ""))) {
+		}
+		else if(key.equalsIgnoreCase(getString(R.string.pref_update_interval))){
+			ospf.edit()
+			.putString(key,
+					spf.getString(key, Constants.DEFAULT_UPDATE_INTERVAL_IN_HOURS))
+			.commit();
+		}
+		else if (valid(spf.getString(key, ""))) {
 
 			ospf.edit().remove(key).commit();
 			ospf.edit()

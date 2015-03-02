@@ -1,9 +1,9 @@
-package nu.info.zeeshan.dao;
+package nu.info.zeeshan.rnf.dao;
 
 import java.util.ArrayList;
 
-import nu.info.zeeshan.utility.Feed;
-import nu.info.zeeshan.utility.Utility;
+import nu.info.zeeshan.rnf.utility.Feed;
+import nu.info.zeeshan.rnf.utility.Utility;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;

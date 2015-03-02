@@ -26,10 +26,17 @@
         android:key="pref_key_storage_settings"
         android:title="@string/pref_cat_general" >
         <EditTextPreference
+            
             android:inputType="number"
             android:key="@string/pref_limit"
             android:summary="@string/limit_summary"
             android:title="@string/limit_title" >
+        </EditTextPreference>
+        <EditTextPreference
+            android:inputType="number"
+            android:key="@string/pref_update_interval"
+            android:summary="@string/update_interval_summary"
+            android:title="@string/update_interval_title" >
         </EditTextPreference>
     </PreferenceCategory>
 

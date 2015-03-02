@@ -1,11 +1,11 @@
-package nu.info.zeeshan.adapters;
+package nu.info.zeeshan.rnf.adapters;
 
 import java.util.Date;
 
-import nu.info.zeeshan.dao.DbStructure;
 import nu.info.zeeshan.rnf.R;
-import nu.info.zeeshan.utility.Utility;
-import nu.info.zeeshan.utility.Utility.ViewHolder;
+import nu.info.zeeshan.rnf.dao.DbStructure;
+import nu.info.zeeshan.rnf.utility.Utility;
+import nu.info.zeeshan.rnf.utility.Utility.ViewHolder;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;

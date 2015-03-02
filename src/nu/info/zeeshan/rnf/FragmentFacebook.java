@@ -1,12 +1,12 @@
 package nu.info.zeeshan.rnf;
 
-import nu.info.zeeshan.adapters.FbAdapter;
-import nu.info.zeeshan.dao.DbConstants;
-import nu.info.zeeshan.dao.DbHelper;
-import nu.info.zeeshan.dao.DbStructure;
-import nu.info.zeeshan.utility.Constants;
-import nu.info.zeeshan.utility.Utility;
-import nu.info.zeeshan.utility.Utility.Filter;
+import nu.info.zeeshan.rnf.adapters.FbAdapter;
+import nu.info.zeeshan.rnf.dao.DbConstants;
+import nu.info.zeeshan.rnf.dao.DbHelper;
+import nu.info.zeeshan.rnf.dao.DbStructure;
+import nu.info.zeeshan.rnf.utility.Constants;
+import nu.info.zeeshan.rnf.utility.Utility;
+import nu.info.zeeshan.rnf.utility.Utility.Filter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -24,7 +24,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AbsListView.OnScrollListener;
 
 public class FragmentFacebook extends Fragment {
 	SharedPreferences spf;
@@ -63,7 +62,7 @@ public class FragmentFacebook extends Fragment {
 		holder.list = (ListView) rootView.findViewById(R.id.listViewFeed);
 		holder.list.setEmptyView(rootView.findViewById(R.id.linearViewError));
 		holder.list.setAdapter(adapter);
-		holder.list.setOnScrollListener((OnScrollListener) activity);
+	//	holder.list.setOnScrollListener((OnScrollListener) activity);
 		holder.errorMsg = (TextView) rootView.findViewById(R.id.textViewError);
 		holder.errorView = (LinearLayout) rootView
 				.findViewById(R.id.linearViewError);

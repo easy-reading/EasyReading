@@ -1,14 +1,12 @@
-package nu.info.zeeshan.utility;
+package nu.info.zeeshan.rnf.utility;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import nu.info.zeeshan.dao.DbHelper;
-import nu.info.zeeshan.rnf.FragmentFacebook;
-import nu.info.zeeshan.rnf.FragmentNews;
 import nu.info.zeeshan.rnf.MainActivity;
-import nu.info.zeeshan.utility.ProcessFeed.FeedInput;
+import nu.info.zeeshan.rnf.dao.DbHelper;
+import nu.info.zeeshan.rnf.utility.ProcessFeed.FeedInput;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -42,7 +40,7 @@ public class ProcessFeed extends AsyncTask<FeedInput, Void, Boolean> {
 
 		public FeedInput(String str, int t) {
 			url = str;
-			type = t;
+			type = t; //1 for news 0 for facebook
 		}
 	}
 
@@ -109,7 +107,7 @@ public class ProcessFeed extends AsyncTask<FeedInput, Void, Boolean> {
 			Utility.log("onPostExecute", "done downloading and processing");
 			MainActivity.fface.updateAdapter(context);
 			MainActivity.fnews.updateAdapter(context);
-			Toast.makeText(context,"updated sucessfully!", Toast.LENGTH_LONG)
+			Toast.makeText(context, "updated sucessfully!", Toast.LENGTH_LONG)
 					.show();
 			;
 		} else {
@@ -117,6 +115,6 @@ public class ProcessFeed extends AsyncTask<FeedInput, Void, Boolean> {
 			Toast.makeText(context, "Error occured while updating!",
 					Toast.LENGTH_LONG).show();
 		}
-		MainActivity.updating=false;
+		MainActivity.updating = false;
 	}
 }

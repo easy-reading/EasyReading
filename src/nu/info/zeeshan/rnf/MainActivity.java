@@ -3,17 +3,19 @@ package nu.info.zeeshan.rnf;
 import it.neokree.materialtabs.MaterialTab;
 import it.neokree.materialtabs.MaterialTabHost;
 import it.neokree.materialtabs.MaterialTabListener;
-import nu.info.zeeshan.dao.DbHelper;
-import nu.info.zeeshan.utility.ProcessFeed;
-import nu.info.zeeshan.utility.ProcessFeed.FeedInput;
-import nu.info.zeeshan.utility.Utility.ViewHolder;
-import android.animation.Animator;
-import android.animation.Animator.AnimatorListener;
+import nu.info.zeeshan.rnf.dao.DbHelper;
+import nu.info.zeeshan.rnf.utility.Constants;
+import nu.info.zeeshan.rnf.utility.ProcessFeed;
+import nu.info.zeeshan.rnf.utility.ProcessFeed.FeedInput;
+import nu.info.zeeshan.rnf.utility.Utility.ViewHolder;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -21,14 +23,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.Transformation;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -38,9 +35,9 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 public class MainActivity extends ActionBarActivity implements
-		MaterialTabListener, OnScrollListener {
+		MaterialTabListener {
 	private static final String TAG = "nu.info.zeeshan.utility.MainActivity";
-	private static boolean SCROLL_IGNORE = false;
+//	private static boolean SCROLL_IGNORE = false;
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
 	public static FragmentNews fnews;
@@ -53,13 +50,14 @@ public class MainActivity extends ActionBarActivity implements
 	MaterialTabHost tabHost;
 	Toolbar toolbar;
 	static int tabhost_height, collapsedH, expandedH;
-	int pvisibleitemindex, pScollY, cScrollY;
+	//int pvisibleitemindex, pScollY, cScrollY;
 	static boolean toolbar_hidden = false, tabBarMoving, paddingunset,
 			toolbarShown = true, SETUP;
-	ChangeToolbarState toolbarStateUpdater;
-	private static int SCROLL_THRESHOLD = 25, toolbarHeight;
-	ViewPagerAnimation anim;
+	//ChangeToolbarState toolbarStateUpdater;
+	//private static int SCROLL_THRESHOLD = 25, toolbarHeight;
+	//ViewPagerAnimation anim;
 	Intent intent;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -73,11 +71,11 @@ public class MainActivity extends ActionBarActivity implements
 			mViewPager.setOnPageChangeListener(mSectionsPagerAdapter);
 
 		}
-		toolbarStateUpdater = new ChangeToolbarState();
+		//toolbarStateUpdater = new ChangeToolbarState();
 		tabHost = (MaterialTabHost) this.findViewById(R.id.tabHost);
 		tabhost_height = (int) getResources().getDimension(
 				R.dimen.tab_host_height);
-		tabHost.animate().setListener(toolbarStateUpdater);
+		//tabHost.animate().setListener(toolbarStateUpdater);
 		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
 			tabHost.addTab(tabHost.newTab()
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
@@ -101,13 +99,31 @@ public class MainActivity extends ActionBarActivity implements
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		SETUP = false;
 		setSupportActionBar(toolbar);
-		anim = new ViewPagerAnimation(mViewPager, true);
+		//anim = new ViewPagerAnimation(mViewPager, true);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		long minutes = Integer.parseInt(spf.getString(
+				getString(R.string.pref_update_interval),
+				Constants.DEFAULT_UPDATE_INTERVAL_IN_HOURS)) * 60;
+		AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+		Intent intent = new Intent(this, NewsService.class);
+		PendingIntent pi = PendingIntent.getService(this, 0, intent, 0);
+		am.cancel(pi);
+		// by my own convention, minutes <= 0 means notifications are disabled
+		if (minutes > 0) {
+			am.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+					SystemClock.elapsedRealtime() + minutes * 60 * 1000,
+					minutes * 60 * 1000, pi);
+		}
 	}
 
 	@Override
@@ -123,6 +139,7 @@ public class MainActivity extends ActionBarActivity implements
 			String msg;
 			if (!updating) {
 				updating = true;
+
 				String fbfeed = spf.getString(
 						getString(R.string.pref_facebookrss), null);
 				String newsfeed = spf.getString(
@@ -130,19 +147,22 @@ public class MainActivity extends ActionBarActivity implements
 
 				if (fbfeed == null && newsfeed == null) {
 					msg = getString(R.string.toast_msg_nofeedok);
-				} else if (fbfeed == null) {
-					msg = getString(R.string.toast_msg_feednewsok);
-					new ProcessFeed(getApplicationContext())
-							.execute(new FeedInput(newsfeed, 1));
-				} else if (newsfeed == null) {
-					msg = getString(R.string.toast_msg_feedfbok);
-					new ProcessFeed(getApplicationContext())
-							.execute(new FeedInput(fbfeed, 2));
 				} else {
-					msg = getString(R.string.toast_msg_bothfeedok);
-					new ProcessFeed(getApplicationContext()).execute(
-							new FeedInput(newsfeed, 1),
-							new FeedInput(fbfeed, 2));
+
+					if (fbfeed == null) {
+						msg = getString(R.string.toast_msg_feednewsok);
+						new ProcessFeed(getApplicationContext())
+								.execute(new FeedInput(newsfeed, 1));
+					} else if (newsfeed == null) {
+						msg = getString(R.string.toast_msg_feedfbok);
+						new ProcessFeed(getApplicationContext())
+								.execute(new FeedInput(fbfeed, 2));
+					} else {
+						msg = getString(R.string.toast_msg_bothfeedok);
+						new ProcessFeed(getApplicationContext()).execute(
+								new FeedInput(newsfeed, 1), new FeedInput(
+										fbfeed, 2));
+					}
 				}
 			} else
 				msg = getString(R.string.toast_msg_wait);
@@ -251,7 +271,7 @@ public class MainActivity extends ActionBarActivity implements
 	public void onTabUnselected(MaterialTab tab) {
 
 	}
-
+/*
 	private boolean setup() {
 		if (!SETUP) {
 			toolbarHeight = toolbar.getHeight();
@@ -260,7 +280,8 @@ public class MainActivity extends ActionBarActivity implements
 		}
 		return SETUP;
 	}
-
+*/
+	/*
 	private void hideActionBar() {
 
 		if (!tabBarMoving && setup()) {
@@ -273,7 +294,8 @@ public class MainActivity extends ActionBarActivity implements
 			toolbarShown = false;
 		}
 	}
-
+*/
+	/*
 	private void showActionBar() {
 
 		if (!tabBarMoving && setup()) {
@@ -287,7 +309,8 @@ public class MainActivity extends ActionBarActivity implements
 			paddingunset = false;
 		}
 	}
-
+*/
+	/*
 	private static class ViewPagerAnimation extends Animation {
 		boolean is_expanding;
 		View view;
@@ -332,7 +355,8 @@ public class MainActivity extends ActionBarActivity implements
 			return true;
 		}
 	}
-
+	*/
+/*
 	@Override
 	public void onScroll(AbsListView view, int firstVisibleItem,
 			int visibleItemCount, int totalItemCount) {
@@ -348,11 +372,11 @@ public class MainActivity extends ActionBarActivity implements
 			if ((pvisibleitemindex == firstVisibleItem && pScollY < cScrollY)
 					|| (pvisibleitemindex > firstVisibleItem)) {
 
-				/**
+				**
 				 * Scrolling downwards translate back tab bar Translate back
 				 * ViewPager dec height of ViewPager
 				 * 
-				 */
+				 *
 				if (!toolbarShown && paddingunset && !tabBarMoving) {
 					Log.d(TAG, "showing acrionbar");
 					showActionBar();
@@ -360,10 +384,10 @@ public class MainActivity extends ActionBarActivity implements
 
 			} else {
 
-				/**
+				**
 				 * Scrolling upwards hide actionbar translate ViewPager IncHight
 				 * of ViewPager
-				 */
+				 *
 				if (toolbarShown && !paddingunset && !tabBarMoving) {
 					Log.d(TAG, "hiding acrionbar");
 					hideActionBar();
@@ -378,7 +402,8 @@ public class MainActivity extends ActionBarActivity implements
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 
 	}
-
+*/
+	/*
 	static class WaitAndChange extends AsyncTask<Void, Void, Void> {
 
 		@Override
@@ -393,8 +418,8 @@ public class MainActivity extends ActionBarActivity implements
 			return null;
 		}
 
-	}
-
+	}*/
+/*
 	static class ChangeToolbarState implements AnimatorListener {
 
 		@Override
@@ -417,6 +442,6 @@ public class MainActivity extends ActionBarActivity implements
 			tabBarMoving = true;
 		}
 
-	}
+	}*/
 
 }

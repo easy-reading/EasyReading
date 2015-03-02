@@ -1,4 +1,4 @@
-package nu.info.zeeshan.utility;
+package nu.info.zeeshan.rnf.utility;
 
 import java.text.SimpleDateFormat;
 

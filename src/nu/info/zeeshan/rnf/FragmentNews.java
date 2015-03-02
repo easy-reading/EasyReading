@@ -1,12 +1,12 @@
 package nu.info.zeeshan.rnf;
 
-import nu.info.zeeshan.adapters.NewsAdapter;
-import nu.info.zeeshan.dao.DbConstants;
-import nu.info.zeeshan.dao.DbHelper;
-import nu.info.zeeshan.dao.DbStructure;
-import nu.info.zeeshan.utility.Constants;
-import nu.info.zeeshan.utility.Utility;
-import nu.info.zeeshan.utility.Utility.Filter;
+import nu.info.zeeshan.rnf.adapters.NewsAdapter;
+import nu.info.zeeshan.rnf.dao.DbConstants;
+import nu.info.zeeshan.rnf.dao.DbHelper;
+import nu.info.zeeshan.rnf.dao.DbStructure;
+import nu.info.zeeshan.rnf.utility.Constants;
+import nu.info.zeeshan.rnf.utility.Utility;
+import nu.info.zeeshan.rnf.utility.Utility.Filter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -20,7 +20,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -63,7 +62,7 @@ public class FragmentNews extends Fragment {
 		holder.list = (ListView) rootView.findViewById(R.id.listViewFeed);
 		holder.list.setEmptyView(rootView.findViewById(R.id.linearViewError));
 		holder.list.setAdapter(adapter);
-		holder.list.setOnScrollListener((OnScrollListener) activity);
+	//	holder.list.setOnScrollListener((OnScrollListener) activity);
 		holder.errorMsg = (TextView) rootView.findViewById(R.id.textViewError);
 		holder.errorView = (LinearLayout) rootView
 				.findViewById(R.id.linearViewError);
@@ -75,7 +74,7 @@ public class FragmentNews extends Fragment {
 	}
 
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		//Utility.log(TAG, "creating fragment menu");
+		// Utility.log(TAG, "creating fragment menu");
 		inflater.inflate(R.menu.news_menu, menu);
 	}
 

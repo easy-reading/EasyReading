@@ -1,4 +1,4 @@
-package nu.info.zeeshan.dao;
+package nu.info.zeeshan.rnf.dao;
 
 public class DbConstants {
 	public static final String COMMA=",";

@@ -12,6 +12,7 @@
     <string name="pref_facebookrss">facebook_rss</string>
     <string name="pref_newsrss">news_rss</string>
     <string name="pref_limit">feed_limit</string>
+    <string name="pref_update_interval">update_interval</string>
     
     <string name="pref_cat_facebook">Facebook</string>
     <string name="pref_cat_news">News</string>
@@ -20,10 +21,12 @@
     <string name="facebook_summary">Your Facebook notification RSS Feed</string>
     <string name="news_summary">Your News Rss Feed</string>
     <string name="limit_summary">Maximum feeds to keep of each type</string>
+    <string name="update_interval_summary">How frequently you get updates</string>
     
     <string name="facebook_title">Facebook Feed</string>
     <string name="news_title">News Feed</string>
     <string name="limit_title">Maximum Feeds</string>
+    <string name="update_interval_title">Update Interval (in Hours)</string>
     
     <string name="invalid_input">Entered value is not valid</string>
     
@@ -45,6 +48,6 @@
     
    <string name="no_feeds_msg">No feeds Available!!\nCheck Settings and/or filter option</string>
    
-    <string name="details">App Version 1.4.4\nDeveloped by Zeeshan Khan\n\u00A9 2014 Zeeshan Khan All Rights Reserved\n\nFork me on Github!\nhttp://github.com/zkhan93/EasyReading\n\nDeveloper Profile\nhttp://zkhan93.github.io\n\nYou Like it Then Rate it on Play Store!\n http://play.google.com/store/apps/?details=nu.info.zeeshan.rnf</string>
+    <string name="details">App Version 1.4.4\nDeveloped by Zeeshan Khan\n\u00A9 2014 Zeeshan Khan All Rights Reserved\n\nFork me on Github!\nhttp://github.com/zkhan93/EasyReading\n\nDeveloper Profile\nhttp://zkhan93.github.io\n\nYou Like it Then Rate it on Play Store!\n http://play.google.com/store/apps/details?id=nu.info.zeeshan.rnf</string>
    
 </resources>
