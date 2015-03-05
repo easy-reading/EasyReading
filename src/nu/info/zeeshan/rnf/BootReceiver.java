@@ -19,7 +19,7 @@ public class BootReceiver extends BroadcastReceiver {
 				.getDefaultSharedPreferences(context);
 		int minutes = Integer.parseInt(prefs.getString(
 				context.getString(R.string.pref_update_interval),
-				Constants.DEFAULT_UPDATE_INTERVAL_IN_HOURS));
+				Constants.DEFAULT_UPDATE_INTERVAL_IN_HOURS))*60;
 		AlarmManager am = (AlarmManager) context
 				.getSystemService(Context.ALARM_SERVICE);
 		Intent intent_ = new Intent(context, NewsService.class);

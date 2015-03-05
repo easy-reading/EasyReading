@@ -7,7 +7,7 @@
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent" >
+        android:layout_height="wrap_content" >
 
         <ListView
             android:id="@+id/listViewFeed"
@@ -17,33 +17,45 @@
         </ListView>
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <LinearLayout
+    <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/linearViewError"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="@dimen/default_padding" >
+        android:layout_height="wrap_content" >
 
-        <TextView
-            android:id="@+id/textViewError"
+        <ScrollView
+            android:id="@+id/scrollView1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/side_top_shade"
-            android:gravity="center"
-            android:padding="@dimen/default_padding"
-            android:text="@string/no_feeds_msg"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#000" />
+            android:layout_height="wrap_content" >
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/tooth_height"
-            android:layout_marginLeft="2dp"
-            android:layout_marginRight="2dp"
-            android:adjustViewBounds="true"
-            android:scaleType="fitXY"
-            android:src="@drawable/zigzag" />
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/linearViewinError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/default_padding" >
+
+                <TextView
+                    android:id="@+id/textViewError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/side_top_shade"
+                    android:gravity="center"
+                    android:padding="@dimen/default_padding"
+                    android:text="@string/no_feeds_msg"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="#000" />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/tooth_height"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginRight="2dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/zigzag" />
+            </LinearLayout>
+        </ScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

@@ -37,48 +37,36 @@ public class MainActivity extends ActionBarActivity implements
 
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
-	public static FragmentNews fnews;
-	public static FragmentFacebook fface;
-	static SharedPreferences spf;
-	static DbHelper dbhelper;
+	FragmentNews fnews;
+	FragmentFacebook fface;
+	SharedPreferences spf;
+	DbHelper dbhelper; // for updating feed states (read/unread)
 	static boolean IMG_LDR_INIT;
-	public static int TRANSITION_TIME = 200;
 	MaterialTabHost tabHost;
 	Toolbar toolbar;
-	//
-	static int tabhost_height, collapsedH, expandedH;
-
-	static boolean toolbar_hidden = false, tabBarMoving, paddingunset,
-			toolbarShown = true, SETUP;
-
 	Intent intent;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Utility.log(TAG, "activity onCreate");
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		if (mSectionsPagerAdapter == null)
-			mSectionsPagerAdapter = new SectionsPagerAdapter(
-					getSupportFragmentManager());
-		if (mViewPager == null) {
-			mViewPager = (ViewPager) findViewById(R.id.container);
-			mViewPager.setAdapter(mSectionsPagerAdapter);
-			mViewPager.setOnPageChangeListener(mSectionsPagerAdapter);
+		mSectionsPagerAdapter = new SectionsPagerAdapter(
+				getSupportFragmentManager());
 
-		}
+		mViewPager = (ViewPager) findViewById(R.id.container);
+		mViewPager.setAdapter(mSectionsPagerAdapter);
+		mViewPager.setOnPageChangeListener(mSectionsPagerAdapter);
 
-		tabHost = (MaterialTabHost) this.findViewById(R.id.tabHost);
-		tabhost_height = (int) getResources().getDimension(
-				R.dimen.tab_host_height);
+		tabHost = (MaterialTabHost) findViewById(R.id.tabHost);
 
 		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
 			tabHost.addTab(tabHost.newTab()
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
-		if (spf == null)
-			spf = getSharedPreferences(getString(R.string.pref_filename),
-					Context.MODE_PRIVATE);
+		spf = getSharedPreferences(getString(R.string.pref_filename),
+				Context.MODE_PRIVATE);
 		if (IMG_LDR_INIT == false) {
 			DisplayImageOptions options = new DisplayImageOptions.Builder()
 					.cacheOnDisk(true).cacheInMemory(true).build();
@@ -89,26 +77,27 @@ public class MainActivity extends ActionBarActivity implements
 			ImageLoader.getInstance().init(config);
 			IMG_LDR_INIT = true;
 		}
-		if (dbhelper == null)
-			dbhelper = new DbHelper(getApplicationContext());
+
+		dbhelper = new DbHelper(getApplicationContext());
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
-		SETUP = false;
 		setSupportActionBar(toolbar);
 
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+		Utility.log(TAG, "activity onCreateOptionsMenu");
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
 
 	@Override
 	protected void onResume() {
+		Utility.log(TAG, "activity onResume");
 		super.onResume();
 		long minutes = Integer.parseInt(spf.getString(
 				getString(R.string.pref_update_interval),
-				Constants.DEFAULT_UPDATE_INTERVAL_IN_HOURS));
+				Constants.DEFAULT_UPDATE_INTERVAL_IN_HOURS))*60;
 		AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
 		Intent intent = new Intent(this, NewsService.class);
 		PendingIntent pi = PendingIntent.getService(this, 0, intent, 0);
@@ -130,12 +119,6 @@ public class MainActivity extends ActionBarActivity implements
 			intent.putExtra("name", "setting");
 			startActivity(intent);
 			return true;
-			/*
-			 * case R.id.action_refresh: // start fetching and inserting news
-			 * active page
-			 * 
-			 * return true;
-			 */
 		case R.id.action_about:
 			intent = new Intent(this, SettingsActivity.class);
 			intent.putExtra("name", "about");
@@ -158,12 +141,15 @@ public class MainActivity extends ActionBarActivity implements
 		else
 			((ImageButton) view).setImageDrawable(getResources().getDrawable(
 					R.drawable.ic_action_read_active));
+		updateAdapter(holder.type - 1);
+	}
 
-		if (holder.type == 1)
-			fnews.updateAdapter(getApplicationContext());
+	private void updateAdapter(int position) {
+		if (position == 0)
+			((FragmentNews) (mSectionsPagerAdapter.getItem(0))).updateAdapter();
 		else
-			fface.updateAdapter(getApplicationContext());
-
+			((FragmentFacebook) (mSectionsPagerAdapter.getItem(1)))
+					.updateAdapter();
 	}
 
 	@Override
@@ -181,7 +167,7 @@ public class MainActivity extends ActionBarActivity implements
 
 	}
 
-	public class SectionsPagerAdapter extends FragmentPagerAdapter implements
+	private class SectionsPagerAdapter extends FragmentPagerAdapter implements
 			OnPageChangeListener {
 
 		public SectionsPagerAdapter(FragmentManager fragmentManager) {
@@ -191,19 +177,21 @@ public class MainActivity extends ActionBarActivity implements
 		@Override
 		public Fragment getItem(int position) {
 			// getItem is called to instantiate the fragment for the given page.
-			// Return a PlaceholderFragment (defined as a static inner class
-			// below).
 			if (position == 0) {
+
 				if (fnews == null) {
+					Utility.log(TAG, "reference is null new fragment created");
 					fnews = new FragmentNews();
 				}
 				return fnews;
-			} else {
+			} else if (position == 1) {
 				if (fface == null) {
+					Utility.log(TAG, "reference is null new fragment created");
 					fface = new FragmentFacebook();
 				}
 				return fface;
-			}
+			} else
+				return null;
 		}
 
 		@Override
@@ -238,4 +226,10 @@ public class MainActivity extends ActionBarActivity implements
 				int positionOffsetPixels) {
 		}
 	}
+	/*
+	 * private static class Result { int type; boolean wasSuccessful;
+	 * 
+	 * public Result(int type_, boolean wasSuccessful_) { type = type_;
+	 * wasSuccessful = wasSuccessful_; } }
+	 */
 }

@@ -6,8 +6,8 @@ import java.util.List;
 
 import nu.info.zeeshan.rnf.dao.DbHelper;
 import nu.info.zeeshan.rnf.utility.Feed;
-import nu.info.zeeshan.rnf.utility.ProcessFeed.FeedInput;
 import nu.info.zeeshan.rnf.utility.Utility;
+import nu.info.zeeshan.rnf.utility.Utility.FeedInput;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -166,19 +166,20 @@ public class NewsService extends Service {
 				Context context = getApplicationContext();
 				builder = new NotificationCompat.Builder(context)
 						.setSmallIcon(R.drawable.ic_notification)
-						.setContentTitle("New feed")
+						.setContentTitle(getString(R.string.app_name))
 						.setAutoCancel(true)
 						.setSound(
 								RingtoneManager
 										.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-						.setContentText(result.get(0));
+						.setContentText(result.size() + " new feeds");
 
 				if (size > 1) {
 					NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-					inboxStyle.setBigContentTitle("New Feeds");
+					inboxStyle.setBigContentTitle(getString(R.string.app_name));
 					for (String str : result) {
 						inboxStyle.addLine(str);
 					}
+					inboxStyle.setSummaryText(result.size() + " new feeds");
 					builder.setStyle(inboxStyle);
 				}
 				Intent intent = new Intent(context, MainActivity.class);
