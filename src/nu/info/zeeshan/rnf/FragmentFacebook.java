@@ -51,6 +51,7 @@ public class FragmentFacebook extends Fragment implements OnRefreshListener {
 	FbAdapter adapter;
 	SQLiteDatabase db;
 	SwipeRefreshLayout refreshlayout;
+	Cursor c;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -163,7 +164,7 @@ public class FragmentFacebook extends Fragment implements OnRefreshListener {
 		if (context != null) {
 			if (db == null)
 				db = new DbHelper(context).getWritableDatabase();
-			Cursor c = db.rawQuery("select count(*) from feeds where "
+			c = db.rawQuery("select count(*) from feeds where "
 					+ DbStructure.FeedTable.COLUMN_TYPE + DbConstants.EQUALS
 					+ DbConstants.Type.FB + DbConstants.AND
 					+ DbStructure.FeedTable.COLUMN_STATE + DbConstants.EQUALS
@@ -206,7 +207,7 @@ public class FragmentFacebook extends Fragment implements OnRefreshListener {
 			if (adapter == null)
 				adapter = new FbAdapter(context, c);
 			else
-				adapter.changeCursor(c);
+				adapter.swapCursor(c).close();
 
 			adapter.notifyDataSetChanged();
 			Utility.log(TAG, "dataset updated facebook" + where + " count is "
@@ -247,7 +248,7 @@ public class FragmentFacebook extends Fragment implements OnRefreshListener {
 					stopRefresh();
 				} else {
 					msg = getString(R.string.toast_msg_fbfeedok);
-					fetch(new FeedInput(fbfeed));
+					fetch(new FeedInput(fbfeed, 2));
 				}
 			} else {
 				msg = getString(R.string.no_internet);
@@ -356,5 +357,12 @@ public class FragmentFacebook extends Fragment implements OnRefreshListener {
 
 	public void fetch(FeedInput feed) {
 		new ProcessFeed().execute(feed);
+	}
+
+	@Override
+	public void onDestroy() {
+		if (c != null)
+			c.close();
+		super.onDestroy();
 	}
 }

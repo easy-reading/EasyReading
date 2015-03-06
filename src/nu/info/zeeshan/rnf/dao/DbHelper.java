@@ -57,4 +57,5 @@ public class DbHelper extends SQLiteOpenHelper{
 		}
 		Utility.log(TAG, "inserted type"+type+" values "+feeds.size());
 	}
+	
 }

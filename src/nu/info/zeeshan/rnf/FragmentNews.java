@@ -51,6 +51,7 @@ public class FragmentNews extends Fragment implements OnRefreshListener {
 	NewsAdapter adapter;
 	SQLiteDatabase db;
 	SwipeRefreshLayout refreshlayout;
+	Cursor c;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -166,11 +167,11 @@ public class FragmentNews extends Fragment implements OnRefreshListener {
 	}
 
 	public void updateAdapter() {
-		Context context = getActivity();
+		Context context = getActivity().getApplicationContext();
 		if (context != null) {
 			if (db == null)
 				db = new DbHelper(context).getWritableDatabase();
-			Cursor c = db.rawQuery("select count(*) from feeds where "
+			c = db.rawQuery("select count(*) from feeds where "
 					+ DbStructure.FeedTable.COLUMN_TYPE + DbConstants.EQUALS
 					+ DbConstants.Type.NEWS + DbConstants.AND
 					+ DbStructure.FeedTable.COLUMN_STATE + DbConstants.EQUALS
@@ -214,7 +215,7 @@ public class FragmentNews extends Fragment implements OnRefreshListener {
 			if (adapter == null)
 				adapter = new NewsAdapter(context, c);
 			else {
-				adapter.changeCursor(c);
+				adapter.swapCursor(c).close();
 			}
 
 			adapter.notifyDataSetChanged();
@@ -260,7 +261,7 @@ public class FragmentNews extends Fragment implements OnRefreshListener {
 				} else {
 
 					msg = getString(R.string.toast_msg_newsfeedok);
-					fetch(new FeedInput(newsfeed));
+					fetch(new FeedInput(newsfeed, 1));
 				}
 			} else {
 				msg = getString(R.string.no_internet);
@@ -370,5 +371,12 @@ public class FragmentNews extends Fragment implements OnRefreshListener {
 
 	public void fetch(FeedInput feed) {
 		new ProcessFeed().execute(feed);
+	}
+
+	@Override
+	public void onDestroy() {
+		if (c != null)
+			c.close();
+		super.onDestroy();
 	}
 }
