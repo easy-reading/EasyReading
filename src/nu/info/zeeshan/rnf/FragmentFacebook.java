@@ -13,6 +13,7 @@ import nu.info.zeeshan.rnf.utility.Feed;
 import nu.info.zeeshan.rnf.utility.Utility;
 import nu.info.zeeshan.rnf.utility.Utility.FeedInput;
 import nu.info.zeeshan.rnf.utility.Utility.Filter;
+import nu.info.zeeshan.rnf.utility.Utility.ViewHolder;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -35,6 +36,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 

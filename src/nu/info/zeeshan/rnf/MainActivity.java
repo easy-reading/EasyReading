@@ -78,7 +78,7 @@ public class MainActivity extends ActionBarActivity implements
 			IMG_LDR_INIT = true;
 		}
 
-		dbhelper = new DbHelper(getApplicationContext());
+		dbhelper = new DbHelper(this);
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 
@@ -97,7 +97,7 @@ public class MainActivity extends ActionBarActivity implements
 		super.onResume();
 		long minutes = Integer.parseInt(spf.getString(
 				getString(R.string.pref_update_interval),
-				Constants.DEFAULT_UPDATE_INTERVAL_IN_HOURS))*60;
+				Constants.DEFAULT_UPDATE_INTERVAL_IN_HOURS)) * 60;
 		AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
 		Intent intent = new Intent(this, NewsService.class);
 		PendingIntent pi = PendingIntent.getService(this, 0, intent, 0);
@@ -129,10 +129,13 @@ public class MainActivity extends ActionBarActivity implements
 		}
 	}
 
+	/**
+	 * 
+	 change state of feed update button
+	 * 
+	 * @param view
+	 */
 	public void read(View view) {
-
-		// change state of feed
-		// update button
 		ViewHolder holder = (ViewHolder) (((LinearLayout) (view.getParent()
 				.getParent())).getTag());
 		if ((holder.state = dbhelper.feedRead(holder.id)) == 1)

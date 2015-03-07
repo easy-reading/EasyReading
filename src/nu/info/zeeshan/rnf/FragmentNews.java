@@ -167,7 +167,7 @@ public class FragmentNews extends Fragment implements OnRefreshListener {
 	}
 
 	public void updateAdapter() {
-		Context context = getActivity().getApplicationContext();
+		Context context = getActivity();
 		if (context != null) {
 			if (db == null)
 				db = new DbHelper(context).getWritableDatabase();
@@ -234,6 +234,7 @@ public class FragmentNews extends Fragment implements OnRefreshListener {
 			db.close();
 		super.onDestroy();
 	}
+
 
 	static class ViewHolder {
 		ListView list;
