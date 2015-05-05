@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/white"
+    android:background="@color/colorBlack"
     android:orientation="vertical" >
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -27,34 +27,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
-            <LinearLayout
-                android:id="@+id/linearViewinError"
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="@dimen/default_padding" >
+                android:layout_margin="@dimen/margin_default" >
 
-                <TextView
-                    android:id="@+id/textViewError"
+                <LinearLayout
+                    android:id="@+id/linearViewinError"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/side_top_shade"
                     android:gravity="center"
-                    android:padding="@dimen/default_padding"
-                    android:text="@string/no_feeds_msg"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="#000" />
+                    android:orientation="vertical"
+                    android:padding="@dimen/padding_high" >
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/tooth_height"
-                    android:layout_marginLeft="2dp"
-                    android:layout_marginRight="2dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/zigzag" />
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/textViewError"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/no_feeds_msg"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="#000" />
+                    <!-- android:background="@drawable/side_top_shade" -->
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
         </ScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
 
