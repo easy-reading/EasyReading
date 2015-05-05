@@ -20,6 +20,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,7 +46,7 @@ public class MainActivity extends ActionBarActivity implements
 	MaterialTabHost tabHost;
 	Toolbar toolbar;
 	Intent intent;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Utility.log(TAG, "activity onCreate");

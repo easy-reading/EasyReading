@@ -22,7 +22,7 @@ public class SettingsActivity extends ActionBarActivity {
 		}
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-		getSupportActionBar().setDisplayShowHomeEnabled(true);//isplayShowHomeEnabled(true);
+		getSupportActionBar().setDisplayShowHomeEnabled(true);
 	}
 
 }
