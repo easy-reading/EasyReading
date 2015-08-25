@@ -1,14 +1,20 @@
 package nu.info.zeeshan.rnf;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import nu.info.zeeshan.rnf.dao.DbHelper;
+import nu.info.zeeshan.rnf.utility.FacebookFeed;
 import nu.info.zeeshan.rnf.utility.Feed;
 import nu.info.zeeshan.rnf.utility.Utility;
 import nu.info.zeeshan.rnf.utility.Utility.FeedInput;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.xml.sax.InputSource;
@@ -23,11 +29,16 @@ import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.support.v4.app.NotificationCompat;
 
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndEntry;
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndFeed;
 import com.google.code.rome.android.repackaged.com.sun.syndication.io.SyndFeedInput;
@@ -40,7 +51,8 @@ public class NewsService extends Service {
 	private static String TAG_IMG = "img";
 	private static String DOUBLE_SLASH = "//";
 	private static String NEW_LINE = "\n";
-	private static int NOTIFICATION_ID = 0;
+	private static int NEWS_NOTIFICATION_ID = 0;
+	private static int FB_NOTIFICATION_ID = 1;
 
 	@Override
 	public IBinder onBind(Intent arg0) {
@@ -61,6 +73,84 @@ public class NewsService extends Service {
 		}
 
 		// handle intent
+		if (isFacebookLoggedIn()) {
+			Bundle parameters = new Bundle();
+			parameters
+					.putString("fields",
+							"name,story,description,link,message,created_time,object_id,likes,picture");
+			GraphRequest request = new GraphRequest(
+					AccessToken.getCurrentAccessToken(), "/me/feed",
+					parameters, HttpMethod.GET, new GraphRequest.Callback() {
+
+						@Override
+						public void onCompleted(GraphResponse response) {
+							JSONArray data;
+							try {
+								data = response.getJSONObject().getJSONArray(
+										"data");
+							} catch (JSONException ex) {
+								data = new JSONArray();
+							}
+							// fill the data in db
+							int len = data.length();
+							JSONObject json_feed;
+							ArrayList<Feed> fb_feeds = new ArrayList<Feed>();
+							FacebookFeed fb_feed;
+							for (int i = 0; i < len; i++) {
+								try {
+									json_feed = data.getJSONObject(i);
+									fb_feed = new FacebookFeed();
+
+									fb_feed.setId(json_feed.getString("id"));
+									if (json_feed.has("story"))
+										fb_feed.setTitle(json_feed
+												.getString("story"));
+									else if (json_feed.has("name"))
+										fb_feed.setTitle(json_feed
+												.getString("name"));
+
+									if (json_feed.has("description"))
+										fb_feed.setDesc(json_feed
+												.getString("description"));
+
+									if (json_feed.has("message"))
+										fb_feed.setDesc(json_feed
+												.getString("message"));
+
+									if (json_feed.has("picture"))
+										fb_feed.setImage(json_feed
+												.getString("picture"));
+									if (json_feed.has("link"))
+										fb_feed.setLink(json_feed
+												.getString("link"));
+									try {
+										if (json_feed.has("created_time")) {
+											SimpleDateFormat format = new SimpleDateFormat(
+													"yyyy-MM-dd'T'HH:mm:ssZ");
+											Date datetime = format.parse(json_feed
+													.getString("created_time"));
+											fb_feed.setTime(datetime.getTime());
+										}
+									} catch (ParseException e) {
+										fb_feed.setTime(new Date().getTime());
+										e.printStackTrace();
+									}
+
+									fb_feeds.add(fb_feed);
+								} catch (JSONException ex) {
+									json_feed = null;
+									Utility.log(TAG, ex.getLocalizedMessage());
+								}
+							}
+							new DbHelper(getApplicationContext())
+									.fillFeed(fb_feeds);
+							setFbNotification(fb_feeds);
+						}
+					});
+			request.executeAsync();
+
+		}
+
 		SharedPreferences spf = getSharedPreferences(
 				getString(R.string.pref_filename), Context.MODE_PRIVATE);
 
@@ -70,6 +160,47 @@ public class NewsService extends Service {
 		} else {
 			new FetchNews().execute(new FeedInput(newsfeed));
 		}
+
+	}
+
+	private void setFbNotification(ArrayList<Feed> result) {
+		NotificationCompat.Builder builder = null;
+		int size = result.size();
+		if (size > 0) {
+			Context context = getApplicationContext();
+			builder = new NotificationCompat.Builder(context)
+					.setSmallIcon(R.drawable.ic_notification)
+					.setContentTitle(getString(R.string.app_name))
+					.setAutoCancel(true)
+					.setSound(
+							RingtoneManager
+									.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+					.setContentText("New facebook feeds");
+
+			if (size > 1) {
+				NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+				inboxStyle.setBigContentTitle(getString(R.string.app_name));
+				for (Feed feed : result) {
+					if(feed.getTitle().trim().length()>0)
+						inboxStyle.addLine(feed.getTitle());
+				}
+				inboxStyle.setSummaryText("New facebook updates");
+				builder.setStyle(inboxStyle);
+			}
+			Intent intent = new Intent(context, MainActivity.class);
+			PendingIntent pintent = PendingIntent.getActivity(context, 0,
+					intent, PendingIntent.FLAG_UPDATE_CURRENT);
+			builder.setContentIntent(pintent);
+
+			NotificationManager notifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+			// Builds the notification and issues it.
+			notifyMgr.notify(FB_NOTIFICATION_ID, builder.build());
+		}
+		stopSelf();
+	}
+
+	private boolean isFacebookLoggedIn() {
+		return AccessToken.getCurrentAccessToken() != null;
 	}
 
 	@Override
@@ -165,7 +296,7 @@ public class NewsService extends Service {
 						.setSound(
 								RingtoneManager
 										.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-						.setContentText(result.size() + " new feeds");
+						.setContentText("New news feeds");
 
 				if (size > 1) {
 					NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
@@ -183,7 +314,7 @@ public class NewsService extends Service {
 
 				NotificationManager notifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 				// Builds the notification and issues it.
-				notifyMgr.notify(NOTIFICATION_ID, builder.build());
+				notifyMgr.notify(NEWS_NOTIFICATION_ID, builder.build());
 			}
 			stopSelf();
 		}

@@ -2,16 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="@string/action_settings" >
 
-    <PreferenceCategory
-        android:key="pref_key_storage_settings"
-        android:title="@string/pref_cat_facebook" >
-        <EditTextPreference
-            android:inputType="textUri"
-            android:key="@string/pref_facebookrss"
-            android:summary="@string/facebook_summary"
-            android:title="@string/facebook_title" >
-        </EditTextPreference>
-    </PreferenceCategory>
+    
     <PreferenceCategory
         android:key="pref_key_storage_settings"
         android:title="@string/pref_cat_news" >
