@@ -26,8 +26,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 
+import com.facebook.FacebookSdk;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -35,7 +35,6 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 public class MainActivity extends ActionBarActivity implements
 		MaterialTabListener {
 	public static final String TAG = "nu.info.zeeshan.utility.MainActivity";
-
 	SectionsPagerAdapter mSectionsPagerAdapter;
 	ViewPager mViewPager;
 	FragmentNews fnews;
@@ -46,11 +45,12 @@ public class MainActivity extends ActionBarActivity implements
 	MaterialTabHost tabHost;
 	Toolbar toolbar;
 	Intent intent;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Utility.log(TAG, "activity onCreate");
 		super.onCreate(savedInstanceState);
+		FacebookSdk.sdkInitialize(getApplicationContext());
 		setContentView(R.layout.activity_main);
 		mSectionsPagerAdapter = new SectionsPagerAdapter(
 				getSupportFragmentManager());
@@ -81,6 +81,7 @@ public class MainActivity extends ActionBarActivity implements
 
 		dbhelper = new DbHelper(this);
 		toolbar = (Toolbar) findViewById(R.id.toolbar);
+
 		setSupportActionBar(toolbar);
 
 	}
@@ -136,24 +137,28 @@ public class MainActivity extends ActionBarActivity implements
 	 * 
 	 * @param view
 	 */
-	public void read(View view) {
-		ViewHolder holder = (ViewHolder) (((LinearLayout) (view.getParent()
-				.getParent())).getTag());
-		if ((holder.state = dbhelper.feedRead(holder.id)) == 1)
+	public void toggleState(View view) {
+		ViewHolder holder = (ViewHolder) ((View) (view.getParent().getParent()
+				.getParent().getParent())).getTag();
+		Utility.log(TAG, "" + holder.getClass());
+		if ((holder.state = dbhelper.toggleFeedState(holder.getId())) == 1)
 			((ImageButton) view).setImageDrawable(getResources().getDrawable(
 					R.drawable.ic_action_read_white));
 		else
 			((ImageButton) view).setImageDrawable(getResources().getDrawable(
 					R.drawable.ic_action_read_active));
-		updateAdapter(holder.type - 1);
+		updateAdapter();
 	}
 
-	private void updateAdapter(int position) {
-		if (position == 0)
+	private void updateAdapter() {
+		try {
 			((FragmentNews) (mSectionsPagerAdapter.getItem(0))).updateAdapter();
-		else
+
 			((FragmentFacebook) (mSectionsPagerAdapter.getItem(1)))
 					.updateAdapter();
+		} catch (Exception ex) {
+			Utility.log(TAG, ex.getLocalizedMessage());
+		}
 	}
 
 	@Override

@@ -63,18 +63,12 @@ public class NewsService extends Service {
 		// handle intent
 		SharedPreferences spf = getSharedPreferences(
 				getString(R.string.pref_filename), Context.MODE_PRIVATE);
-		String fbfeed = spf.getString(getString(R.string.pref_facebookrss),
-				null);
+
 		String newsfeed = spf.getString(getString(R.string.pref_newsrss), null);
-		if (fbfeed == null && newsfeed == null) {
+		if (newsfeed == null && newsfeed == null) {
 			stopSelf(); // no feeds to process
-		} else if (fbfeed == null) {
-			new FetchNews().execute(new FeedInput(newsfeed, 1));
-		} else if (newsfeed == null) {
-			new FetchNews().execute(new FeedInput(fbfeed, 2));
 		} else {
-			new FetchNews().execute(new FeedInput(newsfeed, 1), new FeedInput(
-					fbfeed, 2));
+			new FetchNews().execute(new FeedInput(newsfeed));
 		}
 	}
 
@@ -136,18 +130,18 @@ public class NewsService extends Service {
 								f.setTime(pubdate.getTime());
 							}
 							f.setLink(e.getLink());
-							if (fe.type == 1) {
-								str = doc.getElementsByTag(TAG_IMG).get(0)
-										.attr(TAG_ATTR_SRC);
-								f.setImage(str.startsWith(DOUBLE_SLASH) ? (PROTOCOL + str)
-										: str);
-							}
+
+							str = doc.getElementsByTag(TAG_IMG).get(0)
+									.attr(TAG_ATTR_SRC);
+							f.setImage(str.startsWith(DOUBLE_SLASH) ? (PROTOCOL + str)
+									: str);
+
 							feeds.add(f);
 						} catch (Exception ee) {
 							Utility.log(TAG, "skipped a entry " + ee);
 						}
 					}
-					dbh.fillFeed(feeds, fe.type);
+					dbh.fillFeed(feeds);
 				}
 
 			} catch (Exception e) {
@@ -179,7 +173,7 @@ public class NewsService extends Service {
 					for (String str : result) {
 						inboxStyle.addLine(str);
 					}
-					inboxStyle.setSummaryText(result.size() + " new feeds");
+					inboxStyle.setSummaryText("latest news updates");
 					builder.setStyle(inboxStyle);
 				}
 				Intent intent = new Intent(context, MainActivity.class);

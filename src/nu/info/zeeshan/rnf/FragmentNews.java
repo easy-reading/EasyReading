@@ -171,10 +171,9 @@ public class FragmentNews extends Fragment implements OnRefreshListener {
 		if (context != null) {
 			if (db == null)
 				db = new DbHelper(context).getWritableDatabase();
-			c = db.rawQuery("select count(*) from feeds where "
-					+ DbStructure.FeedTable.COLUMN_TYPE + DbConstants.EQUALS
-					+ DbConstants.Type.NEWS + DbConstants.AND
-					+ DbStructure.FeedTable.COLUMN_STATE + DbConstants.EQUALS
+			c = db.rawQuery("select count(*) from newsfeeds where "
+
+			+ DbStructure.FeedTable.COLUMN_STATE + DbConstants.EQUALS
 					+ DbConstants.State.READ, null);
 			if (c.moveToFirst()) {
 				int limit = Integer.parseInt(spf.getString(
@@ -182,11 +181,11 @@ public class FragmentNews extends Fragment implements OnRefreshListener {
 						Constants.DEFAULT_FEED_LIMIT));
 				if (c.getInt(0) > limit) {
 					// delete extra feeds
-					db.execSQL("delete from feeds where type="
+					db.execSQL("delete from newsfeeds where type="
 							+ DbConstants.Type.NEWS
 							+ " and state="
 							+ DbConstants.State.READ
-							+ " and _id NOT IN (select _id from feeds where type="
+							+ " and _id NOT IN (select _id from newsfeeds where type="
 							+ DbConstants.Type.NEWS + " and state="
 							+ DbConstants.State.READ
 							+ " order by time desc limit " + limit + ")");
@@ -198,19 +197,15 @@ public class FragmentNews extends Fragment implements OnRefreshListener {
 					DbStructure.FeedTable.COLUMN_TITLE,
 					DbStructure.FeedTable.COLUMN_TEXT,
 					DbStructure.FeedTable.COLUMN_TIME,
-					DbStructure.FeedTable.COLUMN_TYPE,
+
 					DbStructure.FeedTable.COLUMN_STATE,
 					DbStructure.FeedTable.COLUMN_IMAGE,
 					DbStructure.FeedTable.COLUMN_LINK, };
-			String where = DbStructure.FeedTable.COLUMN_TYPE
-					+ DbConstants.EQUALS
-					+ DbConstants.Type.NEWS
-					+ ((filter == Filter.READ || filter == Filter.UNREAD) ? (DbConstants.AND
-							+ DbStructure.FeedTable.COLUMN_STATE
-							+ DbConstants.EQUALS + (filter - 1))
-							: "");
-			c = db.query(DbStructure.FeedTable.TABLE_NAME, select, where, null,
-					null, null, DbStructure.FeedTable.COLUMN_TIME
+			String where = ((filter == Filter.READ || filter == Filter.UNREAD) ? (DbStructure.FeedTable.COLUMN_STATE
+					+ DbConstants.EQUALS + (filter - 1))
+					: "");
+			c = db.query(DbStructure.NewsFeedTable.TABLE_NAME, select, where,
+					null, null, null, DbStructure.FeedTable.COLUMN_TIME
 							+ DbConstants.DESC);
 			if (adapter == null)
 				adapter = new NewsAdapter(context, c);
@@ -234,7 +229,6 @@ public class FragmentNews extends Fragment implements OnRefreshListener {
 			db.close();
 		super.onDestroy();
 	}
-
 
 	static class ViewHolder {
 		ListView list;
@@ -345,7 +339,7 @@ public class FragmentNews extends Fragment implements OnRefreshListener {
 						Utility.log(TAG, "skipped a entry " + ee);
 					}
 				}
-				dbh.fillFeed(feeds, fe.type);
+				dbh.fillFeed(feeds);
 
 				return true;
 			} catch (Exception e) {

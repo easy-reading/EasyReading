@@ -10,9 +10,6 @@ public class Feed {
 	public void setTitle(String data){
 		title=data;
 	}
-	
-	
-
 	public void setTime(long data){
 		time=data;
 	}

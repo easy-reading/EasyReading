@@ -5,6 +5,7 @@ import java.util.Date;
 import nu.info.zeeshan.rnf.R;
 import nu.info.zeeshan.rnf.dao.DbStructure;
 import nu.info.zeeshan.rnf.utility.Utility;
+import nu.info.zeeshan.rnf.utility.Utility.NewsViewHolder;
 import nu.info.zeeshan.rnf.utility.Utility.ViewHolder;
 import android.content.Context;
 import android.database.Cursor;
@@ -22,7 +23,7 @@ public class NewsAdapter extends CursorAdapter {
 	private static final String TAG = "nu.info.zeeshan.dao.adapters.NewsAdapter";
 	Cursor c;
 	Context context;
-	ViewHolder holder;
+	NewsViewHolder holder;
 	Date date = new Date();
 
 	public NewsAdapter(Context contxt, Cursor cc) {
@@ -33,7 +34,7 @@ public class NewsAdapter extends CursorAdapter {
 
 	@Override
 	public void bindView(View view, Context context, Cursor c) {
-		holder = (ViewHolder) view.getTag();
+		holder = (NewsViewHolder) view.getTag();
 		holder.title.setText(c.getString(c
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TITLE)));
 		date.setTime(c.getLong(c
@@ -43,12 +44,11 @@ public class NewsAdapter extends CursorAdapter {
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TEXT)));
 		holder.image.setImageDrawable(context.getResources().getDrawable(
 				R.drawable.default_news));
-		holder.id = c
-				.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable._ID));
+		holder.setId(c.getInt(c
+				.getColumnIndexOrThrow(DbStructure.FeedTable._ID)));
 		holder.state = c.getInt(c
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_STATE));
-		holder.type = c.getInt(c
-				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TYPE));
+
 		if (holder.state == 1) {
 			holder.check.setImageDrawable(context.getResources().getDrawable(
 					R.drawable.ic_action_read_active));
@@ -62,19 +62,21 @@ public class NewsAdapter extends CursorAdapter {
 		view.setTag(holder);
 		String imgsrc = c.getString(c
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_IMAGE));
-		if (imgsrc != null && !imgsrc.trim().isEmpty())
+		if (imgsrc != null && !imgsrc.trim().isEmpty()) {
 			ImageLoader
 					.getInstance()
 					.displayImage(
 							c.getString(c
 									.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_IMAGE)),
 							holder.image);
-
+			holder.image.setVisibility(View.VISIBLE);
+		} else
+			holder.image.setVisibility(View.GONE);
 	}
 
 	@Override
 	public View newView(Context context, Cursor c, ViewGroup parent) {
-		holder = new ViewHolder();
+		holder = new NewsViewHolder();
 		View view = ((LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(
 				R.layout.feed_item_news, parent, false);
@@ -97,14 +99,15 @@ public class NewsAdapter extends CursorAdapter {
 
 		String imgsrc = c.getString(c
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_IMAGE));
-		if (imgsrc != null && !imgsrc.trim().isEmpty())
+		if (imgsrc != null && !imgsrc.trim().isEmpty()) {
 			ImageLoader.getInstance().displayImage(imgsrc, holder.image);
+			holder.image.setVisibility(View.VISIBLE);
+		} else
+			holder.image.setVisibility(View.GONE);
 		holder.id = c
 				.getInt(c.getColumnIndexOrThrow(DbStructure.FeedTable._ID));
 		holder.state = c.getInt(c
 				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_STATE));
-		holder.type = c.getInt(c
-				.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TYPE));
 		if (holder.state == 1) {
 			holder.check.setImageDrawable(context.getResources().getDrawable(
 					R.drawable.ic_action_read_active));

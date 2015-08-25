@@ -20,9 +20,13 @@ public class Utility {
 
 	public static void showProgressDialog(Context context) {
 		try {
-			progress_dialog = ProgressDialog.show(context, null,
-					"Please wait..", true, false);
-			Utility.log(TAG, "progress is OK");
+			if (progress_dialog != null) {
+				progress_dialog = ProgressDialog.show(context, null,
+						"Please wait..", true, false);
+				Utility.log(TAG, "progress is OK");
+			} else {
+				Utility.log(TAG, "progress is null");
+			}
 		} catch (Exception ex) {
 			log(TAG, "showProgressDialog " + ex.getMessage());
 		}
@@ -30,7 +34,8 @@ public class Utility {
 
 	public static void hideProgressDialog() {
 		try {
-			progress_dialog.dismiss();
+			if (progress_dialog != null)
+				progress_dialog.dismiss();
 		} catch (Exception ex) {
 			log(TAG, "hideProgressDialog " + ex.getMessage());
 		}
@@ -42,15 +47,41 @@ public class Utility {
 		int ALL = 3;
 	}
 
-	public static class ViewHolder {
+	public static abstract class ViewHolder {
 		public TextView title;
 		public TextView desc;
 		public TextView time;
 		public ImageView image;
 		public ImageButton check;
-		public int id;
 		public int state;
-		public int type;
+		
+		public abstract Object getId();
+		public abstract void setId(Object id);
+	}
+
+	public static class FacebookViewHolder extends ViewHolder {
+		public String id;
+		@Override
+		public String getId() {
+			return id;
+		}
+		@Override
+		public void setId(Object id) {
+			this.id=(String)id;	
+		}
+		
+	}
+
+	public static class NewsViewHolder extends ViewHolder {
+		public int id;
+		@Override
+		public Integer getId() {
+			return id;
+		}
+		@Override
+		public void setId(Object id) {
+			this.id=(Integer)id;	
+		}
 	}
 
 	public static class FeedInput {

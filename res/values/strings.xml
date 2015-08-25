@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="facebook_app_id">1703040656590544</string>
     <string name="app_name">Easy Reading</string>
     <string name="app_ver">1.4.6</string>
     <string name="action_settings">Settings</string>

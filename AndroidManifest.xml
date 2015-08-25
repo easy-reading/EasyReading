@@ -20,6 +20,10 @@
         android:label="@string/app_name"
         android:logo="@drawable/ic_action_launcher"
         android:theme="@style/AppTheme" >
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
         <activity
             android:name="nu.info.zeeshan.rnf.MainActivity"
             android:label="@string/app_name"
@@ -37,6 +41,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="nu.info.zeeshan.rnf.MainActivity" />
         </activity>
+        
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <receiver android:name=".BootReceiver" >
             <intent-filter>

@@ -1,25 +1,28 @@
 package nu.info.zeeshan.rnf;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.zip.DataFormatException;
 
 import nu.info.zeeshan.rnf.adapters.FbAdapter;
 import nu.info.zeeshan.rnf.dao.DbConstants;
 import nu.info.zeeshan.rnf.dao.DbHelper;
 import nu.info.zeeshan.rnf.dao.DbStructure;
 import nu.info.zeeshan.rnf.utility.Constants;
+import nu.info.zeeshan.rnf.utility.FacebookFeed;
 import nu.info.zeeshan.rnf.utility.Feed;
 import nu.info.zeeshan.rnf.utility.Utility;
 import nu.info.zeeshan.rnf.utility.Utility.FeedInput;
 import nu.info.zeeshan.rnf.utility.Utility.Filter;
-import nu.info.zeeshan.rnf.utility.Utility.ViewHolder;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.xml.sax.InputSource;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -36,14 +39,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndEntry;
-import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndFeed;
-import com.google.code.rome.android.repackaged.com.sun.syndication.io.SyndFeedInput;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 
 public class FragmentFacebook extends Fragment implements OnRefreshListener {
 	static String TAG = "nu.info.zeeshan.rnf.FragmentFacebook";
@@ -55,13 +62,21 @@ public class FragmentFacebook extends Fragment implements OnRefreshListener {
 	SQLiteDatabase db;
 	SwipeRefreshLayout refreshlayout;
 	Cursor c;
+	private CallbackManager callbackManager;
+	private LoginButton loginButton;
+	private View login_layout;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		Utility.log(TAG, " in onCreate facebook");
 		db = new DbHelper(getActivity()).getWritableDatabase();
 		setspf(); // set shared preference
+
 		super.onCreate(savedInstanceState);
+	}
+
+	private boolean isFacebookLoggedIn() {
+		return AccessToken.getCurrentAccessToken() != null;
 	}
 
 	private void setspf() {
@@ -74,8 +89,8 @@ public class FragmentFacebook extends Fragment implements OnRefreshListener {
 			Bundle savedInstanceState) {
 		// null checks creating empty fragments
 		Utility.log(TAG, " in onCreateView facebook");
-		View rootView = inflater.inflate(R.layout.fragment_main, container,
-				false);
+		View rootView = inflater
+				.inflate(R.layout.fragment_fb, container, false);
 		if (filter == 0)
 			filter = Filter.UNREAD;
 		setspf();
@@ -86,7 +101,7 @@ public class FragmentFacebook extends Fragment implements OnRefreshListener {
 		holder.list = (ListView) rootView.findViewById(R.id.listViewFeed);
 		holder.list.setEmptyView(rootView.findViewById(R.id.linearViewError));
 		holder.list.setAdapter(adapter);
-
+		login_layout = (View) rootView.findViewById(R.id.FacebookLoginLayout);
 		// holder.errorMsg = (TextView)
 		// rootView.findViewById(R.id.textViewError);
 		holder.errorView = (SwipeRefreshLayout) rootView
@@ -99,11 +114,56 @@ public class FragmentFacebook extends Fragment implements OnRefreshListener {
 		refreshlayout.setOnRefreshListener(this);
 		updating = false;
 		stopRefresh();
+		loginButton = (LoginButton) rootView
+				.findViewById(R.id.facebook_login_button);
+
+		if (!isFacebookLoggedIn()) {
+			loginButton.setReadPermissions("user_posts,news");
+			loginButton.setFragment(this);
+			callbackManager = CallbackManager.Factory.create();
+			loginButton.registerCallback(callbackManager,
+					new FacebookCallback<LoginResult>() {
+						@Override
+						public void onSuccess(LoginResult loginResult) {
+							Utility.log(TAG, loginResult.toString());
+							setLoginView(true);
+							Utility.log(TAG, "login done");
+						}
+
+						@Override
+						public void onCancel() {
+							// App code
+						}
+
+						@Override
+						public void onError(FacebookException exception) {
+							// App code
+						}
+					});
+			setLoginView(false);
+		} else {
+			setLoginView(true);
+		}
 		return rootView;
+	}
+
+	public void setLoginView(boolean logged_in) {
+		if (logged_in) {
+			login_layout.setVisibility(View.VISIBLE);
+			loginButton.setVisibility(View.GONE);
+		} else {
+			login_layout.setVisibility(View.GONE);
+			loginButton.setVisibility(View.VISIBLE);
+		}
 	}
 
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		inflater.inflate(R.menu.fb_menu, menu);
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		callbackManager.onActivityResult(requestCode, resultCode, data);
 	}
 
 	public void onPrepareOptionsMenu(Menu menu) {
@@ -167,10 +227,9 @@ public class FragmentFacebook extends Fragment implements OnRefreshListener {
 		if (context != null) {
 			if (db == null)
 				db = new DbHelper(context).getWritableDatabase();
-			c = db.rawQuery("select count(*) from feeds where "
-					+ DbStructure.FeedTable.COLUMN_TYPE + DbConstants.EQUALS
-					+ DbConstants.Type.FB + DbConstants.AND
-					+ DbStructure.FeedTable.COLUMN_STATE + DbConstants.EQUALS
+			c = db.rawQuery("select count(*) from facebookfeeds where "
+
+			+ DbStructure.FeedTable.COLUMN_STATE + DbConstants.EQUALS
 					+ DbConstants.State.READ, null);
 			if (c.moveToFirst()) {
 
@@ -179,11 +238,11 @@ public class FragmentFacebook extends Fragment implements OnRefreshListener {
 						Constants.DEFAULT_FEED_LIMIT));
 				if (c.getInt(0) > limit) {
 					// delete extra feeds
-					db.execSQL("delete from feeds where type="
+					db.execSQL("delete from facebookfeeds where type="
 							+ DbConstants.Type.FB
 							+ " and state="
 							+ DbConstants.State.READ
-							+ " and _id NOT IN (select _id from feeds where type="
+							+ " and _id NOT IN (select _id from facebookfeeds where type="
 							+ DbConstants.Type.FB + " and state="
 							+ DbConstants.State.READ
 							+ " order by time desc limit " + limit + ")");
@@ -193,19 +252,15 @@ public class FragmentFacebook extends Fragment implements OnRefreshListener {
 			String[] select = { DbStructure.FeedTable._ID,
 					DbStructure.FeedTable.COLUMN_TITLE,
 					DbStructure.FeedTable.COLUMN_TEXT,
-					DbStructure.FeedTable.COLUMN_TYPE,
+					DbStructure.FeedTable.COLUMN_IMAGE,
 					DbStructure.FeedTable.COLUMN_TIME,
 					DbStructure.FeedTable.COLUMN_STATE,
 					DbStructure.FeedTable.COLUMN_LINK, };
-			String where = DbStructure.FeedTable.COLUMN_TYPE
-					+ DbConstants.EQUALS
-					+ DbConstants.Type.FB
-					+ (((filter == Filter.READ || filter == Filter.UNREAD) ? DbConstants.AND
-							+ DbStructure.FeedTable.COLUMN_STATE
-							+ DbConstants.EQUALS + (filter - 1)
-							: ""));
-			c = db.query(DbStructure.FeedTable.TABLE_NAME, select, where, null,
-					null, null, DbStructure.FeedTable.COLUMN_TIME
+			String where = (((filter == Filter.READ || filter == Filter.UNREAD) ? DbStructure.FeedTable.COLUMN_STATE
+					+ DbConstants.EQUALS + (filter - 1)
+					: ""));
+			c = db.query(DbStructure.FacebookFeedTable.TABLE_NAME, select,
+					where, null, null, null, DbStructure.FeedTable.COLUMN_TIME
 							+ DbConstants.DESC);
 			if (adapter == null)
 				adapter = new FbAdapter(context, c);
@@ -240,18 +295,17 @@ public class FragmentFacebook extends Fragment implements OnRefreshListener {
 		String msg;
 		if (!updating) {
 			updating = true;
-			String fbfeed = spf.getString(getString(R.string.pref_facebookrss),
-					null);
+
 			ConnectivityManager cm = (ConnectivityManager) getActivity()
 					.getSystemService(Context.CONNECTIVITY_SERVICE);
 			NetworkInfo ni = cm.getActiveNetworkInfo();
 			if (ni != null && ni.isConnected()) {
-				if (fbfeed == null) {
+				if (isFacebookLoggedIn()) {
+					msg = getString(R.string.toast_msg_fbfeedok);
+					fetch();
+				} else {
 					msg = null;
 					stopRefresh();
-				} else {
-					msg = getString(R.string.toast_msg_fbfeedok);
-					fetch(new FeedInput(fbfeed, 2));
 				}
 			} else {
 				msg = getString(R.string.no_internet);
@@ -279,87 +333,91 @@ public class FragmentFacebook extends Fragment implements OnRefreshListener {
 
 	}
 
-	public class ProcessFeed extends AsyncTask<FeedInput, Void, Boolean> {
-
-		private static final String TAG = "nu.info.zeeshan.ProcessFeed";
-		private static final String PROTOCOL = "http:";
-		private static final String TAG_ATTR_SRC = "src";
-		private static final String TAG_IMG = "img";
-		private static final String DOUBLE_SLASH = "//";
+	public class ProcessNewFeed extends AsyncTask<FeedInput, Void, Boolean> {
 
 		@Override
-		protected Boolean doInBackground(FeedInput... inputfeed) {
-			try {
-				// URL url=arg0[0];
-				ArrayList<Feed> feeds = new ArrayList<Feed>();
-				Feed f;
-				String str;
-				SyndFeedInput input = new SyndFeedInput();
-				SyndFeed feed;// = input.build(new XmlReader(new URL(url[0])));
-				List<SyndEntry> list;// = feed.getEntries();
-				InputSource inputSource;
-				DbHelper dbh = new DbHelper(getActivity());
-				Date pubdate;
-				Document doc;
+		protected Boolean doInBackground(FeedInput... arg0) {
 
-				FeedInput fe = inputfeed[0];
-
-				feeds.clear();
-				inputSource = new InputSource(fe.url);
-				inputSource.setEncoding("UTF-8");
-				feed = input.build(inputSource);
-				list = feed.getEntries();
-				for (SyndEntry e : list) {
-					try {
-						f = new Feed();
-						f.setTitle(e.getTitle());
-						doc = Jsoup.parse(e.getDescription().getValue());
-						f.setDesc(doc.text());
-						pubdate = e.getPublishedDate();
-						if (pubdate == null) {
-							f.setTime(new Date().getTime()); // set current date
-							// need to fetch whatever in the pubdate tag
-						} else {
-							f.setTime(pubdate.getTime());
-						}
-						f.setLink(e.getLink());
-						if (fe.type == 1) {
-							str = doc.getElementsByTag(TAG_IMG).get(0)
-									.attr(TAG_ATTR_SRC);
-							f.setImage(str.startsWith(DOUBLE_SLASH) ? (PROTOCOL + str)
-									: str);
-						}
-						feeds.add(f);
-					} catch (Exception ee) {
-						Utility.log(TAG, "skipped a entry " + ee);
-					}
-				}
-				dbh.fillFeed(feeds, fe.type);
-
-				return true;
-			} catch (Exception e) {
-				Utility.log("doInBackgroud", "" + e + e.getLocalizedMessage());
-				return false;
-			}
-
+			return null;
 		}
 
-		@Override
-		protected void onPostExecute(Boolean res) {
-			// setAdapter();
-			if (res) {
-				Utility.log("onPostExecute", "done downloading and processing");
-				updateAdapter();
-
-			} else {
-				Utility.log("onPostExecute", "error downloading or processing");
-			}
-			stopRefresh();
-		}
 	}
 
-	public void fetch(FeedInput feed) {
-		new ProcessFeed().execute(feed);
+	public void fetch() {
+		Bundle parameters = new Bundle();
+		parameters
+				.putString("fields",
+						"name,story,description,link,message,created_time,object_id,likes,picture");
+		GraphRequest request = new GraphRequest(
+				AccessToken.getCurrentAccessToken(), "/me/feed", parameters,
+				HttpMethod.GET, new GraphRequest.Callback() {
+
+					@Override
+					public void onCompleted(GraphResponse response) {
+						JSONArray data;
+						try {
+							data = response.getJSONObject()
+									.getJSONArray("data");
+						} catch (JSONException ex) {
+							data = new JSONArray();
+						}
+						// fill the data in db
+						int len = data.length();
+						JSONObject json_feed;
+						ArrayList<Feed> fb_feeds = new ArrayList<Feed>();
+						FacebookFeed fb_feed;
+						for (int i = 0; i < len; i++) {
+							try {
+								json_feed = data.getJSONObject(i);
+								fb_feed = new FacebookFeed();
+
+								fb_feed.setId(json_feed.getString("id"));
+								if (json_feed.has("story"))
+									fb_feed.setTitle(json_feed
+											.getString("story"));
+								else if (json_feed.has("name"))
+									fb_feed.setTitle(json_feed
+											.getString("name"));
+
+								if (json_feed.has("description"))
+									fb_feed.setDesc(json_feed
+											.getString("description"));
+
+								if (json_feed.has("message"))
+									fb_feed.setDesc(json_feed
+											.getString("message"));
+
+								if (json_feed.has("picture"))
+									fb_feed.setImage(json_feed
+											.getString("picture"));
+								if (json_feed.has("link"))
+									fb_feed.setLink(json_feed.getString("link"));
+								try {
+									if (json_feed.has("created_time")) {
+										SimpleDateFormat format = new SimpleDateFormat(
+												"yyyy-MM-dd'T'HH:mm:ssZ");
+										Date datetime = format.parse(json_feed
+												.getString("created_time"));
+										fb_feed.setTime(datetime.getTime());
+									}
+								} catch (ParseException e) {
+									fb_feed.setTime(new Date().getTime());
+									e.printStackTrace();
+								}
+
+								fb_feeds.add(fb_feed);
+							} catch (JSONException ex) {
+								json_feed = null;
+								Utility.log(TAG, ex.getLocalizedMessage());
+							}
+						}
+						new DbHelper(getActivity()).fillFeed(fb_feeds);
+						stopRefresh();
+						updateAdapter();
+
+					}
+				});
+		request.executeAsync();
 	}
 
 	@Override
