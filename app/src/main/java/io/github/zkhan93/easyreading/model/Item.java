@@ -5,6 +5,24 @@ package io.github.zkhan93.easyreading.model;
  */
 public class Item {
     private String title, image_url, desc;
+    private String id;
+    private long time;
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;

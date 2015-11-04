@@ -2,4 +2,6 @@
     <string name="app_name">Easy Reading</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="facebook_app_id">1703040656590544</string>
+
 </resources>

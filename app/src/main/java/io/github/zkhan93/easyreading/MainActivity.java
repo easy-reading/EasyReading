@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.FacebookSdk;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -58,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
                 .writeDebugLogs()
                 .build();
         ImageLoader.getInstance().init(config);
+        //Fb init
+        FacebookSdk.sdkInitialize(getApplicationContext());
     }
 
 

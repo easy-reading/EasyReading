@@ -17,12 +17,19 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.github.zkhan93.easyreading.adapters.ItemAdapter;
@@ -42,6 +49,12 @@ public class FragmentMain extends Fragment {
     public static String TAG = "FragmentMain";
     private RequestQueue reqQueue;
     private ItemAdapter itemAdapter;
+    private int myType;
+
+    private static interface FRAGMENT_TYPE {
+        int NEWS = 1;
+        int FB = 2;
+    }
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -58,6 +71,82 @@ public class FragmentMain extends Fragment {
     private void fillAdapter(List<Item> items) {
         if (itemAdapter != null)
             itemAdapter.addAll(items);
+    }
+
+    public void startFetchingFb() {
+        Bundle parameters = new Bundle();
+        parameters
+                .putString("fields",
+                        "name,story,description,link,message,created_time,object_id,likes,picture");
+        GraphRequest request = new GraphRequest(
+                AccessToken.getCurrentAccessToken(), "/me/feed", parameters,
+                HttpMethod.GET, new GraphRequest.Callback() {
+
+            @Override
+            public void onCompleted(GraphResponse response) {
+                JSONArray data;
+
+                try {
+                    data = response.getJSONObject()
+                            .getJSONArray("data");
+                } catch (JSONException ex) {
+                    data = new JSONArray();
+                }
+                // fill the data in db
+                int len = data.length();
+                JSONObject json_feed;
+                ArrayList<Item> fb_feeds = new ArrayList<Item>();
+                Item fb_feed;
+                for (int i = 0; i < len; i++) {
+                    try {
+                        json_feed = data.getJSONObject(i);
+                        fb_feed = new Item();
+
+                        fb_feed.setId(json_feed.getString("id"));
+                        if (json_feed.has("story"))
+                            fb_feed.setTitle(json_feed
+                                    .getString("story"));
+                        else if (json_feed.has("name"))
+                            fb_feed.setTitle(json_feed
+                                    .getString("name"));
+
+                        if (json_feed.has("description"))
+                            fb_feed.setDesc(json_feed
+                                    .getString("description"));
+
+                        if (json_feed.has("message"))
+                            fb_feed.setDesc(json_feed
+                                    .getString("message"));
+
+                        if (json_feed.has("picture"))
+                            fb_feed.setImage_url(json_feed
+                                    .getString("picture"));
+                        if (json_feed.has("link"))
+                            ;//fb_feed.setLink(json_feed.getString("link"));
+                        try {
+                            if (json_feed.has("created_time")) {
+                                SimpleDateFormat format = new SimpleDateFormat(
+                                        "yyyy-MM-dd'T'HH:mm:ssZ");
+
+                                fb_feed.setTime(format.parse(json_feed
+                                        .getString("created_time")).getTime());
+                            }
+                        } catch (ParseException e) {
+                            fb_feed.setTime(new Date().getTime());
+                            e.printStackTrace();
+                        }
+
+                        fb_feeds.add(fb_feed);
+                    } catch (JSONException ex) {
+                        json_feed = null;
+                        Log.d(TAG, ex.getLocalizedMessage());
+                    }
+                }
+                fillAdapter(fb_feeds);
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+        request.executeAsync();
     }
 
     public void startFetchingFeed() {
@@ -121,20 +210,18 @@ public class FragmentMain extends Fragment {
             @Override
             public void onRefresh() {
                 Toast.makeText(getContext(), "refresh", Toast.LENGTH_SHORT).show();
-                startFetchingFeed();
+                if (myType == FRAGMENT_TYPE.NEWS)
+                    startFetchingFeed();
+                else
+                    startFetchingFb();
 
             }
         });
 
         Bundle bundle = getArguments();
-        if (bundle.getInt(ARG_SECTION_NUMBER) == 1) {
-            itemAdapter = new ItemAdapter(new ArrayList<Item>(),getContext());
-        } else {
-            itemAdapter = new ItemAdapter(new ArrayList<Item>(),getContext());
-        }
+        myType = bundle.getInt(ARG_SECTION_NUMBER);
+        itemAdapter = new ItemAdapter(new ArrayList<Item>(), getContext());
         itemList.setAdapter(itemAdapter);
         return rootView;
     }
-
-
 }
