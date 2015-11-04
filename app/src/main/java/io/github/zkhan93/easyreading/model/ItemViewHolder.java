@@ -1,11 +1,14 @@
 package io.github.zkhan93.easyreading.model;
 
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 
 import io.github.zkhan93.easyreading.R;
 
@@ -42,6 +45,17 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         else
             itemDesc.setText("--N.A--");
         if (item.getImage_url() != null)
-            ImageLoader.getInstance().displayImage(item.getImage_url(), itemImage);
+            ImageLoader.getInstance().displayImage(item.getImage_url(), itemImage, new DisplayImageOptions.Builder()
+                    .showImageForEmptyUri(R.drawable.com_facebook_profile_picture_blank_square)
+                    .showImageOnFail(R.drawable.com_facebook_profile_picture_blank_square)
+                    .bitmapConfig(Bitmap.Config.ARGB_8888)
+                    .imageScaleType(ImageScaleType.EXACTLY_STRETCHED)
+                    .showImageOnLoading(R.drawable.com_facebook_profile_picture_blank_square)
+                    .cacheInMemory(true)
+                    .build());
+    }
+
+    public ImageView getItemImage() {
+        return itemImage;
     }
 }

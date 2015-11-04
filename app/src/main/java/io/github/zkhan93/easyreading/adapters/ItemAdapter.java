@@ -1,10 +1,12 @@
 package io.github.zkhan93.easyreading.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.github.zkhan93.easyreading.R;
@@ -16,9 +18,11 @@ import io.github.zkhan93.easyreading.model.ItemViewHolder;
  */
 public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Item> itemList;
+    private Context context;
 
-    public ItemAdapter(List<Item> itemList) {
+    public ItemAdapter(List<Item> itemList, Context context) {
         this.itemList = itemList;
+        this.context = context;
     }
 
     @Override
@@ -30,6 +34,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         ItemViewHolder holder = (ItemViewHolder) viewHolder;
+        holder.getItemImage().setImageDrawable(context.getResources().getDrawable(R.drawable.com_facebook_profile_picture_blank_square));
         holder.setItem(itemList.get(position));
     }
 
@@ -38,4 +43,10 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return itemList == null ? 0 : itemList.size();
     }
 
+    public void addAll(List<Item> items) {
+        if (itemList == null)
+            itemList = new ArrayList<>();
+        itemList.addAll(items);
+        notifyDataSetChanged();
+    }
 }

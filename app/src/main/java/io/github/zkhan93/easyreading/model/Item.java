@@ -29,4 +29,13 @@ public class Item {
     public void setDesc(String desc) {
         this.desc = desc;
     }
+
+    @Override
+    public String toString() {
+        return "Item{" +
+                "title='" + title + '\'' +
+                ", image_url='" + image_url + '\'' +
+                ", desc='" + desc + '\'' +
+                '}';
+    }
 }
