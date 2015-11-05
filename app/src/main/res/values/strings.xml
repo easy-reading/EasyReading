@@ -4,4 +4,10 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="facebook_app_id">1703040656590544</string>
 
+    <string name="toast_msg_newsfeedok">Loading News feeds</string>
+    <string name="toast_msg_fbfeedok">Loading Facebook feeds</string>
+    <string name="toast_no_internet">No Internet</string>
+    <string name="toast_msg_wait">Wait for last operation to complete</string>
+
+
 </resources>

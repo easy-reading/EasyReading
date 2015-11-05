@@ -4,7 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import io.github.zkhan93.easyreading.FragmentMain;
+import io.github.zkhan93.easyreading.FragmentFacebook;
+import io.github.zkhan93.easyreading.FragmentNews;
 
 /**
  * Created by Zeeshan Khan on 10/28/2015.
@@ -19,8 +20,10 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         // getItem is called to instantiate the fragment for the given page.
-        // Return a PlaceholderFragment (defined as a static inner class below).
-        return FragmentMain.newInstance(position + 1);
+        if(position== 0)
+            return new FragmentNews();
+        else
+            return new FragmentFacebook();
     }
 
     @Override
