@@ -36,6 +36,7 @@ import android.os.PowerManager.WakeLock;
 import android.support.v4.app.NotificationCompat;
 
 import com.facebook.AccessToken;
+import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
@@ -73,6 +74,8 @@ public class NewsService extends Service {
 		}
 
 		// handle intent
+		if (!FacebookSdk.isInitialized())
+			FacebookSdk.sdkInitialize(getApplicationContext());
 		if (isFacebookLoggedIn()) {
 			Bundle parameters = new Bundle();
 			parameters
@@ -181,7 +184,7 @@ public class NewsService extends Service {
 				NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
 				inboxStyle.setBigContentTitle(getString(R.string.app_name));
 				for (Feed feed : result) {
-					if(feed.getTitle().trim().length()>0)
+					if (feed.getTitle().trim().length() > 0)
 						inboxStyle.addLine(feed.getTitle());
 				}
 				inboxStyle.setSummaryText("New facebook updates");
