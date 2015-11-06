@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -103,6 +104,10 @@ public abstract class FragmentMain extends Fragment implements SwipeRefreshLayou
             swipeRefreshLayout.setRefreshing(false);
         } else
             Log.d(TAG, "refreshlayout is null");
+    }
+
+    protected void showMsg(String msg) {
+        Snackbar.make(swipeRefreshLayout, msg, Snackbar.LENGTH_SHORT).show();
     }
 
     public abstract void startFetchingFeed();

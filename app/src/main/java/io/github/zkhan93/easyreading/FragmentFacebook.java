@@ -1,13 +1,22 @@
 package io.github.zkhan93.easyreading;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.HttpMethod;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,9 +32,38 @@ import io.github.zkhan93.easyreading.model.Item;
 /**
  * Created by Zeeshan Khan on 10/28/2015.
  */
-public class FragmentFacebook extends FragmentMain{
+public class FragmentFacebook extends FragmentMain {
 
     public static String TAG = "FragmentFacebook";
+    ArrayList<String> permissions;
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        callbackManager = CallbackManager.Factory.create();
+        permissions = new ArrayList<String>();
+        permissions.add("user_posts");
+        permissions.add("user_actions.news");
+
+        LoginManager.getInstance().registerCallback(callbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        Log.d(TAG, loginResult.toString());
+                        Log.d(TAG, "login done");
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        Log.d(TAG, "cancled");
+                    }
+
+                    @Override
+                    public void onError(FacebookException exception) {
+                        Log.d(TAG, "error->" + exception.getLocalizedMessage() + "");
+                    }
+                });
+        return  super.onCreateView(inflater, container, savedInstanceState);
+    }
 
     public void startFetchingFeed() {
         if (AccessToken.getCurrentAccessToken() != null) {
@@ -104,9 +142,26 @@ public class FragmentFacebook extends FragmentMain{
             });
             request.executeAsync();
         } else {
-            Toast.makeText(getContext(), "login to facebook", Toast.LENGTH_SHORT).show();
+
+            Snackbar.make(swipeRefreshLayout, "Login to facebook", Snackbar.LENGTH_LONG)
+                    .setAction("Login", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            LoginManager.getInstance().logInWithReadPermissions(FragmentFacebook.this, permissions);
+                        }
+                    }).show();
             stopRefresh();
         }
+    }
+
+
+    CallbackManager callbackManager;
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivity result" + data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     public FragmentFacebook() {

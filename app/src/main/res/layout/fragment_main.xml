@@ -27,7 +27,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="no_feeds_msg"
+                    android:text="@string/msg_no_feed"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="#000" />
                 <!-- android:background="@drawable/side_top_shade" -->

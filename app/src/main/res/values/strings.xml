@@ -9,5 +9,6 @@
     <string name="toast_no_internet">No Internet</string>
     <string name="toast_msg_wait">Wait for last operation to complete</string>
 
-
+    <string name="msg_no_feed">No feeds</string>
+    <string name="title_activity_facebook_login">FacebookLoginActivity</string>
 </resources>
