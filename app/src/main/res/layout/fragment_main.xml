@@ -35,7 +35,7 @@
         </android.support.v7.widget.CardView>
     </ScrollView>
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <io.github.zkhan93.easyreading.model.MySwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -45,6 +45,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:listitem="@layout/item" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </io.github.zkhan93.easyreading.model.MySwipeRefreshLayout>
 
 </RelativeLayout>
