@@ -175,7 +175,7 @@ public class FragmentFacebook extends Fragment implements SwipeRefreshLayout.OnR
      */
     @Override
     public void onRefresh() {
-
+        swipeRefreshLayout.setEnabled(false);
         String msg=null;
         if (!updating) {
             updating = true;
@@ -206,6 +206,7 @@ public class FragmentFacebook extends Fragment implements SwipeRefreshLayout.OnR
             Log.d(TAG, "refreshlayout is null");
 
         updating = false;
+        swipeRefreshLayout.setEnabled(true);
     }
 
 }

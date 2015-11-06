@@ -104,10 +104,10 @@ public class FragmentNews extends Fragment implements SwipeRefreshLayout.OnRefre
     public FragmentNews() {
     }
 
-    public void emptyListCheck(){
-        if(itemAdapter==null || itemAdapter.getItemCount()==0){
+    public void emptyListCheck() {
+        if (itemAdapter == null || itemAdapter.getItemCount() == 0) {
             emptyView.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             emptyView.setVisibility(View.GONE);
         }
     }
@@ -142,7 +142,8 @@ public class FragmentNews extends Fragment implements SwipeRefreshLayout.OnRefre
      */
     @Override
     public void onRefresh() {
-        String msg=null;
+        swipeRefreshLayout.setEnabled(false);
+        String msg = null;
         if (!updating) {
             updating = true;
             ConnectivityManager cm = (ConnectivityManager) getActivity()
@@ -171,5 +172,6 @@ public class FragmentNews extends Fragment implements SwipeRefreshLayout.OnRefre
             Log.d(TAG, "refreshlayout is null");
 
         updating = false;
+        swipeRefreshLayout.setEnabled(true);
     }
 }
