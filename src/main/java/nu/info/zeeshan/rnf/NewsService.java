@@ -1,50 +1,17 @@
 package nu.info.zeeshan.rnf;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import nu.info.zeeshan.rnf.dao.DbHelper;
-import nu.info.zeeshan.rnf.utility.FacebookFeed;
-import nu.info.zeeshan.rnf.utility.Feed;
-import nu.info.zeeshan.rnf.utility.Utility;
-import nu.info.zeeshan.rnf.utility.Utility.FeedInput;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.xml.sax.InputSource;
-
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.media.RingtoneManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.IBinder;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
-import android.support.v4.app.NotificationCompat;
-
-import com.facebook.AccessToken;
-import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
-import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndEntry;
-import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndFeed;
-import com.google.code.rome.android.repackaged.com.sun.syndication.io.SyndFeedInput;
+import android.support.annotation.Nullable;
 
 public class NewsService extends Service {
+	@Nullable
+	@Override
+	public IBinder onBind(Intent intent) {
+		return null;
+	}
+	/*
 	private WakeLock wakelock;
 	private static String TAG = "nu.info.zeeshan.rnf.NewsService";
 	private static String PROTOCOL = "http:";
@@ -322,4 +289,5 @@ public class NewsService extends Service {
 			stopSelf();
 		}
 	}
+	*/
 }

@@ -1,6 +1,6 @@
 package nu.info.zeeshan.rnf;
 
-import nu.info.zeeshan.rnf.utility.Constants;
+
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+
+import nu.info.zeeshan.rnf.util.Constants;
 
 public class BootReceiver extends BroadcastReceiver {
 

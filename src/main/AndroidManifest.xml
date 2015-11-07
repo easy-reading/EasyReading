@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="nu.info.zeeshan.rnf"
-    >
+    package="nu.info.zeeshan.rnf" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -33,6 +32,24 @@
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
+        <activity
+            android:name=".SecondaryActivity"
+            android:label="@string/title_activity_secondary"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="nu.info.zeeshan.rnf.MainActivity" />
+        </activity>
+        <activity
+            android:name=".SettingActivity"
+            android:label="@string/title_activity_setting"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="nu.info.zeeshan.rnf.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

@@ -1,5 +1,6 @@
 package nu.info.zeeshan.rnf;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -17,7 +18,6 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import nu.info.zeeshan.rnf.adapters.SectionsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
-
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -80,9 +79,17 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingActivity.class);
+
+            startActivity(intent);
             return true;
         }
+        if (id == R.id.action_about) {
+            Intent intent = new Intent(this, SecondaryActivity.class);
 
+            startActivity(intent);
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 }
