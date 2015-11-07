@@ -1,4 +1,4 @@
-package io.github.zkhan93.easyreading;
+package nu.info.zeeshan.rnf;
 
 import android.text.Html;
 import android.util.Log;
@@ -16,8 +16,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.zkhan93.easyreading.model.Item;
-import io.github.zkhan93.easyreading.util.Constants;
+import nu.info.zeeshan.rnf.model.Item;
+import nu.info.zeeshan.rnf.util.Constants;
 
 /**
  * Created by Zeeshan Khan on 10/28/2015.

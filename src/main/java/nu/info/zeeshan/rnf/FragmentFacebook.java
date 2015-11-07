@@ -1,4 +1,4 @@
-package io.github.zkhan93.easyreading;
+package nu.info.zeeshan.rnf;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,7 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import io.github.zkhan93.easyreading.model.Item;
+import nu.info.zeeshan.rnf.model.Item;
 
 /**
  * Created by Zeeshan Khan on 10/28/2015.

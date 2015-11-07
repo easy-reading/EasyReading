@@ -1,4 +1,4 @@
-package io.github.zkhan93.easyreading.adapters;
+package nu.info.zeeshan.rnf.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.zkhan93.easyreading.R;
-import io.github.zkhan93.easyreading.model.Item;
-import io.github.zkhan93.easyreading.model.ItemViewHolder;
+import nu.info.zeeshan.rnf.R;
+import nu.info.zeeshan.rnf.model.Item;
+import nu.info.zeeshan.rnf.model.ItemViewHolder;
 
 /**
  * Created by Zeeshan Khan on 10/29/2015.

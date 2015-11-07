@@ -1,4 +1,4 @@
-package io.github.zkhan93.easyreading;
+package nu.info.zeeshan.rnf;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -19,9 +19,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.zkhan93.easyreading.adapters.ItemAdapter;
-import io.github.zkhan93.easyreading.model.Item;
-import io.github.zkhan93.easyreading.model.MySwipeRefreshLayout;
+import nu.info.zeeshan.rnf.adapters.ItemAdapter;
+import nu.info.zeeshan.rnf.model.Item;
+import nu.info.zeeshan.rnf.model.MySwipeRefreshLayout;
 
 /**
  * Created by Zeeshan Khan on 10/28/2015.

@@ -1,4 +1,4 @@
-package io.github.zkhan93.easyreading.model;
+package nu.info.zeeshan.rnf.model;
 
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;

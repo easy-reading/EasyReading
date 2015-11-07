@@ -1,11 +1,11 @@
-package io.github.zkhan93.easyreading.adapters;
+package nu.info.zeeshan.rnf.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import io.github.zkhan93.easyreading.FragmentFacebook;
-import io.github.zkhan93.easyreading.FragmentNews;
+import nu.info.zeeshan.rnf.FragmentFacebook;
+import nu.info.zeeshan.rnf.FragmentNews;
 
 /**
  * Created by Zeeshan Khan on 10/28/2015.

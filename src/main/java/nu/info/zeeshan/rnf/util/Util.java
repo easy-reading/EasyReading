@@ -1,4 +1,4 @@
-package io.github.zkhan93.easyreading.util;
+package nu.info.zeeshan.rnf.util;
 
 /**
  * Created by Zeeshan Khan on 11/6/2015.

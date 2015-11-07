@@ -1,4 +1,4 @@
-package io.github.zkhan93.easyreading.model;
+package nu.info.zeeshan.rnf.model;
 
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
@@ -10,7 +10,8 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 
-import io.github.zkhan93.easyreading.R;
+import nu.info.zeeshan.rnf.R;
+
 
 /**
  * Created by Zeeshan Khan on 10/29/2015.

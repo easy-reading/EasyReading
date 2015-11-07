@@ -1,4 +1,4 @@
-package io.github.zkhan93.easyreading;
+package nu.info.zeeshan.rnf;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -14,7 +14,7 @@ import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
-import io.github.zkhan93.easyreading.adapters.SectionsPagerAdapter;
+import nu.info.zeeshan.rnf.adapters.SectionsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 

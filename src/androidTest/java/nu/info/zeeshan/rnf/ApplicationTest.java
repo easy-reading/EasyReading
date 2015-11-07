@@ -1,4 +1,4 @@
-package io.github.zkhan93.easyreading;
+package nu.info.zeeshan.rnf;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
