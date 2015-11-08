@@ -1,34 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    android:title="@string/action_settings" >
-
-    
-    <PreferenceCategory
-        android:key="pref_key_storage_settings"
-        android:title="@string/pref_cat_news" >
-        <EditTextPreference
-            android:inputType="textUri"
-            android:key="@string/pref_newsrss"
-            android:summary="@string/news_summary"
-            android:title="@string/news_title" >
-        </EditTextPreference>
-    </PreferenceCategory>
-    <PreferenceCategory
-        android:key="pref_key_storage_settings"
-        android:title="@string/pref_cat_general" >
-        <EditTextPreference
-            
-            android:inputType="number"
-            android:key="@string/pref_limit"
-            android:summary="@string/limit_summary"
-            android:title="@string/limit_title" >
-        </EditTextPreference>
-        <EditTextPreference
-            android:inputType="number"
-            android:key="@string/pref_update_interval"
-            android:summary="@string/update_interval_summary"
-            android:title="@string/update_interval_title" >
-        </EditTextPreference>
-    </PreferenceCategory>
-
+    android:title="@string/action_settings">
+    <MultiSelectListPreference
+        android:entries="@array/pref_news_keywords"
+        android:entryValues="@array/pref_news_keywords_values"
+        android:summary="@string/news_summary"
+        android:title="@string/news_title"></MultiSelectListPreference>
+    <EditTextPreference
+        android:inputType="number"
+        android:key="@string/pref_limit"
+        android:summary="@string/limit_summary"
+        android:title="@string/limit_title"></EditTextPreference>
+    <EditTextPreference
+        android:inputType="number"
+        android:key="@string/pref_update_interval"
+        android:summary="@string/update_interval_summary"
+        android:title="@string/update_interval_title"></EditTextPreference>
 </PreferenceScreen>

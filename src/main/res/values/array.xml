@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="pref_news_keywords">
+        <item>All</item>
+        <item>India</item>
+        <item>Entertainment</item>
+        <item>Science</item>
+        <item>Political</item>
+        <item>Sports</item>
+    </string-array>
+    <string-array name="pref_news_keywords_values">
+        <item>all</item>
+        <item>india</item>
+        <item>entertainment</item>
+        <item>science</item>
+        <item>political</item>
+        <item>sports</item>
+    </string-array>
+</resources>
