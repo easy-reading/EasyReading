@@ -49,32 +49,23 @@ public class DbHelper extends SQLiteOpenHelper {
 		c.close();
 		return res;
 	}
-
-	public void fillFeed(ArrayList<Feed> feeds) {
+*/
+	public void fillFeed(ArrayList<Item> feeds) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues values;
 		int fbfeeds = 0;
-		int newsfeeds = 0;
 		for (Feed f : feeds) {
 			values = new ContentValues();
+			values.put(DbStructure.FeedTable._ID,f.getId());
 			values.put(DbStructure.FeedTable.COLUMN_TITLE, f.getTitle());
 			values.put(DbStructure.FeedTable.COLUMN_TEXT, f.getDesc());
 			values.put(DbStructure.FeedTable.COLUMN_TIME, f.getTime());
-			values.put(DbStructure.FeedTable.COLUMN_LINK, f.getLink());
-			values.put(DbStructure.FeedTable.COLUMN_IMAGE, f.getImage());
-			if (f instanceof FacebookFeed) {
-				values.put(DbStructure.FeedTable._ID,
-						((FacebookFeed) f).getId());
-				db.insert(DbStructure.FacebookFeedTable.TABLE_NAME, null,
+			values.put(DbStructure.FeedTable.COLUMN_IMAGE, f.getImage_url());
+			db.insert(DbStructure.FacebookFeedTable.TABLE_NAME, null,
 						values);
-				fbfeeds++;
-			} else {
-				db.insert(DbStructure.NewsFeedTable.TABLE_NAME, null, values);
-				newsfeeds++;
-			}
+			fbfeeds++;
 		}
-		Utility.log(TAG, feeds.size() + " new feeds inserted, facebook:"
-				+ fbfeeds + ", news:" + newsfeeds);
+		Utility.log(TAG, feeds.size() + " new feeds inserted, facebook:"+ fbfeeds);
 	}
-	*/
+	
 }

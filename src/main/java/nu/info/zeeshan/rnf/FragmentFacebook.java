@@ -167,4 +167,9 @@ public class FragmentFacebook extends FragmentMain {
     public FragmentFacebook() {
     }
 
+    @override
+    protected void fillAdapter(List<Item> items) {
+        super.fillAdapter(items);
+        new DbHelper(getActivity()).fillFeed(items);
+    }
 }
