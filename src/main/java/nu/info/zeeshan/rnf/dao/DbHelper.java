@@ -1,8 +1,14 @@
 package nu.info.zeeshan.rnf.dao;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import java.util.List;
+
+import nu.info.zeeshan.rnf.model.Item;
 
 public class DbHelper extends SQLiteOpenHelper {
 
@@ -50,11 +56,11 @@ public class DbHelper extends SQLiteOpenHelper {
 		return res;
 	}
 */
-	public void fillFeed(ArrayList<Item> feeds) {
+	public void fillFacebookFeed(List<Item> feeds) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues values;
 		int fbfeeds = 0;
-		for (Feed f : feeds) {
+		for (Item f : feeds) {
 			values = new ContentValues();
 			values.put(DbStructure.FeedTable._ID,f.getId());
 			values.put(DbStructure.FeedTable.COLUMN_TITLE, f.getTitle());
@@ -65,7 +71,25 @@ public class DbHelper extends SQLiteOpenHelper {
 						values);
 			fbfeeds++;
 		}
-		Utility.log(TAG, feeds.size() + " new feeds inserted, facebook:"+ fbfeeds);
+		Log.d(TAG, feeds.size() + " facebook feeds inserted" + fbfeeds);
 	}
-	
+
+	public void fillNewsFeed(List<Item> feeds) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		ContentValues values;
+		int fbfeeds = 0;
+		for (Item f : feeds) {
+			values = new ContentValues();
+			values.put(DbStructure.FeedTable._ID,f.getId());
+			values.put(DbStructure.FeedTable.COLUMN_TITLE, f.getTitle());
+			values.put(DbStructure.FeedTable.COLUMN_TEXT, f.getDesc());
+			values.put(DbStructure.FeedTable.COLUMN_TIME, f.getTime());
+            values.put(DbStructure.FeedTable.COLUMN_LINK, f.getLink());
+			values.put(DbStructure.FeedTable.COLUMN_IMAGE, f.getImage_url());
+			db.insert(DbStructure.NewsFeedTable.TABLE_NAME, null,
+					values);
+			fbfeeds++;
+		}
+		Log.d(TAG, feeds.size() + " news feeds inserted" + fbfeeds);
+	}
 }

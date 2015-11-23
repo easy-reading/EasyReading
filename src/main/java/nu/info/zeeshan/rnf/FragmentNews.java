@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import nu.info.zeeshan.rnf.dao.DbHelper;
 import nu.info.zeeshan.rnf.model.Item;
 import nu.info.zeeshan.rnf.util.Constants;
 
@@ -45,9 +46,12 @@ public class FragmentNews extends FragmentMain {
                         item.setDesc(Html.fromHtml(jobj.optString("content")).toString());
                         if (jobj.has("image"))
                             item.setImage_url(jobj.optJSONObject("image").optString("tbUrl"));
+                        Log.d(TAG,"whole: "+jobj.toString());
+                        Log.d(TAG, "date: " + jobj.optString("publishedDate"));
+                        item.setLink(jobj.optString("link"));
+                        //item.setTime(Date.valueOf(jobj.optString("publishedDate")));
                         feeds.add(item);
                     }
-
                 } catch (JSONException ex) {
                     Log.d(TAG, "exp in response parsing" + ex.getLocalizedMessage());
                 }
@@ -75,5 +79,9 @@ public class FragmentNews extends FragmentMain {
 
     public FragmentNews() {
     }
-
+    @Override
+    protected void fillAdapter(List<Item> items) {
+        super.fillAdapter(items);
+        new DbHelper(getActivity()).fillNewsFeed(items);
+    }
 }

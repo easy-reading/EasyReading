@@ -26,7 +26,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import nu.info.zeeshan.rnf.dao.DbHelper;
 import nu.info.zeeshan.rnf.model.Item;
 
 /**
@@ -167,9 +169,9 @@ public class FragmentFacebook extends FragmentMain {
     public FragmentFacebook() {
     }
 
-    @override
+    @Override
     protected void fillAdapter(List<Item> items) {
         super.fillAdapter(items);
-        new DbHelper(getActivity()).fillFeed(items);
+        new DbHelper(getActivity()).fillFacebookFeed(items);
     }
 }
