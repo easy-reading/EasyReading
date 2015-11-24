@@ -3,7 +3,7 @@ package nu.info.zeeshan.rnf.model;
 /**
  * Created by Zeeshan Khan on 10/29/2015.
  */
-public class Item {
+public abstract class Item {
     private String title, image_url, desc;
     private String id;
     private long time;

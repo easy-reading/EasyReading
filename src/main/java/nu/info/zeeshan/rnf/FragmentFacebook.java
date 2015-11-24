@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 
 import nu.info.zeeshan.rnf.dao.DbHelper;
+import nu.info.zeeshan.rnf.model.FacebookItem;
 import nu.info.zeeshan.rnf.model.Item;
 
 /**
@@ -91,11 +92,11 @@ public class FragmentFacebook extends FragmentMain {
                     int len = data.length();
                     JSONObject json_feed;
                     ArrayList<Item> fb_feeds = new ArrayList<Item>();
-                    Item fb_feed;
+                    FacebookItem fb_feed;
                     for (int i = 0; i < len; i++) {
                         try {
                             json_feed = data.getJSONObject(i);
-                            fb_feed = new Item();
+                            fb_feed = new FacebookItem();
 
                             fb_feed.setId(json_feed.getString("id"));
                             if (json_feed.has("story"))
@@ -116,8 +117,7 @@ public class FragmentFacebook extends FragmentMain {
                             if (json_feed.has("picture"))
                                 fb_feed.setImage_url(json_feed
                                         .getString("picture"));
-                            if (json_feed.has("link"))
-                                ;//fb_feed.setLink(json_feed.getString("link"));
+                            fb_feed.setLink(json_feed.optString("link"));
                             try {
                                 if (json_feed.has("created_time")) {
                                     SimpleDateFormat format = new SimpleDateFormat(
@@ -129,6 +129,11 @@ public class FragmentFacebook extends FragmentMain {
                             } catch (ParseException e) {
                                 fb_feed.setTime(new Date().getTime());
                                 e.printStackTrace();
+                            }
+                            JSONObject tmp=json_feed.optJSONObject("likes");
+                            if(tmp!=null) {
+                                JSONArray likes=tmp.optJSONArray("data");
+                                fb_feed.setLikes(likes.length());
                             }
 
                             fb_feeds.add(fb_feed);
@@ -171,7 +176,12 @@ public class FragmentFacebook extends FragmentMain {
 
     @Override
     protected void fillAdapter(List<Item> items) {
-        super.fillAdapter(items);
-        new DbHelper(getActivity()).fillFacebookFeed(items);
+        DbHelper dbh=new DbHelper(getActivity());
+        List<FacebookItem> fbItems=new ArrayList<FacebookItem>();
+        for(Item i:items){
+            fbItems.add((FacebookItem)i);
+        }
+        dbh.fillFacebookFeed(fbItems);
+        super.fillAdapter(dbh.getFacebookFeeds(false));
     }
 }

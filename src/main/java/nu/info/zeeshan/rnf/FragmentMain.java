@@ -38,7 +38,6 @@ public abstract class FragmentMain extends Fragment implements SwipeRefreshLayou
     protected void fillAdapter(List<Item> items) {
         if (itemAdapter != null){
             itemAdapter.addAll(items);
-            
         }
     }
 

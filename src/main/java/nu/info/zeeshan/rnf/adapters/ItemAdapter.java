@@ -46,6 +46,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void addAll(List<Item> items) {
         if (itemList == null)
             itemList = new ArrayList<>();
+        itemList.clear();
         itemList.addAll(items);
         notifyDataSetChanged();
     }
