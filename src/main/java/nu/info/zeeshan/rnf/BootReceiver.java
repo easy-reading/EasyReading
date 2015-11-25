@@ -17,12 +17,16 @@ public class BootReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		// get setting
-		boolean DEBUG = false;
+		boolean DEBUG = true;
 		SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(context);
-		int minutes = DEBUG ? 0 : Integer.parseInt(prefs.getString(
-				context.getString(R.string.pref_update_interval),
-				Constants.DEFAULT_UPDATE_INTERVAL_IN_HOURS)) * 60;
+		int updateInterval;
+		try{
+			updateInterval=Integer.parseInt(prefs.getString(context.getString(R.string.pref_update_interval),Constants.DEFAULT_UPDATE_INTERVAL_IN_HOURS));
+		}catch(Exception ex){
+			updateInterval=Integer.parseInt(Constants.DEFAULT_UPDATE_INTERVAL_IN_HOURS);
+		}
+		int minutes = DEBUG ? 1 : updateInterval * 60;
 		AlarmManager am = (AlarmManager) context
 				.getSystemService(Context.ALARM_SERVICE);
 		Intent intent_ = new Intent(context, NewsService.class);

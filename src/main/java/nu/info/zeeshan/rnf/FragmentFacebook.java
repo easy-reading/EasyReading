@@ -33,6 +33,7 @@ import nu.info.zeeshan.rnf.dao.DbHelper;
 import nu.info.zeeshan.rnf.model.FacebookItem;
 import nu.info.zeeshan.rnf.model.Item;
 import nu.info.zeeshan.rnf.util.Constants;
+import nu.info.zeeshan.rnf.util.Util;
 
 /**
  * Created by Zeeshan Khan on 10/28/2015.
@@ -176,6 +177,7 @@ public class FragmentFacebook extends FragmentMain {
 
     @Override
     protected void fillAdapter(List<Item> items) {
+        Util.fillDb(getActivity().getApplicationContext(),items);
         DbHelper dbh = new DbHelper(getActivity());
         if(items!=null && items.size()>0) {
             List<FacebookItem> fbItems = new ArrayList<FacebookItem>();

@@ -83,6 +83,8 @@ public class DbHelper extends SQLiteOpenHelper {
 				feeds.add(item);
 			}while(c.moveToNext());
 		}
+		if(db!=null)
+			db.close();
 		return feeds;
 	}
 	public void fillFacebookFeed(List<FacebookItem> feeds) {
@@ -102,6 +104,8 @@ public class DbHelper extends SQLiteOpenHelper {
 						values,SQLiteDatabase.CONFLICT_REPLACE);
 			fbfeeds++;
 		}
+		if(db!=null)
+			db.close();
 		Log.d(TAG, feeds.size() + " facebook feeds inserted" + fbfeeds);
 	}
 	public List<Item> getNewsFeeds(boolean latestOnly){
@@ -127,6 +131,8 @@ public class DbHelper extends SQLiteOpenHelper {
 				feeds.add(item);
 			}while(c.moveToNext());
 		}
+		if(db!=null)
+			db.close();
 		return feeds;
 	}
 	public void fillNewsFeed(List<NewsItem> feeds) {
@@ -147,5 +153,7 @@ public class DbHelper extends SQLiteOpenHelper {
 			fbfeeds++;
 		}
 		Log.d(TAG, feeds.size() + " news feeds inserted" + fbfeeds);
+		if(db!=null)
+			db.close();
 	}
 }

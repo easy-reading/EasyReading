@@ -23,10 +23,7 @@ public class FragmentSetting extends PreferenceFragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // setContentView(R.layout.activity_settings);
         addPreferencesFromResource(R.xml.activity_settings);
-        // getSupportedFragmentManager().beginTransaction().replace(R.id.setting_fragment_holder,new
-        // FragmentSettings()).commit();
     }
 
     @Override

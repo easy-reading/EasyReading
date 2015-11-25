@@ -1,293 +1,297 @@
 package nu.info.zeeshan.rnf;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.RingtoneManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
+import android.os.PowerManager;
+import android.support.v4.app.NotificationCompat;
+import android.text.Html;
+import android.util.Log;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.facebook.AccessToken;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.HttpMethod;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import nu.info.zeeshan.rnf.model.FacebookItem;
+import nu.info.zeeshan.rnf.model.Item;
+import nu.info.zeeshan.rnf.model.NewsItem;
+import nu.info.zeeshan.rnf.util.Constants;
+import nu.info.zeeshan.rnf.util.Util;
 
 public class NewsService extends Service {
-	@Nullable
-	@Override
-	public IBinder onBind(Intent intent) {
-		return null;
-	}
-	/*
-	private WakeLock wakelock;
-	private static String TAG = "nu.info.zeeshan.rnf.NewsService";
-	private static String PROTOCOL = "http:";
-	private static String TAG_ATTR_SRC = "src";
-	private static String TAG_IMG = "img";
-	private static String DOUBLE_SLASH = "//";
-	private static String NEW_LINE = "\n";
-	private static int NEWS_NOTIFICATION_ID = 0;
-	private static int FB_NOTIFICATION_ID = 1;
 
-	@Override
-	public IBinder onBind(Intent arg0) {
-		return null;
-	}
+    private PowerManager.WakeLock wakelock;
+    private static String TAG = "nu.info.zeeshan.rnf.NewsService";
+    private static int EASY_READING_NOTIFICATION_ID = 0;
+    private List<Item> summaryItems=new ArrayList<Item>();
 
-	private void handleIntent(Intent intent) {
-		PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-		wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
-		wakelock.acquire();
-		Utility.log(TAG, "m on work :D");
-		ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-		NetworkInfo ni = cm.getActiveNetworkInfo();
-		if (ni == null || !ni.isConnected()) {
-			Utility.log(TAG, "I am a service but you have no internet");
-			stopSelf();
-			return;
-		}
+    @Override
+    public IBinder onBind(Intent arg0) {
+        return null;
+    }
 
-		// handle intent
-		if (!FacebookSdk.isInitialized())
-			FacebookSdk.sdkInitialize(getApplicationContext());
-		if (isFacebookLoggedIn()) {
-			Bundle parameters = new Bundle();
-			parameters
-					.putString("fields",
-							"name,story,description,link,message,created_time,object_id,likes,picture");
-			GraphRequest request = new GraphRequest(
-					AccessToken.getCurrentAccessToken(), "/me/feed",
-					parameters, HttpMethod.GET, new GraphRequest.Callback() {
+    private void handleIntent(Intent intent) {
+        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+        wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
+        wakelock.acquire();
+        Log.d(TAG, "m on work :D");
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+        if (ni == null || !ni.isConnected()) {
+            Log.d(TAG, "I am a service but you have no internet");
+            stopSelf();
+            return;
+        }
+        // handle intent
+        fetchFacebookFeeds();
+        fetchNewsFeeds();
+    }
 
-						@Override
-						public void onCompleted(GraphResponse response) {
-							JSONArray data;
-							try {
-								data = response.getJSONObject().getJSONArray(
-										"data");
-							} catch (JSONException ex) {
-								data = new JSONArray();
-							}
-							// fill the data in db
-							int len = data.length();
-							JSONObject json_feed;
-							ArrayList<Feed> fb_feeds = new ArrayList<Feed>();
-							FacebookFeed fb_feed;
-							for (int i = 0; i < len; i++) {
-								try {
-									json_feed = data.getJSONObject(i);
-									fb_feed = new FacebookFeed();
+    public void fetchFacebookFeeds() {
+        if (!FacebookSdk.isInitialized())
+            FacebookSdk.sdkInitialize(getApplicationContext());
+        if (isFacebookLoggedIn()) {
+            if (AccessToken.getCurrentAccessToken() != null) {
+                Bundle parameters = new Bundle();
+                parameters
+                        .putString("fields",
+                                Constants.FacebookFeed.PARAMS);
+                GraphRequest request = new GraphRequest(
+                        AccessToken.getCurrentAccessToken(), Constants.FacebookFeed.NODE, parameters,
+                        HttpMethod.GET, new GraphRequest.Callback() {
 
-									fb_feed.setId(json_feed.getString("id"));
-									if (json_feed.has("story"))
-										fb_feed.setTitle(json_feed
-												.getString("story"));
-									else if (json_feed.has("name"))
-										fb_feed.setTitle(json_feed
-												.getString("name"));
+                    @Override
+                    public void onCompleted(GraphResponse response) {
+                        JSONArray data;
 
-									if (json_feed.has("description"))
-										fb_feed.setDesc(json_feed
-												.getString("description"));
+                        try {
+                            data = response.getJSONObject()
+                                    .getJSONArray("data");
+                        } catch (JSONException ex) {
+                            data = new JSONArray();
+                        }
+                        // fill the data in db
+                        int len = data.length();
+                        JSONObject json_feed;
+                        ArrayList<Item> fb_feeds = new ArrayList<Item>();
+                        FacebookItem fb_feed;
+                        for (int i = 0; i < len; i++) {
+                            try {
+                                json_feed = data.getJSONObject(i);
+                                fb_feed = new FacebookItem();
+                                fb_feed.setId(json_feed.getString("id"));
 
-									if (json_feed.has("message"))
-										fb_feed.setDesc(json_feed
-												.getString("message"));
+                                if (json_feed.has("story"))
+                                    fb_feed.setTitle(json_feed
+                                            .getString("story"));
 
-									if (json_feed.has("picture"))
-										fb_feed.setImage(json_feed
-												.getString("picture"));
-									if (json_feed.has("link"))
-										fb_feed.setLink(json_feed
-												.getString("link"));
-									try {
-										if (json_feed.has("created_time")) {
-											SimpleDateFormat format = new SimpleDateFormat(
-													"yyyy-MM-dd'T'HH:mm:ssZ");
-											Date datetime = format.parse(json_feed
-													.getString("created_time"));
-											fb_feed.setTime(datetime.getTime());
-										}
-									} catch (ParseException e) {
-										fb_feed.setTime(new Date().getTime());
-										e.printStackTrace();
-									}
+                                else if (json_feed.has("name"))
+                                    fb_feed.setTitle(json_feed
+                                            .getString("name"));
 
-									fb_feeds.add(fb_feed);
-								} catch (JSONException ex) {
-									json_feed = null;
-									Utility.log(TAG, ex.getLocalizedMessage());
-								}
-							}
-							new DbHelper(getApplicationContext())
-									.fillFeed(fb_feeds);
-							setFbNotification(fb_feeds);
-						}
-					});
-			request.executeAsync();
+                                if (json_feed.has("description"))
+                                    fb_feed.setDesc(json_feed
+                                            .getString("description"));
 
-		}
+                                if (json_feed.has("message"))
+                                    fb_feed.setDesc(json_feed
+                                            .getString("message"));
 
-		SharedPreferences spf = getSharedPreferences(
-				getString(R.string.pref_filename), Context.MODE_PRIVATE);
+                                if (json_feed.has("picture"))
+                                    fb_feed.setImage_url(json_feed
+                                            .getString("picture"));
+                                fb_feed.setLink(json_feed.optString("link"));
+                                try {
+                                    if (json_feed.has("created_time")) {
+                                        SimpleDateFormat format = new SimpleDateFormat(
+                                                "yyyy-MM-dd'T'HH:mm:ssZ");
 
-		String newsfeed = spf.getString(getString(R.string.pref_newsrss), null);
-		if (newsfeed == null && newsfeed == null) {
-			stopSelf(); // no feeds to process
-		} else {
-			new FetchNews().execute(new FeedInput(newsfeed));
-		}
+                                        fb_feed.setTime(format.parse(json_feed
+                                                .getString("created_time")).getTime());
+                                    }
+                                } catch (ParseException e) {
+                                    fb_feed.setTime(new Date().getTime());
+                                    e.printStackTrace();
+                                }
+                                JSONObject tmp = json_feed.optJSONObject("likes");
+                                if (tmp != null) {
+                                    JSONArray likes = tmp.optJSONArray("data");
+                                    fb_feed.setLikes(likes.length());
+                                }
 
-	}
+                                fb_feeds.add(fb_feed);
+                            } catch (JSONException ex) {
+                                json_feed = null;
+                                Log.d(TAG, ex.getLocalizedMessage());
+                            }
+                        }
+                        Util.fillDb(getApplicationContext(), fb_feeds);
+                        summaryItems.addAll(fb_feeds);
+                        setNotification();
+                        Log.d(TAG,"fb feeds done in service");
+                    }
+                });
+                request.executeAsync();
+            }
+        }
+    }
+    private RequestQueue requestQueue;
+    private RequestQueue getRequestQueue(){
+        if(requestQueue==null)
+            requestQueue= Volley.newRequestQueue(this);
+        return requestQueue;
+    }
+    public void fetchNewsFeeds() {
+        Response.ErrorListener errorListener=new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, error + "");
+            }
+        };
+        Response.Listener<String> responseListener=new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                List<Item> feeds = new ArrayList<>();
+                try {
+                    JSONObject jobj = new JSONObject(response);
+                    jobj = jobj.optJSONObject("responseData");
+                    JSONArray jarr = jobj.getJSONArray("results");
+                    DateFormat dateFormat=new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
+                    String dateString;
+                    for (int i = 0; i < jarr.length(); i++) {
+                        jobj = jarr.getJSONObject(i);
+                        NewsItem item = new NewsItem();
+                        item.setTitle(Html.fromHtml(jobj.optString("title")).toString());
+                        item.setDesc(Html.fromHtml(jobj.optString("content")).toString());
+                        if (jobj.has("image"))
+                            item.setImage_url(jobj.optJSONObject("image").optString("tbUrl"));
 
-	private void setFbNotification(ArrayList<Feed> result) {
-		NotificationCompat.Builder builder = null;
-		int size = result.size();
-		if (size > 0) {
-			Context context = getApplicationContext();
-			builder = new NotificationCompat.Builder(context)
-					.setSmallIcon(R.drawable.ic_notification)
-					.setContentTitle(getString(R.string.app_name))
-					.setAutoCancel(true)
-					.setSound(
-							RingtoneManager
-									.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-					.setContentText("New facebook feeds");
+                        dateString=jobj.optString("publishedDate");
+                        if(dateString!=null){
+                            try {
+                                Date date = dateFormat.parse(dateString);
+                                item.setTime(date.getTime());
+                            }catch(ParseException ex){
+                                Log.d(TAG,"invalid date format");
+                            }
+                        }
 
-			if (size > 1) {
-				NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-				inboxStyle.setBigContentTitle(getString(R.string.app_name));
-				for (Feed feed : result) {
-					if (feed.getTitle().trim().length() > 0)
-						inboxStyle.addLine(feed.getTitle());
-				}
-				inboxStyle.setSummaryText("New facebook updates");
-				builder.setStyle(inboxStyle);
-			}
-			Intent intent = new Intent(context, MainActivity.class);
-			PendingIntent pintent = PendingIntent.getActivity(context, 0,
-					intent, PendingIntent.FLAG_UPDATE_CURRENT);
-			builder.setContentIntent(pintent);
+                        item.setLink(jobj.optString("unescapedUrl"));
+                        item.setPublisher(jobj.optString("publisher"));
+                        feeds.add(item);
+                    }
+                } catch (JSONException ex) {
+                    Log.d(TAG, "exp in response parsing" + ex.getLocalizedMessage());
+                }
+                Log.d(TAG, feeds.size() + " -> " + feeds);
+                Log.d(TAG,"news feeds done in service");
+                Util.fillDb(getApplicationContext(), feeds);
+                summaryItems.addAll(feeds);
+                setNotification();
+            }
+        };
+        SharedPreferences spf=getApplicationContext().getSharedPreferences(getString(R.string.pref_filename), Context.MODE_PRIVATE);
+        Set<String> interests=spf.getStringSet(getString(R.string.pref_news_keywords), Constants.DEFAULT_NEWS_KEYWORDS);
+        for (String s:interests){
+            StringRequest strReq = new StringRequest(Constants.News.URL + "&q=india,"+s, responseListener, errorListener);
+            getRequestQueue().add(strReq);
+        }
+    }
 
-			NotificationManager notifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-			// Builds the notification and issues it.
-			notifyMgr.notify(FB_NOTIFICATION_ID, builder.build());
-		}
-		stopSelf();
-	}
+    private void setNotification() {
+        Log.d(TAG,"notification in service");
+        NotificationCompat.Builder builder = null;
+        int size = summaryItems.size();
+        if (size > 0) {
+            Log.d(TAG,"have some data");
+            int fbItem=0;
+            int newsItem=0;
+            for(Item i:summaryItems){
+                if(i instanceof FacebookItem)
+                    fbItem++;
+                else if(i instanceof NewsItem)
+                    newsItem++;
+            }
+            Context context = getApplicationContext();
+            builder = new NotificationCompat.Builder(context)
+                    .setSmallIcon(R.drawable.ic_notification)
+                    .setContentTitle(getString(R.string.app_name))
+                    .setAutoCancel(true)
+                    .setSound(
+                            RingtoneManager
+                                    .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                    .setContentText(fbItem+" new facebook feeds | "+newsItem+" new news feeds");
 
-	private boolean isFacebookLoggedIn() {
-		return AccessToken.getCurrentAccessToken() != null;
-	}
+            if (size > 1) {
+                NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
+                inboxStyle.setBigContentTitle(getString(R.string.app_name));
+                for (Item feed : summaryItems) {
+                    if (feed.getTitle().trim().length() > 0)
+                        inboxStyle.addLine(feed.getTitle());
+                }
+                inboxStyle.setSummaryText("New facebook updates");
+                builder.setStyle(inboxStyle);
+            }
+            Intent intent = new Intent(context, MainActivity.class);
+            PendingIntent pintent = PendingIntent.getActivity(context, 0,
+                    intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.setContentIntent(pintent);
 
-	@Override
-	public void onStart(Intent intent, int startId) {
-		handleIntent(intent);
-	}
+            NotificationManager notifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            // Builds the notification and issues it.
+            notifyMgr.notify(EASY_READING_NOTIFICATION_ID, builder.build());
+        }else{
+            Log.d(TAG,"nothing in sample service");
+        }
+        stopSelf();
+    }
 
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		handleIntent(intent);
-		return START_NOT_STICKY;
-	}
+    private boolean isFacebookLoggedIn() {
+        return AccessToken.getCurrentAccessToken() != null;
+    }
 
-	public void onDestroy() {
-		super.onDestroy();
-		wakelock.release();
-	}
+    @Override
+    public void onStart(Intent intent, int startId) {
+        handleIntent(intent);
+    }
 
-	private class FetchNews extends
-			AsyncTask<FeedInput, Void, ArrayList<String>> {
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        handleIntent(intent);
+        return START_NOT_STICKY;
+    }
 
-		@Override
-		protected ArrayList<String> doInBackground(FeedInput... inputfeed) {
-			ArrayList<String> title_noti = new ArrayList<String>();
-			try {
-				// URL url=arg0[0];
+    public void onDestroy() {
 
-				ArrayList<Feed> feeds = new ArrayList<Feed>();
-				Feed f;
-				String str;
-				SyndFeedInput input = new SyndFeedInput();
-				SyndFeed feed;// = input.build(new XmlReader(new URL(url[0])));
-				List<SyndEntry> list;// = feed.getEntries();
-				InputSource inputSource;
-				DbHelper dbh = new DbHelper(getApplicationContext());
-				Date pubdate;
-				Document doc;
-				for (FeedInput fe : inputfeed) {
-					feeds.clear();
-
-					inputSource = new InputSource(fe.url);
-					inputSource.setEncoding("UTF-8");
-					feed = input.build(inputSource);
-					list = feed.getEntries();
-					for (SyndEntry e : list) {
-						try {
-							f = new Feed();
-							f.setTitle(e.getTitle());
-							title_noti.add(e.getTitle());
-							doc = Jsoup.parse(e.getDescription().getValue());
-							f.setDesc(doc.text());
-							pubdate = e.getPublishedDate();
-							if (pubdate == null) {
-								f.setTime(new Date().getTime()); // set current
-																	// date
-								// need to fetch whatever in the pubdate tag
-							} else {
-								f.setTime(pubdate.getTime());
-							}
-							f.setLink(e.getLink());
-
-							str = doc.getElementsByTag(TAG_IMG).get(0)
-									.attr(TAG_ATTR_SRC);
-							f.setImage(str.startsWith(DOUBLE_SLASH) ? (PROTOCOL + str)
-									: str);
-
-							feeds.add(f);
-						} catch (Exception ee) {
-							Utility.log(TAG, "skipped a entry " + ee);
-						}
-					}
-					dbh.fillFeed(feeds);
-				}
-
-			} catch (Exception e) {
-				Utility.log("doInBackgroud", "" + e + e.getLocalizedMessage());
-
-			}
-			return title_noti;
-
-		}
-
-		@Override
-		protected void onPostExecute(ArrayList<String> result) {
-			NotificationCompat.Builder builder = null;
-			int size = result.size();
-			if (size > 0) {
-				Context context = getApplicationContext();
-				builder = new NotificationCompat.Builder(context)
-						.setSmallIcon(R.drawable.ic_notification)
-						.setContentTitle(getString(R.string.app_name))
-						.setAutoCancel(true)
-						.setSound(
-								RingtoneManager
-										.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-						.setContentText("New news feeds");
-
-				if (size > 1) {
-					NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-					inboxStyle.setBigContentTitle(getString(R.string.app_name));
-					for (String str : result) {
-						inboxStyle.addLine(str);
-					}
-					inboxStyle.setSummaryText("latest news updates");
-					builder.setStyle(inboxStyle);
-				}
-				Intent intent = new Intent(context, MainActivity.class);
-				PendingIntent pintent = PendingIntent.getActivity(context, 0,
-						intent, PendingIntent.FLAG_UPDATE_CURRENT);
-				builder.setContentIntent(pintent);
-
-				NotificationManager notifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-				// Builds the notification and issues it.
-				notifyMgr.notify(NEWS_NOTIFICATION_ID, builder.build());
-			}
-			stopSelf();
-		}
-	}
-	*/
+        super.onDestroy();
+        wakelock.release();
+    }
 }
