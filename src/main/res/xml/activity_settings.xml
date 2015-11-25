@@ -4,9 +4,11 @@
     <MultiSelectListPreference
         android:entries="@array/pref_news_keywords"
         android:entryValues="@array/pref_news_keywords_values"
+        android:key="@string/pref_news_keywords"
         android:summary="@string/news_summary"
         android:title="@string/news_title"></MultiSelectListPreference>
     <EditTextPreference
+
         android:inputType="number"
         android:key="@string/pref_limit"
         android:summary="@string/limit_summary"

@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -31,6 +32,7 @@ import java.util.List;
 import nu.info.zeeshan.rnf.dao.DbHelper;
 import nu.info.zeeshan.rnf.model.FacebookItem;
 import nu.info.zeeshan.rnf.model.Item;
+import nu.info.zeeshan.rnf.util.Constants;
 
 /**
  * Created by Zeeshan Khan on 10/28/2015.
@@ -39,13 +41,14 @@ public class FragmentFacebook extends FragmentMain {
 
     public static String TAG = "FragmentFacebook";
     ArrayList<String> permissions;
+    CallbackManager callbackManager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         callbackManager = CallbackManager.Factory.create();
         permissions = new ArrayList<String>();
-        permissions.add("user_posts");
-        permissions.add("user_actions.news");
+        permissions.addAll(Constants.FACEBOOK_PERMISSIONS);
 
         LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
@@ -63,9 +66,10 @@ public class FragmentFacebook extends FragmentMain {
                     @Override
                     public void onError(FacebookException exception) {
                         Log.d(TAG, "error->" + exception.getLocalizedMessage() + "");
+                        Toast.makeText(getActivity().getApplicationContext(), "Error occured. Try again!!", Toast.LENGTH_SHORT).show();
                     }
                 });
-        return  super.onCreateView(inflater, container, savedInstanceState);
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     public void startFetchingFeed() {
@@ -73,9 +77,9 @@ public class FragmentFacebook extends FragmentMain {
             Bundle parameters = new Bundle();
             parameters
                     .putString("fields",
-                            "name,story,description,link,message,created_time,object_id,likes,picture");
+                            Constants.FacebookFeed.PARAMS);
             GraphRequest request = new GraphRequest(
-                    AccessToken.getCurrentAccessToken(), "/me/feed", parameters,
+                    AccessToken.getCurrentAccessToken(), Constants.FacebookFeed.NODE, parameters,
                     HttpMethod.GET, new GraphRequest.Callback() {
 
                 @Override
@@ -97,11 +101,12 @@ public class FragmentFacebook extends FragmentMain {
                         try {
                             json_feed = data.getJSONObject(i);
                             fb_feed = new FacebookItem();
-
                             fb_feed.setId(json_feed.getString("id"));
+
                             if (json_feed.has("story"))
                                 fb_feed.setTitle(json_feed
                                         .getString("story"));
+
                             else if (json_feed.has("name"))
                                 fb_feed.setTitle(json_feed
                                         .getString("name"));
@@ -130,9 +135,9 @@ public class FragmentFacebook extends FragmentMain {
                                 fb_feed.setTime(new Date().getTime());
                                 e.printStackTrace();
                             }
-                            JSONObject tmp=json_feed.optJSONObject("likes");
-                            if(tmp!=null) {
-                                JSONArray likes=tmp.optJSONArray("data");
+                            JSONObject tmp = json_feed.optJSONObject("likes");
+                            if (tmp != null) {
+                                JSONArray likes = tmp.optJSONArray("data");
                                 fb_feed.setLikes(likes.length());
                             }
 
@@ -141,7 +146,6 @@ public class FragmentFacebook extends FragmentMain {
                             json_feed = null;
                             Log.d(TAG, ex.getLocalizedMessage());
                         }
-
                     }
                     fillAdapter(fb_feeds);
                     stopRefresh();
@@ -149,7 +153,6 @@ public class FragmentFacebook extends FragmentMain {
             });
             request.executeAsync();
         } else {
-
             Snackbar.make(swipeRefreshLayout, "Login to facebook", Snackbar.LENGTH_LONG)
                     .setAction("Login", new View.OnClickListener() {
                         @Override
@@ -160,9 +163,6 @@ public class FragmentFacebook extends FragmentMain {
             stopRefresh();
         }
     }
-
-
-    CallbackManager callbackManager;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -176,12 +176,20 @@ public class FragmentFacebook extends FragmentMain {
 
     @Override
     protected void fillAdapter(List<Item> items) {
-        DbHelper dbh=new DbHelper(getActivity());
-        List<FacebookItem> fbItems=new ArrayList<FacebookItem>();
-        for(Item i:items){
-            fbItems.add((FacebookItem)i);
+        DbHelper dbh = new DbHelper(getActivity());
+        if(items!=null && items.size()>0) {
+            List<FacebookItem> fbItems = new ArrayList<FacebookItem>();
+            for (Item i : items) {
+                fbItems.add((FacebookItem) i);
+            }
+            dbh.fillFacebookFeed(fbItems);
         }
-        dbh.fillFacebookFeed(fbItems);
         super.fillAdapter(dbh.getFacebookFeeds(false));
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        fillAdapter(null);
     }
 }

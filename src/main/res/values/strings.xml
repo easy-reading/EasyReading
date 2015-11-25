@@ -22,6 +22,7 @@
     <string name="pref_facebookrss">facebook_rss</string>
     <string name="pref_newsrss">news_rss</string>
     <string name="pref_limit">feed_limit</string>
+    <string name="pref_news_keywords">news_keywords</string>
     <string name="pref_update_interval">update_interval</string>
     <string name="pref_cat_facebook">Facebook</string>
     <string name="pref_cat_news">News</string>

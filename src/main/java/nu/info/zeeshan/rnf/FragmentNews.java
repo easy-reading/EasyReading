@@ -1,7 +1,10 @@
 package nu.info.zeeshan.rnf;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.text.Html;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -20,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import nu.info.zeeshan.rnf.dao.DbHelper;
 import nu.info.zeeshan.rnf.model.Item;
@@ -32,59 +36,69 @@ import nu.info.zeeshan.rnf.util.Constants;
 public class FragmentNews extends FragmentMain {
     public static String TAG = "FragmentNews";
     private RequestQueue reqQueue;
-
-
-    public void startFetchingFeed() {
-
-        StringRequest strReq = new StringRequest(Constants.URL.NEWS + "&q=india", new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                List<Item> feeds = new ArrayList<>();
-                try {
-                    JSONObject jobj = new JSONObject(response);
-                    jobj = jobj.optJSONObject("responseData");
-                    JSONArray jarr = jobj.getJSONArray("results");
-                    DateFormat dateFormat=new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
-                    String dateString;
-                    for (int i = 0; i < jarr.length(); i++) {
-                        jobj = jarr.getJSONObject(i);
-                        NewsItem item = new NewsItem();
-                        item.setTitle(Html.fromHtml(jobj.optString("title")).toString());
-                        item.setDesc(Html.fromHtml(jobj.optString("content")).toString());
-                        if (jobj.has("image"))
-                            item.setImage_url(jobj.optJSONObject("image").optString("tbUrl"));
-                        Log.d(TAG,"whole: "+jobj.toString());
-                        dateString=jobj.optString("publishedDate");
-                        if(dateString!=null){
-                            try {
-                                Date date = dateFormat.parse(dateString);
-                                item.setTime(date.getTime());
-                            }catch(ParseException ex){
-                                Log.d(TAG,"invalid date format");
-                            }
+    private Response.ErrorListener errorListener=new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError error) {
+            Log.d(TAG, error + "");
+            swipeRefreshLayout.setRefreshing(false);
+            Toast.makeText(getActivity().getApplicationContext(),"Error occured. Try again!!",Toast.LENGTH_SHORT).show();
+            stopRefresh();
+        }
+    };
+    private Response.Listener<String> responseListener=new Response.Listener<String>() {
+        @Override
+        public void onResponse(String response) {
+            List<Item> feeds = new ArrayList<>();
+            try {
+                JSONObject jobj = new JSONObject(response);
+                jobj = jobj.optJSONObject("responseData");
+                JSONArray jarr = jobj.getJSONArray("results");
+                DateFormat dateFormat=new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
+                String dateString;
+                for (int i = 0; i < jarr.length(); i++) {
+                    jobj = jarr.getJSONObject(i);
+                    NewsItem item = new NewsItem();
+                    item.setTitle(Html.fromHtml(jobj.optString("title")).toString());
+                    item.setDesc(Html.fromHtml(jobj.optString("content")).toString());
+                    if (jobj.has("image"))
+                        item.setImage_url(jobj.optJSONObject("image").optString("tbUrl"));
+                    Log.d(TAG,"whole: "+jobj.toString());
+                    dateString=jobj.optString("publishedDate");
+                    if(dateString!=null){
+                        try {
+                            Date date = dateFormat.parse(dateString);
+                            item.setTime(date.getTime());
+                        }catch(ParseException ex){
+                            Log.d(TAG,"invalid date format");
                         }
-                        Log.d(TAG, "date: " + jobj.optString("publishedDate"));
-                        item.setLink(jobj.optString("unescapedUrl"));
-                        item.setPublisher(jobj.optString("publisher"));
-                        feeds.add(item);
                     }
-                } catch (JSONException ex) {
-                    Log.d(TAG, "exp in response parsing" + ex.getLocalizedMessage());
+                    Log.d(TAG, "date: " + jobj.optString("publishedDate"));
+                    item.setLink(jobj.optString("unescapedUrl"));
+                    item.setPublisher(jobj.optString("publisher"));
+                    feeds.add(item);
                 }
-                Log.d(TAG, feeds.size() + " -> " + feeds);
-                fillAdapter(feeds);
-                swipeRefreshLayout.setRefreshing(false);
-                stopRefresh();
+            } catch (JSONException ex) {
+                Log.d(TAG, "exp in response parsing" + ex.getLocalizedMessage());
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, error + "");
-                swipeRefreshLayout.setRefreshing(false);
-                stopRefresh();
-            }
-        });
-        getReqQueue().add(strReq);
+            Log.d(TAG, feeds.size() + " -> " + feeds);
+            fillAdapter(feeds);
+            swipeRefreshLayout.setRefreshing(false);
+            stopRefresh();
+        }
+    };
+    public void startFetchingFeed() {
+        SharedPreferences spf=getActivity().getSharedPreferences(getString(R.string.pref_filename), Context.MODE_PRIVATE);
+        Set<String> interests=spf.getStringSet(getString(R.string.pref_news_keywords),Constants.DEFAULT_NEWS_KEYWORDS);
+        for (String s:interests){
+            StringRequest strReq = new StringRequest(Constants.News.URL + "&q=india,"+s, responseListener, errorListener);
+            getReqQueue().add(strReq);
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        fillAdapter(null);
     }
 
     private RequestQueue getReqQueue() {
@@ -95,14 +109,17 @@ public class FragmentNews extends FragmentMain {
 
     public FragmentNews() {
     }
+
     @Override
     protected void fillAdapter(List<Item> items) {
-        DbHelper dbh=new DbHelper(getActivity());
-        List<NewsItem> newsItems=new ArrayList<>();
-        for(Item i:items){
-            newsItems.add((NewsItem)i);
+        DbHelper dbh = new DbHelper(getActivity());
+        if(items!=null && items.size()>0) {
+            List<NewsItem> newsItems = new ArrayList<>();
+            for (Item i : items) {
+                newsItems.add((NewsItem) i);
+            }
+            dbh.fillNewsFeed(newsItems);
         }
-        dbh.fillNewsFeed(newsItems);
         super.fillAdapter(dbh.getNewsFeeds(true));
     }
 }
