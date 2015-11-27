@@ -14,7 +14,6 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.Html;
-import android.util.Log;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -51,7 +50,7 @@ public class NewsService extends Service {
     private PowerManager.WakeLock wakelock;
     private static String TAG = "nu.info.zeeshan.rnf.NewsService";
     private static int EASY_READING_NOTIFICATION_ID = 0;
-    private List<Item> summaryItems=new ArrayList<Item>();
+    private List<Item> summaryItems=new ArrayList<>();
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -62,11 +61,11 @@ public class NewsService extends Service {
         PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
         wakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
         wakelock.acquire();
-        Log.d(TAG, "m on work :D");
+        Util.log(TAG, "m on work :D");
         ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();
         if (ni == null || !ni.isConnected()) {
-            Log.d(TAG, "I am a service but you have no internet");
+            Util.log(TAG, "I am a service but you have no internet");
             stopSelf();
             return;
         }
@@ -150,13 +149,13 @@ public class NewsService extends Service {
                                 fb_feeds.add(fb_feed);
                             } catch (JSONException ex) {
                                 json_feed = null;
-                                Log.d(TAG, ex.getLocalizedMessage());
+                                Util.log(TAG, ex.getLocalizedMessage());
                             }
                         }
                         Util.fillDb(getApplicationContext(), fb_feeds);
                         summaryItems.addAll(fb_feeds);
                         setNotification();
-                        Log.d(TAG,"fb feeds done in service");
+                        Util.log(TAG, "fb feeds done in service");
                     }
                 });
                 request.executeAsync();
@@ -173,7 +172,7 @@ public class NewsService extends Service {
         Response.ErrorListener errorListener=new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, error + "");
+                Util.log(TAG, error + "");
             }
         };
         Response.Listener<String> responseListener=new Response.Listener<String>() {
@@ -200,7 +199,7 @@ public class NewsService extends Service {
                                 Date date = dateFormat.parse(dateString);
                                 item.setTime(date.getTime());
                             }catch(ParseException ex){
-                                Log.d(TAG,"invalid date format");
+                                Util.log(TAG, "invalid date format");
                             }
                         }
 
@@ -209,10 +208,10 @@ public class NewsService extends Service {
                         feeds.add(item);
                     }
                 } catch (JSONException ex) {
-                    Log.d(TAG, "exp in response parsing" + ex.getLocalizedMessage());
+                    Util.log(TAG, "exp in response parsing" + ex.getLocalizedMessage());
                 }
-                Log.d(TAG, feeds.size() + " -> " + feeds);
-                Log.d(TAG,"news feeds done in service");
+                Util.log(TAG, feeds.size() + " -> " + feeds);
+                Util.log(TAG, "news feeds done in service");
                 Util.fillDb(getApplicationContext(), feeds);
                 summaryItems.addAll(feeds);
                 setNotification();
@@ -227,11 +226,11 @@ public class NewsService extends Service {
     }
 
     private void setNotification() {
-        Log.d(TAG,"notification in service");
+        Util.log(TAG, "notification in service");
         NotificationCompat.Builder builder = null;
         int size = summaryItems.size();
         if (size > 0) {
-            Log.d(TAG,"have some data");
+            Util.log(TAG, "have some data");
             int fbItem=0;
             int newsItem=0;
             for(Item i:summaryItems){
@@ -248,16 +247,16 @@ public class NewsService extends Service {
                     .setSound(
                             RingtoneManager
                                     .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                    .setContentText(fbItem+" new facebook feeds | "+newsItem+" new news feeds");
+                    .setContentText("New Stories");
 
             if (size > 1) {
                 NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
                 inboxStyle.setBigContentTitle(getString(R.string.app_name));
                 for (Item feed : summaryItems) {
-                    if (feed.getTitle().trim().length() > 0)
-                        inboxStyle.addLine(feed.getTitle());
+                    if (feed.getTitle()!=null)
+                        inboxStyle.addLine(feed.getTitle().trim());
                 }
-                inboxStyle.setSummaryText("New facebook updates");
+                inboxStyle.setSummaryText("New Stories");
                 builder.setStyle(inboxStyle);
             }
             Intent intent = new Intent(context, MainActivity.class);
@@ -269,7 +268,7 @@ public class NewsService extends Service {
             // Builds the notification and issues it.
             notifyMgr.notify(EASY_READING_NOTIFICATION_ID, builder.build());
         }else{
-            Log.d(TAG,"nothing in sample service");
+            Util.log(TAG, "nothing in sample service");
         }
         stopSelf();
     }
@@ -290,7 +289,6 @@ public class NewsService extends Service {
     }
 
     public void onDestroy() {
-
         super.onDestroy();
         wakelock.release();
     }

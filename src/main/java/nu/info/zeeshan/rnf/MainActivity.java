@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         ImageLoader.getInstance().init(config);
         //Fb init
         FacebookSdk.sdkInitialize(getApplicationContext());
+
     }
 
     @Override

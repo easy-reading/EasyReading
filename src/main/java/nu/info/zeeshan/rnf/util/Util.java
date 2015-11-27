@@ -1,6 +1,7 @@
 package nu.info.zeeshan.rnf.util;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,5 +33,9 @@ public class Util {
                 dbh.fillNewsFeed(newsItems);
             }
         }
+    }
+    public static void log(String TAG,String msg){
+        if(Constants.DEBUG)
+            Log.d(TAG,msg);
     }
 }

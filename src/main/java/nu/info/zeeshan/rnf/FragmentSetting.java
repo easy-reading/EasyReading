@@ -9,12 +9,12 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceFragment;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Set;
 
 import nu.info.zeeshan.rnf.util.Constants;
+import nu.info.zeeshan.rnf.util.Util;
 
 public class FragmentSetting extends PreferenceFragment implements
         OnSharedPreferenceChangeListener {
@@ -51,7 +51,7 @@ public class FragmentSetting extends PreferenceFragment implements
                 Toast.makeText(getActivity().getApplicationContext(),"set to default 'latest'",Toast.LENGTH_SHORT).show();
             }
             ospf.edit().putStringSet(key, keywords).commit();
-            Log.d(TAG, "news keywords" + spf.getStringSet(key, Constants.DEFAULT_NEWS_KEYWORDS));
+            Util.log(TAG, "news keywords" + spf.getStringSet(key, Constants.DEFAULT_NEWS_KEYWORDS));
         } else if (key.equalsIgnoreCase(getString(R.string.pref_limit))) {
             String limit;
             try {
@@ -62,7 +62,7 @@ public class FragmentSetting extends PreferenceFragment implements
                 Toast.makeText(getActivity().getApplicationContext(),"Set to default "+limit,Toast.LENGTH_SHORT).show();
             }
             ospf.edit().putString(key, limit).commit();
-            Log.d(TAG, "item limit" + limit);
+            Util.log(TAG, "item limit" + limit);
         } else if (key
                 .equalsIgnoreCase(getString(R.string.pref_update_interval))) {
             String updateInterval;
@@ -81,7 +81,7 @@ public class FragmentSetting extends PreferenceFragment implements
             Intent intent_ = new Intent(context, NewsService.class);
             PendingIntent pi = PendingIntent.getService(context, 0, intent_, 0);
             am.cancel(pi);
-            int minutes = Integer.parseInt(updateInterval);
+            int minutes = Constants.DEBUG?1:Integer.parseInt(updateInterval)*60;
             // by my own convention, minutes <= 0 means notifications are
             // disabled
             if (minutes > 0) {
@@ -89,8 +89,8 @@ public class FragmentSetting extends PreferenceFragment implements
                         SystemClock.elapsedRealtime() + minutes * 60 * 1000,
                         minutes * 60 * 1000, pi);
             }
-            Log.d(TAG, "Alarm reset");
-            Log.d(TAG, "update interval" + updateInterval);
+            Util.log(TAG, "Alarm reset after " + minutes * 60 * 1000 + "ms");
+
         } else {
             Toast.makeText(getActivity(), getString(R.string.invalid_input),
                     Toast.LENGTH_SHORT).show();

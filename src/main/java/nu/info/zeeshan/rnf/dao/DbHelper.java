@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +12,7 @@ import java.util.List;
 import nu.info.zeeshan.rnf.model.FacebookItem;
 import nu.info.zeeshan.rnf.model.Item;
 import nu.info.zeeshan.rnf.model.NewsItem;
+import nu.info.zeeshan.rnf.util.Util;
 
 public class DbHelper extends SQLiteOpenHelper {
 
@@ -106,7 +106,7 @@ public class DbHelper extends SQLiteOpenHelper {
 		}
 		if(db!=null)
 			db.close();
-		Log.d(TAG, feeds.size() + " facebook feeds inserted" + fbfeeds);
+		Util.log(TAG, feeds.size() + " facebook feeds inserted" + fbfeeds);
 	}
 	public List<Item> getNewsFeeds(boolean latestOnly){
 		List<Item> feeds=new ArrayList<>();
@@ -152,7 +152,8 @@ public class DbHelper extends SQLiteOpenHelper {
 					values,SQLiteDatabase.CONFLICT_REPLACE);
 			fbfeeds++;
 		}
-		Log.d(TAG, feeds.size() + " news feeds inserted" + fbfeeds);
+
+			Util.log(TAG, feeds.size() + " news feeds inserted" + fbfeeds);
 		if(db!=null)
 			db.close();
 	}

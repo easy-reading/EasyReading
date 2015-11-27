@@ -3,7 +3,6 @@ package nu.info.zeeshan.rnf;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,18 +54,18 @@ public class FragmentFacebook extends FragmentMain {
                 new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                        Log.d(TAG, loginResult.toString());
-                        Log.d(TAG, "login done");
+                        Util.log(TAG, loginResult.toString());
+                        Util.log(TAG, "login done");
                     }
 
                     @Override
                     public void onCancel() {
-                        Log.d(TAG, "cancled");
+                        Util.log(TAG, "cancled");
                     }
 
                     @Override
                     public void onError(FacebookException exception) {
-                        Log.d(TAG, "error->" + exception.getLocalizedMessage() + "");
+                        Util.log(TAG, "error->" + exception.getLocalizedMessage() + "");
                         Toast.makeText(getActivity().getApplicationContext(), "Error occured. Try again!!", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -145,7 +144,7 @@ public class FragmentFacebook extends FragmentMain {
                             fb_feeds.add(fb_feed);
                         } catch (JSONException ex) {
                             json_feed = null;
-                            Log.d(TAG, ex.getLocalizedMessage());
+                            Util.log(TAG, ex.getLocalizedMessage());
                         }
                     }
                     fillAdapter(fb_feeds);
@@ -168,7 +167,7 @@ public class FragmentFacebook extends FragmentMain {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivity result" + data);
+        Util.log(TAG, "onActivity result" + data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 

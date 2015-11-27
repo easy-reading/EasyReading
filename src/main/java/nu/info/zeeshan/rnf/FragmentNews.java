@@ -3,7 +3,6 @@ package nu.info.zeeshan.rnf;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.Html;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -29,6 +28,7 @@ import nu.info.zeeshan.rnf.dao.DbHelper;
 import nu.info.zeeshan.rnf.model.Item;
 import nu.info.zeeshan.rnf.model.NewsItem;
 import nu.info.zeeshan.rnf.util.Constants;
+import nu.info.zeeshan.rnf.util.Util;
 
 /**
  * Created by Zeeshan Khan on 10/28/2015.
@@ -39,7 +39,7 @@ public class FragmentNews extends FragmentMain {
     private Response.ErrorListener errorListener=new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
-            Log.d(TAG, error + "");
+            Util.log(TAG, error + "");
             swipeRefreshLayout.setRefreshing(false);
             Toast.makeText(getActivity().getApplicationContext(),"Error occured. Try again!!",Toast.LENGTH_SHORT).show();
             stopRefresh();
@@ -62,25 +62,25 @@ public class FragmentNews extends FragmentMain {
                     item.setDesc(Html.fromHtml(jobj.optString("content")).toString());
                     if (jobj.has("image"))
                         item.setImage_url(jobj.optJSONObject("image").optString("tbUrl"));
-                    Log.d(TAG,"whole: "+jobj.toString());
+                    Util.log(TAG, "whole: " + jobj.toString());
                     dateString=jobj.optString("publishedDate");
                     if(dateString!=null){
                         try {
                             Date date = dateFormat.parse(dateString);
                             item.setTime(date.getTime());
                         }catch(ParseException ex){
-                            Log.d(TAG,"invalid date format");
+                            Util.log(TAG, "invalid date format");
                         }
                     }
-                    Log.d(TAG, "date: " + jobj.optString("publishedDate"));
+                    Util.log(TAG, "date: " + jobj.optString("publishedDate"));
                     item.setLink(jobj.optString("unescapedUrl"));
                     item.setPublisher(jobj.optString("publisher"));
                     feeds.add(item);
                 }
             } catch (JSONException ex) {
-                Log.d(TAG, "exp in response parsing" + ex.getLocalizedMessage());
+                Util.log(TAG, "exp in response parsing" + ex.getLocalizedMessage());
             }
-            Log.d(TAG, feeds.size() + " -> " + feeds);
+            Util.log(TAG, feeds.size() + " -> " + feeds);
             fillAdapter(feeds);
             swipeRefreshLayout.setRefreshing(false);
             stopRefresh();

@@ -11,7 +11,7 @@ public interface Constants {
     public interface News {
         String URL = "https://ajax.googleapis.com/ajax/services/search/news?v=1.0&rsz=8";
     }
-
+    boolean DEBUG=false;
     Set<String> DEFAULT_NEWS_KEYWORDS = new HashSet<String>(Arrays.asList("latest"));
     String DEFAULT_FEED_LIMIT = "50";
     String DEFAULT_UPDATE_INTERVAL_IN_HOURS = "2";

@@ -9,12 +9,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.Toast;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,7 @@ import java.util.List;
 import nu.info.zeeshan.rnf.adapters.ItemAdapter;
 import nu.info.zeeshan.rnf.model.Item;
 import nu.info.zeeshan.rnf.model.MySwipeRefreshLayout;
+import nu.info.zeeshan.rnf.util.Util;
 
 /**
  * Created by Zeeshan Khan on 10/28/2015.
@@ -72,6 +75,9 @@ public abstract class FragmentMain extends Fragment implements SwipeRefreshLayou
             }
         });
         emptyListCheck();
+        AdView mAdView = (AdView) rootView.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("3451D7D6CB474027A1B4D8F8499A52E3").build();
+        mAdView.loadAd(adRequest);
         return rootView;
     }
 
@@ -104,7 +110,7 @@ public abstract class FragmentMain extends Fragment implements SwipeRefreshLayou
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setRefreshing(false);
         } else
-            Log.d(TAG, "refreshlayout is null");
+            Util.log(TAG, "refreshlayout is null");
     }
 
     protected void showMsg(String msg) {
