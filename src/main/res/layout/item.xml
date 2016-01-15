@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-
+    android:clickable="true"
     card_view:cardCornerRadius="4dp">
 
     <LinearLayout
@@ -31,12 +31,12 @@
                 android:id="@+id/item_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+
+
                 android:layout_weight="1"
-
-
                 android:text="Item title"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:layout_marginLeft="10dp" />
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
         </LinearLayout>
 
@@ -45,23 +45,23 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
 
-            android:text="Item desc"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="10dp"
+            android:text="Item desc" />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Small Text"
             android:id="@+id/item_extra"
-            android:layout_gravity="right" />
-
-        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_gravity="right"
+            android:text="Small Text"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/item_timestamp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="22, Nov"
-            android:id="@+id/item_timestamp" />
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
 
     </LinearLayout>

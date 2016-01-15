@@ -11,11 +11,12 @@ public interface Constants {
     public interface News {
         String URL = "https://ajax.googleapis.com/ajax/services/search/news?v=1.0&rsz=8";
     }
-    boolean DEBUG=false;
+
+    boolean DEBUG = false;
     Set<String> DEFAULT_NEWS_KEYWORDS = new HashSet<String>(Arrays.asList("latest"));
     String DEFAULT_FEED_LIMIT = "50";
     String DEFAULT_UPDATE_INTERVAL_IN_HOURS = "2";
-    Set<String> FACEBOOK_PERMISSIONS = new HashSet<String>(Arrays.asList("user_posts","user_actions.news"));
+    Set<String> FACEBOOK_PERMISSIONS = new HashSet<String>(Arrays.asList("user_posts", "user_actions.news"));
 
     String EMPTY_FEED = "nothing";
     String pref_filename = "nu.info.zeeshan.preference_file";
@@ -24,8 +25,12 @@ public interface Constants {
     String pref_limit = "feed_limit";
     String pref_update_interval = "update_interval";
 
-    public interface FacebookFeed{
-        String PARAMS="name,story,description,link,message,created_time,object_id,likes,picture";
-        String NODE="/me/feed";
+    public interface FacebookFeed {
+        String PARAMS = "name,story,description,link,message,created_time,object_id,likes,picture";
+        String NODE = "/me/feed";
+    }
+    interface ItemType{
+        int NORMAL=1;
+        int AD=2;
     }
 }

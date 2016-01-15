@@ -8,13 +8,17 @@ public abstract class Item {
     private String id;
     private long time;
     private String link;
+    private short state;
+    private boolean expanded;
 
-    public String getLink(){
+    public String getLink() {
         return link;
     }
-    public void setLink(String link){
-        this.link=link;
+
+    public void setLink(String link) {
+        this.link = link;
     }
+
     public long getTime() {
         return time;
     }
@@ -53,6 +57,22 @@ public abstract class Item {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public short getState() {
+        return state;
+    }
+
+    public void setState(short state) {
+        this.state = state;
+    }
+
+    public void setExpanded(boolean expanded) {
+        this.expanded = expanded;
+    }
+
+    public boolean isExpanded() {
+        return expanded;
     }
 
     @Override

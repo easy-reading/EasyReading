@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import nu.info.zeeshan.rnf.dao.DbHelper;
 import nu.info.zeeshan.rnf.model.FacebookItem;
 import nu.info.zeeshan.rnf.model.Item;
 import nu.info.zeeshan.rnf.model.NewsItem;
@@ -50,7 +51,7 @@ public class NewsService extends Service {
     private PowerManager.WakeLock wakelock;
     private static String TAG = "nu.info.zeeshan.rnf.NewsService";
     private static int EASY_READING_NOTIFICATION_ID = 0;
-    private List<Item> summaryItems=new ArrayList<>();
+    //private List<Item> summaryItems=new ArrayList<>();
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -153,7 +154,7 @@ public class NewsService extends Service {
                             }
                         }
                         Util.fillDb(getApplicationContext(), fb_feeds);
-                        summaryItems.addAll(fb_feeds);
+                        //summaryItems.addAll(fb_feeds);
                         setNotification();
                         Util.log(TAG, "fb feeds done in service");
                     }
@@ -182,30 +183,33 @@ public class NewsService extends Service {
                 try {
                     JSONObject jobj = new JSONObject(response);
                     jobj = jobj.optJSONObject("responseData");
-                    JSONArray jarr = jobj.getJSONArray("results");
-                    DateFormat dateFormat=new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
-                    String dateString;
-                    for (int i = 0; i < jarr.length(); i++) {
-                        jobj = jarr.getJSONObject(i);
-                        NewsItem item = new NewsItem();
-                        item.setTitle(Html.fromHtml(jobj.optString("title")).toString());
-                        item.setDesc(Html.fromHtml(jobj.optString("content")).toString());
-                        if (jobj.has("image"))
-                            item.setImage_url(jobj.optJSONObject("image").optString("tbUrl"));
+                    if(jobj!=null) {
+                        JSONArray jarr = jobj.optJSONArray("results");
+                        if(jarr!=null) {
+                            DateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
+                            String dateString;
+                            for (int i = 0; i < jarr.length(); i++) {
+                                jobj = jarr.getJSONObject(i);
+                                NewsItem item = new NewsItem();
+                                item.setTitle(Html.fromHtml(jobj.optString("title")).toString());
+                                item.setDesc(Html.fromHtml(jobj.optString("content")).toString());
+                                if (jobj.has("image"))
+                                    item.setImage_url(jobj.optJSONObject("image").optString("tbUrl"));
 
-                        dateString=jobj.optString("publishedDate");
-                        if(dateString!=null){
-                            try {
-                                Date date = dateFormat.parse(dateString);
-                                item.setTime(date.getTime());
-                            }catch(ParseException ex){
-                                Util.log(TAG, "invalid date format");
+                                dateString = jobj.optString("publishedDate");
+                                if (dateString != null) {
+                                    try {
+                                        Date date = dateFormat.parse(dateString);
+                                        item.setTime(date.getTime());
+                                    } catch (ParseException ex) {
+                                        Util.log(TAG, "invalid date format");
+                                    }
+                                }
+                                item.setLink(jobj.optString("unescapedUrl"));
+                                item.setPublisher(jobj.optString("publisher"));
+                                feeds.add(item);
                             }
                         }
-
-                        item.setLink(jobj.optString("unescapedUrl"));
-                        item.setPublisher(jobj.optString("publisher"));
-                        feeds.add(item);
                     }
                 } catch (JSONException ex) {
                     Util.log(TAG, "exp in response parsing" + ex.getLocalizedMessage());
@@ -213,7 +217,7 @@ public class NewsService extends Service {
                 Util.log(TAG, feeds.size() + " -> " + feeds);
                 Util.log(TAG, "news feeds done in service");
                 Util.fillDb(getApplicationContext(), feeds);
-                summaryItems.addAll(feeds);
+                //summaryItems.addAll(feeds);
                 setNotification();
             }
         };
@@ -227,18 +231,11 @@ public class NewsService extends Service {
 
     private void setNotification() {
         Util.log(TAG, "notification in service");
+        List<Item> summaryItems=new DbHelper(getApplicationContext()).getTopUnread();
         NotificationCompat.Builder builder = null;
         int size = summaryItems.size();
         if (size > 0) {
             Util.log(TAG, "have some data");
-            int fbItem=0;
-            int newsItem=0;
-            for(Item i:summaryItems){
-                if(i instanceof FacebookItem)
-                    fbItem++;
-                else if(i instanceof NewsItem)
-                    newsItem++;
-            }
             Context context = getApplicationContext();
             builder = new NotificationCompat.Builder(context)
                     .setSmallIcon(R.drawable.ic_notification)
@@ -270,7 +267,6 @@ public class NewsService extends Service {
         }else{
             Util.log(TAG, "nothing in sample service");
         }
-        stopSelf();
     }
 
     private boolean isFacebookLoggedIn() {
@@ -289,7 +285,7 @@ public class NewsService extends Service {
     }
 
     public void onDestroy() {
-        super.onDestroy();
         wakelock.release();
+        super.onDestroy();
     }
 }

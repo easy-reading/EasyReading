@@ -15,17 +15,17 @@ import nu.info.zeeshan.rnf.model.NewsItem;
  * Created by Zeeshan Khan on 11/6/2015.
  */
 public class Util {
-    public static void fillDb(Context context,List<Item> items){
-        if(items!=null && items.size()>0) {
+    public static void fillDb(Context context, List<Item> items) {
+        if (items != null && items.size() > 0) {
             DbHelper dbh = new DbHelper(context);
-            Item tmpItem=items.get(0);
-            if(tmpItem instanceof FacebookItem) {
+            Item tmpItem = items.get(0);
+            if (tmpItem instanceof FacebookItem) {
                 List<FacebookItem> fbItems = new ArrayList<FacebookItem>();
                 for (Item i : items) {
                     fbItems.add((FacebookItem) i);
                 }
                 dbh.fillFacebookFeed(fbItems);
-            }else if(tmpItem instanceof NewsItem){
+            } else if (tmpItem instanceof NewsItem) {
                 List<NewsItem> newsItems = new ArrayList<NewsItem>();
                 for (Item i : items) {
                     newsItems.add((NewsItem) i);
@@ -34,8 +34,9 @@ public class Util {
             }
         }
     }
-    public static void log(String TAG,String msg){
-        if(Constants.DEBUG)
-            Log.d(TAG,msg);
+
+    public static void log(String TAG, String msg) {
+        if (Constants.DEBUG)
+            Log.d(TAG, msg);
     }
 }

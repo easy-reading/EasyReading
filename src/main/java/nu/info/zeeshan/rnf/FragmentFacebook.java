@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import nu.info.zeeshan.rnf.dao.DbConstants;
 import nu.info.zeeshan.rnf.dao.DbHelper;
 import nu.info.zeeshan.rnf.model.FacebookItem;
 import nu.info.zeeshan.rnf.model.Item;
@@ -191,6 +192,11 @@ public class FragmentFacebook extends FragmentMain {
     @Override
     public void onStart() {
         super.onStart();
+        try {
+            new DbHelper(getContext()).markAllAs(DbConstants.State.READ, DbConstants.Type.FB);
+        } catch (Exception ex) {
+            Util.log(TAG, ex.getMessage() + "");
+        }
         fillAdapter(null);
     }
 }

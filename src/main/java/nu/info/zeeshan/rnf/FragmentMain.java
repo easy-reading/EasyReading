@@ -15,9 +15,6 @@ import android.view.ViewGroup;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +36,7 @@ public abstract class FragmentMain extends Fragment implements SwipeRefreshLayou
     }
 
     protected void fillAdapter(List<Item> items) {
-        if (itemAdapter != null){
+        if (itemAdapter != null) {
             itemAdapter.addAll(items);
         }
     }
@@ -67,6 +64,7 @@ public abstract class FragmentMain extends Fragment implements SwipeRefreshLayou
 
         itemAdapter = new ItemAdapter(new ArrayList<Item>(), getContext());
         itemList.setAdapter(itemAdapter);
+
         itemAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
@@ -74,10 +72,9 @@ public abstract class FragmentMain extends Fragment implements SwipeRefreshLayou
                 emptyListCheck();
             }
         });
+
         emptyListCheck();
-        AdView mAdView = (AdView) rootView.findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("3451D7D6CB474027A1B4D8F8499A52E3").build();
-        mAdView.loadAd(adRequest);
+
         return rootView;
     }
 
@@ -86,10 +83,7 @@ public abstract class FragmentMain extends Fragment implements SwipeRefreshLayou
      */
     @Override
     public void onRefresh() {
-
         String msg = null;
-
-
         ConnectivityManager cm = (ConnectivityManager) getActivity()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();

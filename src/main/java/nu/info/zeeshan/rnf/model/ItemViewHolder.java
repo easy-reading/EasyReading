@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import nu.info.zeeshan.rnf.R;
+import nu.info.zeeshan.rnf.util.Util;
 
 
 /**
@@ -24,25 +25,24 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     private TextView itemTitle, itemDesc, itemTimestamp, itemExtra;
     private ImageView itemImage;
     private static DateFormat DATE_FORMAT = new SimpleDateFormat("dd, MMM");
-
-    public ItemViewHolder(final View parent, TextView itemTitle, TextView itemDesc, ImageView itemImage, TextView itemTimestamp, TextView itemExtra) {
+    public static String TAG="ItemViewHolder";
+    public ItemViewHolder(final View parent, final ItemClickListener clickListener) {
         super(parent);
-        this.itemDesc = itemDesc;
-        this.itemImage = itemImage;
-        this.itemTitle = itemTitle;
-        this.itemTimestamp = itemTimestamp;
-        this.itemExtra = itemExtra;
-    }
-
-    public static ItemViewHolder newInstance(View parent) {
-        TextView itemTitle, itemDesc, itemTimestamp, itemExtra;
-        ImageView itemImage;
+        parent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickListener.onClick(getAdapterPosition());
+                Util.log(TAG,"clicked item");
+            }
+        });
         itemDesc = (TextView) parent.findViewById(R.id.item_desc);
         itemTitle = (TextView) parent.findViewById(R.id.item_title);
         itemImage = (ImageView) parent.findViewById(R.id.item_image);
         itemTimestamp = (TextView) parent.findViewById(R.id.item_timestamp);
         itemExtra = (TextView) parent.findViewById(R.id.item_extra);
-        return new ItemViewHolder(parent, itemTitle, itemDesc, itemImage, itemTimestamp, itemExtra);
+    }
+    public static ItemViewHolder newInstance(View parent,ItemClickListener clickListener) {
+        return new ItemViewHolder(parent,clickListener);
     }
 
     public void setItem(Item item) {
@@ -82,6 +82,11 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
                 itemExtra.setText(((NewsItem) item).getPublisher());
             else
                 itemExtra.setText("Unspecified publisher");
+        }
+        if(item.isExpanded()){
+            itemDesc.setVisibility(View.VISIBLE);
+        }else{
+            itemDesc.setVisibility(View.GONE);
         }
     }
 
