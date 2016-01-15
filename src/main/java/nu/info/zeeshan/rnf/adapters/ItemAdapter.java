@@ -24,7 +24,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
     private ItemClickListener clickListener;
     private int lastExpandedItem;
-    public static int ADD_AFTER = 10;
+    public static int ADD_AFTER = 7;
 
     public ItemAdapter(final List<Item> itemList, Context context) {
         this.itemList = itemList;
