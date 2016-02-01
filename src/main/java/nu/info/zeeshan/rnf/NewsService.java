@@ -194,7 +194,7 @@ public class NewsService extends Service {
                                 item.setTitle(Html.fromHtml(jobj.optString("title")).toString());
                                 item.setDesc(Html.fromHtml(jobj.optString("content")).toString());
                                 if (jobj.has("image"))
-                                    item.setImage_url(jobj.optJSONObject("image").optString("tbUrl"));
+                                    item.setImage_url(jobj.optJSONObject("image").optString("url"));
 
                                 dateString = jobj.optString("publishedDate");
                                 if (dateString != null) {

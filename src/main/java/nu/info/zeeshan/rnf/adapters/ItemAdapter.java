@@ -14,6 +14,7 @@ import nu.info.zeeshan.rnf.model.AddItemViewHolder;
 import nu.info.zeeshan.rnf.model.Item;
 import nu.info.zeeshan.rnf.model.ItemClickListener;
 import nu.info.zeeshan.rnf.model.ItemViewHolder;
+import nu.info.zeeshan.rnf.model.NewsItem;
 import nu.info.zeeshan.rnf.util.Constants;
 
 /**
@@ -62,17 +63,21 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         if (getItemViewType(position) == Constants.ItemType.NORMAL) {
             ItemViewHolder holder = (ItemViewHolder) viewHolder;
-            holder.getItemImage().setImageDrawable(context.getResources().getDrawable(R.drawable.com_facebook_profile_picture_blank_square));
-            holder.setItem(itemList.get(getActualItemPosition(position)));
-        }else{
-            AddItemViewHolder holder=(AddItemViewHolder)viewHolder;
+            Item item = itemList.get(getActualItemPosition(position));
+            if (item instanceof NewsItem)
+                holder.getItemImage().setImageDrawable(context.getResources().getDrawable(R.drawable.default_news_background));
+            else
+                holder.getItemImage().setImageDrawable(context.getResources().getDrawable(R.drawable.default_facebook_background));
+            holder.setItem(item);
+        } else {
+            AddItemViewHolder holder = (AddItemViewHolder) viewHolder;
             holder.initAd();
         }
     }
 
     @Override
     public int getItemViewType(int position) {
-        if ((position+1) % ADD_AFTER == 0)
+        if ((position + 1) % ADD_AFTER == 0)
             return Constants.ItemType.AD;
         else
             return Constants.ItemType.NORMAL;
@@ -81,10 +86,12 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private int getActualItemPosition(int position) {
         return position - position / ADD_AFTER;
     }
-public static String TAG="ItemAdapter";
+
+    public static String TAG = "ItemAdapter";
+
     @Override
     public int getItemCount() {
-        return  itemList == null ? 0 : itemList.size() + (int)Math.ceil(itemList.size()/(ADD_AFTER-1));
+        return itemList == null ? 0 : itemList.size() + (int) Math.ceil(itemList.size() / (ADD_AFTER - 1));
     }
 
     public void addAll(List<Item> items) {
