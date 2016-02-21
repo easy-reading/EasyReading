@@ -13,11 +13,12 @@ import java.util.ListIterator;
 import nu.info.zeeshan.rnf.model.FacebookItem;
 import nu.info.zeeshan.rnf.model.Item;
 import nu.info.zeeshan.rnf.model.NewsItem;
+import nu.info.zeeshan.rnf.util.Constants;
 import nu.info.zeeshan.rnf.util.Util;
 
 public class DbHelper extends SQLiteOpenHelper {
 
-    public static int DATABASE_VERSION = 8;
+    public static int DATABASE_VERSION = 10;
     private static String TAG = "nu.info.zeeshan..rnf.dao.DbHelper";
     public static String DATABASE_NAME = "redb.db";
 

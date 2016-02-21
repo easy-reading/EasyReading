@@ -3,6 +3,7 @@ package nu.info.zeeshan.rnf.model;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,11 +20,10 @@ import nu.info.zeeshan.rnf.util.Util;
 
 
 /**
- *
  * Created by Zeeshan Khan on 10/29/2015.
  */
 public class ItemViewHolder extends RecyclerView.ViewHolder {
-    private TextView itemTitle, itemDesc, itemInfo;
+    private TextView itemTitle, itemInfo;
     private ImageView itemImage;
     private static DateFormat DATE_FORMAT = new SimpleDateFormat("dd, MMM");
     public static String TAG = "ItemViewHolder";
@@ -37,11 +37,10 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
                 Util.log(TAG, "clicked item");
             }
         });
-        itemDesc = (TextView) parent.findViewById(R.id.item_desc);
+
         itemTitle = (TextView) parent.findViewById(R.id.item_title);
         itemImage = (ImageView) parent.findViewById(R.id.item_image);
         itemInfo = (TextView) parent.findViewById(R.id.item_info);
-
     }
 
     public static ItemViewHolder newInstance(View parent, ItemClickListener clickListener) {
@@ -53,23 +52,24 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
             itemTitle.setText(item.getTitle());
         else
             itemTitle.setText("-N.A-");
-        if (item.getDesc() != null)
-            itemDesc.setText(item.getDesc());
-        else
-            itemDesc.setText("-N.A-");
         if (item.getTime() > 0) {
             itemInfo.setText(DATE_FORMAT.format(new Date(item.getTime())));
         } else {
             itemInfo.setText("Unspecified time");
         }
         if (item.getImage_url() != null)
-            ImageLoader.getInstance().displayImage(item.getImage_url(), itemImage, new DisplayImageOptions.Builder()
-                    .showImageForEmptyUri(item instanceof FacebookItem ? R.drawable.default_facebook_background : R.drawable.default_news_background)
-                    .showImageOnFail(item instanceof FacebookItem ? R.drawable.default_facebook_background : R.drawable.default_news_background)
+            ImageLoader.getInstance().displayImage(item.getImage_url(), itemImage, new
+                    DisplayImageOptions.Builder()
+                    .showImageForEmptyUri(item instanceof FacebookItem ? R.drawable
+                            .default_facebook_background : R.drawable.default_news_background)
+                    .showImageOnFail(item instanceof FacebookItem ? R.drawable
+                            .default_facebook_background : R.drawable.default_news_background)
                     .bitmapConfig(Bitmap.Config.ARGB_8888)
                     .imageScaleType(ImageScaleType.EXACTLY_STRETCHED)
-                    .showImageOnLoading(item instanceof FacebookItem ? R.drawable.default_facebook_background : R.drawable.default_news_background)
+                    .showImageOnLoading(item instanceof FacebookItem ? R.drawable
+                            .default_facebook_background : R.drawable.default_news_background)
                     .cacheInMemory(true)
+                    .cacheOnDisk(true)
                     .build());
         //for extra data
         if (item instanceof FacebookItem) {
@@ -85,11 +85,6 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
                 addInfoText(((NewsItem) item).getPublisher());
             else
                 addInfoText("Unspecified publisher");
-        }
-        if (item.isExpanded()) {
-            itemDesc.setVisibility(View.VISIBLE);
-        } else {
-            itemDesc.setVisibility(View.GONE);
         }
     }
 

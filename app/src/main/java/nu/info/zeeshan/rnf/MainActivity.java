@@ -1,6 +1,7 @@
 package nu.info.zeeshan.rnf;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -11,11 +12,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.facebook.FacebookSdk;
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.process.BitmapProcessor;
+import com.nostra13.universalimageloader.utils.StorageUtils;
+
+import java.io.File;
 
 import nu.info.zeeshan.rnf.adapters.SectionsPagerAdapter;
+import nu.info.zeeshan.rnf.model.ActionClickListener;
+import nu.info.zeeshan.rnf.model.Item;
 
 public class MainActivity extends AppCompatActivity {
     /**
@@ -32,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +63,21 @@ public class MainActivity extends AppCompatActivity {
         //universal Image loader
         DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
                 .cacheInMemory(true)
+                .postProcessor(new BitmapProcessor() {
+                    @Override
+                    public Bitmap process(Bitmap bitmap) {
+                        return null;
+                    }
+                })
                 .cacheOnDisk(true)
                 .build();
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
+        File cacheDir = StorageUtils.getOwnCacheDirectory(getApplicationContext(), getString(R
+                .string.cache_folder));
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder
+                (getApplicationContext())
                 .defaultDisplayImageOptions(defaultOptions)
                 .writeDebugLogs()
+                .diskCache(new UnlimitedDiskCache(cacheDir))
                 .build();
         ImageLoader.getInstance().init(config);
         //Fb init

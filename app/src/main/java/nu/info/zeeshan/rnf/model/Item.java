@@ -1,6 +1,7 @@
 package nu.info.zeeshan.rnf.model;
 
 /**
+ *
  * Created by Zeeshan Khan on 10/29/2015.
  */
 public abstract class Item {

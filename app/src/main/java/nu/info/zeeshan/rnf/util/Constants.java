@@ -29,8 +29,13 @@ public interface Constants {
         String PARAMS = "name,story,description,link,message,created_time,object_id,likes,picture";
         String NODE = "/me/feed";
     }
-    interface ItemType{
+    interface ItemViewType {
         int NORMAL=1;
+        int EXPANDED=3;
         int AD=2;
+    }
+    interface ItemType{
+        int NEWS=1;
+        int FACEBOOK=3;
     }
 }
