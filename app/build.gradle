@@ -5,7 +5,7 @@ android {
         config {
             keyAlias 'rnf'
             keyPassword 'bathroom'
-            storeFile file('D:/projects/RNF/keystore/mykey3')
+            storeFile file('C:/Users/n193211/Desktop/extra/android/keys')
             storePassword 'bathroom'
         }
     }
@@ -30,6 +30,9 @@ android {
 }
 repositories {
     mavenCentral()
+    maven {
+        url "https://jitpack.io"
+    }
 }
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -41,4 +44,5 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.0.1'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.4'
     compile 'com.google.android.gms:play-services-ads:8.3.0'
+    compile 'com.github.recruit-lifestyle:WaveSwipeRefreshLayout:1.6'
 }

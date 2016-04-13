@@ -7,6 +7,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.co.recruit_lifestyle.android.widget.WaveSwipeRefreshLayout;
 import nu.info.zeeshan.rnf.adapters.ItemAdapter;
 import nu.info.zeeshan.rnf.model.ActionClickListener;
 import nu.info.zeeshan.rnf.model.Item;
@@ -28,10 +30,10 @@ import nu.info.zeeshan.rnf.util.Util;
 /**
  * Created by Zeeshan Khan on 10/28/2015.
  */
-public abstract class FragmentMain extends Fragment implements SwipeRefreshLayout
+public abstract class FragmentMain extends Fragment implements WaveSwipeRefreshLayout
         .OnRefreshListener {
     public static String TAG = "FragmentMain";
-    protected MySwipeRefreshLayout swipeRefreshLayout;
+    protected WaveSwipeRefreshLayout swipeRefreshLayout;
     private ScrollView emptyView;
     private ItemAdapter itemAdapter;
     private ActionClickListener actionClickListener = new ActionClickListener() {
@@ -82,8 +84,9 @@ public abstract class FragmentMain extends Fragment implements SwipeRefreshLayou
         RecyclerView itemList = (RecyclerView) rootView.findViewById(R.id.item_list);
         itemList.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        swipeRefreshLayout = (MySwipeRefreshLayout) rootView.findViewById(R.id
+        swipeRefreshLayout = (WaveSwipeRefreshLayout) rootView.findViewById(R.id
                 .swipe_refresh_layout);
+        swipeRefreshLayout.setWaveColor(ContextCompat.getColor(getActivity(),R.color.colorPrimary));
         swipeRefreshLayout.setOnRefreshListener(this);
         emptyView = (ScrollView) rootView.findViewById(R.id.empty_view);
 
