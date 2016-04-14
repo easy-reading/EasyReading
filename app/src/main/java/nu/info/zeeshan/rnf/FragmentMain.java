@@ -30,10 +30,10 @@ import nu.info.zeeshan.rnf.util.Util;
 /**
  * Created by Zeeshan Khan on 10/28/2015.
  */
-public abstract class FragmentMain extends Fragment implements WaveSwipeRefreshLayout
+public abstract class FragmentMain extends Fragment implements SwipeRefreshLayout
         .OnRefreshListener {
     public static String TAG = "FragmentMain";
-    protected WaveSwipeRefreshLayout swipeRefreshLayout;
+    protected MySwipeRefreshLayout swipeRefreshLayout;
     private ScrollView emptyView;
     private ItemAdapter itemAdapter;
     private ActionClickListener actionClickListener = new ActionClickListener() {
@@ -84,9 +84,9 @@ public abstract class FragmentMain extends Fragment implements WaveSwipeRefreshL
         RecyclerView itemList = (RecyclerView) rootView.findViewById(R.id.item_list);
         itemList.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        swipeRefreshLayout = (WaveSwipeRefreshLayout) rootView.findViewById(R.id
+        swipeRefreshLayout = (MySwipeRefreshLayout) rootView.findViewById(R.id
                 .swipe_refresh_layout);
-        swipeRefreshLayout.setWaveColor(ContextCompat.getColor(getActivity(),R.color.colorPrimary));
+
         swipeRefreshLayout.setOnRefreshListener(this);
         emptyView = (ScrollView) rootView.findViewById(R.id.empty_view);
 

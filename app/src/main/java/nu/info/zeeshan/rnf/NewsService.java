@@ -227,6 +227,7 @@ public class NewsService extends Service {
             StringRequest strReq = new StringRequest(Constants.News.URL + "&q=india,"+s, responseListener, errorListener);
             getRequestQueue().add(strReq);
         }
+
     }
 
     private void setNotification() {
