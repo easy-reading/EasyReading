@@ -68,13 +68,13 @@ public abstract class FragmentMain extends Fragment implements SwipeRefreshLayou
     }
 
 
-    public void emptyListCheck() {
-        if (itemAdapter == null || itemAdapter.getItemCount() == 0) {
-            emptyView.setVisibility(View.VISIBLE);
-        } else {
-            emptyView.setVisibility(View.GONE);
-        }
-    }
+//    public void emptyListCheck() {
+//        if (itemAdapter == null || itemAdapter.getItemCount() == 0) {
+//            emptyView.setVisibility(View.VISIBLE);
+//        } else {
+//            emptyView.setVisibility(View.GONE);
+//        }
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,20 +88,20 @@ public abstract class FragmentMain extends Fragment implements SwipeRefreshLayou
                 .swipe_refresh_layout);
 
         swipeRefreshLayout.setOnRefreshListener(this);
-        emptyView = (ScrollView) rootView.findViewById(R.id.empty_view);
+//        emptyView = (ScrollView) rootView.findViewById(R.id.empty_view);
 
         itemAdapter = new ItemAdapter(new ArrayList<Item>(), getContext(),actionClickListener);
         itemList.setAdapter(itemAdapter);
 
-        itemAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                emptyListCheck();
-            }
-        });
+//        itemAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+//            @Override
+//            public void onChanged() {
+//                super.onChanged();
+//                emptyListCheck();
+//            }
+//        });
 
-        emptyListCheck();
+//        emptyListCheck();
 
         return rootView;
     }
@@ -110,7 +110,7 @@ public abstract class FragmentMain extends Fragment implements SwipeRefreshLayou
      * called on refresh action performed by SwipeRefreshLayout
      */
     @Override
-    public void onRefresh() {
+        public void onRefresh() {
         String msg = null;
         ConnectivityManager cm = (ConnectivityManager) getActivity()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);

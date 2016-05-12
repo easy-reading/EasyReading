@@ -4,7 +4,7 @@
     android:layout_height="fill_parent"
     android:orientation="vertical">
 
-    <ScrollView
+   <!-- <ScrollView
         android:id="@+id/empty_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -30,16 +30,15 @@
                     android:text="@string/msg_no_feed"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="#000" />
-                <!-- android:background="@drawable/side_top_shade" -->
+                &lt;!&ndash; android:background="@drawable/side_top_shade" &ndash;&gt;
             </LinearLayout>
         </android.support.v7.widget.CardView>
-    </ScrollView>
+    </ScrollView>-->
 
     <nu.info.zeeshan.rnf.model.MySwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/adView">
+        android:layout_height="wrap_content">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/item_list"

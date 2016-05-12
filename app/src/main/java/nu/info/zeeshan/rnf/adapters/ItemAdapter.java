@@ -16,6 +16,7 @@ import nu.info.zeeshan.rnf.model.ExpandedItemViewHolder;
 import nu.info.zeeshan.rnf.model.Item;
 import nu.info.zeeshan.rnf.model.ItemClickListener;
 import nu.info.zeeshan.rnf.model.ItemViewHolder;
+import nu.info.zeeshan.rnf.model.ListEmptyViewHolder;
 import nu.info.zeeshan.rnf.model.NewsItem;
 import nu.info.zeeshan.rnf.util.Constants;
 
@@ -30,14 +31,16 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private int lastExpandedItem;
     public static int ADD_AFTER = 7;
 
-    public ItemAdapter(final List<Item> itemList, Context context,ActionClickListener actionClickListener) {
-        this.actionClickListener=actionClickListener;
+    public ItemAdapter(final List<Item> itemList, Context context, ActionClickListener
+            actionClickListener) {
+        this.actionClickListener = actionClickListener;
         this.itemList = itemList;
         this.context = context;
         this.clickListener = new ItemClickListener() {
             public void onClick(int position) {
                 if (position == lastExpandedItem) {
-                    itemList.get(getActualItemPosition(position)).setExpanded(!itemList.get(getActualItemPosition(position)).isExpanded());
+                    itemList.get(getActualItemPosition(position)).setExpanded(!itemList.get
+                            (getActualItemPosition(position)).isExpanded());
                     notifyItemChanged(lastExpandedItem);
                 } else {
                     itemList.get(getActualItemPosition(lastExpandedItem)).setExpanded(false);
@@ -55,27 +58,40 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == Constants.ItemViewType.NORMAL) {
-            final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item, parent, false);
+            final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item,
+                    parent, false);
             return ItemViewHolder.newInstance(view, clickListener);
         } else if (viewType == Constants.ItemViewType.EXPANDED) {
-            final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_expanded, parent, false);
-            return ExpandedItemViewHolder.newInstance(view, clickListener,actionClickListener);
-        } else {
-            final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.add_item, parent, false);
+            final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout
+                    .item_expanded, parent, false);
+            return ExpandedItemViewHolder.newInstance(view, clickListener, actionClickListener);
+        } else if (viewType == Constants.ItemViewType.EMPTY_VIEW) {
+            final View view = LayoutInflater.from(context).inflate(R.layout
+                    .list_empty_layout, parent, false);
+            return new ListEmptyViewHolder(view);
+        } else if (viewType == Constants.ItemViewType.AD) {
+            final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.add_item,
+                    parent, false);
             return new AddItemViewHolder(view);
         }
+        return null;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        if (getItemViewType(position) == Constants.ItemViewType.NORMAL || getItemViewType(position) == Constants.ItemViewType.EXPANDED) {
+        int type = getItemViewType(position);
+        if (type == Constants.ItemViewType.NORMAL || type == Constants.ItemViewType.EXPANDED) {
             ItemViewHolder holder = (ItemViewHolder) viewHolder;
             Item item = itemList.get(getActualItemPosition(position));
             if (item instanceof NewsItem)
-                holder.getItemImage().setImageDrawable(context.getResources().getDrawable(R.drawable.default_news_background));
+                holder.getItemImage().setImageDrawable(context.getResources().getDrawable(R
+                        .drawable.default_news_background));
             else
-                holder.getItemImage().setImageDrawable(context.getResources().getDrawable(R.drawable.default_facebook_background));
+                holder.getItemImage().setImageDrawable(context.getResources().getDrawable(R
+                        .drawable.default_facebook_background));
             holder.setItem(item);
+        } else if (type == Constants.ItemViewType.EMPTY_VIEW) {
+            //noting to do with empty view
         } else {
             AddItemViewHolder holder = (AddItemViewHolder) viewHolder;
             holder.initAd();
@@ -84,6 +100,9 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
+        if (itemList == null || itemList.size() == 0) {
+            return Constants.ItemViewType.EMPTY_VIEW;
+        }
         if ((position + 1) % ADD_AFTER == 0)
             return Constants.ItemViewType.AD;
         else {
@@ -102,7 +121,13 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return itemList == null ? 0 : itemList.size() + (int) Math.ceil(itemList.size() / (ADD_AFTER - 1));
+        int itemCount;
+        if (itemList == null || itemList.size() == 0)
+            itemCount = 1; //for empty view
+        else
+            //number of items plus Adds after ADD_AFTER number of items
+            itemCount = itemList.size() + (int) Math.ceil(itemList.size() / (ADD_AFTER - 1));
+        return itemCount;
     }
 
     public void addAll(List<Item> items) {

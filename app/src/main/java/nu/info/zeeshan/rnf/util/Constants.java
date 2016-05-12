@@ -33,6 +33,7 @@ public interface Constants {
         int NORMAL=1;
         int EXPANDED=3;
         int AD=2;
+        int EMPTY_VIEW=4;
     }
     interface ItemType{
         int NEWS=1;
