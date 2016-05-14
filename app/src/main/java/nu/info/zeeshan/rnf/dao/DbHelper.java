@@ -13,7 +13,6 @@ import java.util.ListIterator;
 import nu.info.zeeshan.rnf.model.FacebookItem;
 import nu.info.zeeshan.rnf.model.Item;
 import nu.info.zeeshan.rnf.model.NewsItem;
-import nu.info.zeeshan.rnf.util.Constants;
 import nu.info.zeeshan.rnf.util.Util;
 
 public class DbHelper extends SQLiteOpenHelper {
@@ -114,57 +113,57 @@ public class DbHelper extends SQLiteOpenHelper {
         Util.log(TAG, feeds.size() + " facebook feeds inserted" + fbfeeds);
     }
 
-    public List<Item> getNewsFeeds(boolean latestOnly) {
-        List<Item> feeds = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor c;
-        if (latestOnly) {
-            c = db.query(DbStructure.NewsFeedTable.TABLE_NAME, null, DbStructure.NewsFeedTable.COLUMN_TIME + ">= (CURRENT_TIMESTAMP - 86400000) ", null, null, null, DbStructure.FeedTable.COLUMN_TIME + DbConstants.DESC);
-        } else {
-            c = db.query(DbStructure.NewsFeedTable.TABLE_NAME, null, null, null, null, null, DbStructure.FeedTable.COLUMN_TIME + DbConstants.DESC);
-        }
-        NewsItem item;
-        if (c.moveToFirst()) {
-            do {
-                item = new NewsItem();
-                item.setTime(c.getLong(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TIME)));
-                item.setLink(c.getString(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_LINK)));
-                item.setDesc(c.getString(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TEXT)));
-                item.setTitle(c.getString(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TITLE)));
-                item.setImage_url(c.getString(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_IMAGE)));
-                item.setId(c.getString(c.getColumnIndexOrThrow(DbStructure.FeedTable._ID)));
-                item.setState(c.getShort(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_STATE)));
-                item.setPublisher(c.getString(c.getColumnIndexOrThrow(DbStructure.NewsFeedTable.COLUMN_PUBLISHER)));
-                feeds.add(item);
-            } while (c.moveToNext());
-        }
-        if (db != null)
-            db.close();
-        return feeds;
-    }
+//    public List<Item> getNewsFeeds(boolean latestOnly) {
+//        List<Item> feeds = new ArrayList<>();
+//        SQLiteDatabase db = this.getReadableDatabase();
+//        Cursor c;
+//        if (latestOnly) {
+//            c = db.query(DbStructure.NewsFeedTable.TABLE_NAME, null, DbStructure.NewsFeedTable.COLUMN_TIME + ">= (CURRENT_TIMESTAMP - 86400000) ", null, null, null, DbStructure.FeedTable.COLUMN_TIME + DbConstants.DESC);
+//        } else {
+//            c = db.query(DbStructure.NewsFeedTable.TABLE_NAME, null, null, null, null, null, DbStructure.FeedTable.COLUMN_TIME + DbConstants.DESC);
+//        }
+//        NewsItem item;
+//        if (c.moveToFirst()) {
+//            do {
+//                item = new NewsItem();
+//                item.setTime(c.getLong(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TIME)));
+//                item.setLink(c.getString(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_LINK)));
+//                item.setDesc(c.getString(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TEXT)));
+//                item.setTitle(c.getString(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_TITLE)));
+//                item.setImage_url(c.getString(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_IMAGE)));
+//                item.setId(c.getString(c.getColumnIndexOrThrow(DbStructure.FeedTable._ID)));
+//                item.setState(c.getShort(c.getColumnIndexOrThrow(DbStructure.FeedTable.COLUMN_STATE)));
+//                item.setPublisher(c.getString(c.getColumnIndexOrThrow(DbStructure.NewsFeedTable.COLUMN_PUBLISHER)));
+//                feeds.add(item);
+//            } while (c.moveToNext());
+//        }
+//        if (db != null)
+//            db.close();
+//        return feeds;
+//    }
 
-    public void fillNewsFeed(List<NewsItem> feeds) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values;
-        int fbfeeds = 0;
-        for (NewsItem f : feeds) {
-            values = new ContentValues();
-            values.put(DbStructure.FeedTable._ID, f.getId());
-            values.put(DbStructure.FeedTable.COLUMN_TITLE, f.getTitle());
-            values.put(DbStructure.FeedTable.COLUMN_TEXT, f.getDesc());
-            values.put(DbStructure.FeedTable.COLUMN_TIME, f.getTime());
-            values.put(DbStructure.FeedTable.COLUMN_LINK, f.getLink());
-            values.put(DbStructure.NewsFeedTable.COLUMN_PUBLISHER, f.getPublisher());
-            values.put(DbStructure.FeedTable.COLUMN_IMAGE, f.getImage_url());
-            db.insertWithOnConflict(DbStructure.NewsFeedTable.TABLE_NAME, null,
-                    values, SQLiteDatabase.CONFLICT_IGNORE);
-            fbfeeds++;
-        }
-
-        Util.log(TAG, feeds.size() + " news feeds inserted" + fbfeeds);
-        if (db != null)
-            db.close();
-    }
+//    public void fillNewsFeed(List<NewsItem> feeds) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        ContentValues values;
+//        int fbfeeds = 0;
+//        for (NewsItem f : feeds) {
+//            values = new ContentValues();
+//            values.put(DbStructure.FeedTable._ID, f.getId());
+//            values.put(DbStructure.FeedTable.COLUMN_TITLE, f.getTitle());
+//            values.put(DbStructure.FeedTable.COLUMN_TEXT, f.getDesc());
+//            values.put(DbStructure.FeedTable.COLUMN_TIME, f.getTime());
+//            values.put(DbStructure.FeedTable.COLUMN_LINK, f.getLink());
+//            values.put(DbStructure.NewsFeedTable.COLUMN_PUBLISHER, f.getPublisher());
+//            values.put(DbStructure.FeedTable.COLUMN_IMAGE, f.getImage_url());
+//            db.insertWithOnConflict(DbStructure.NewsFeedTable.TABLE_NAME, null,
+//                    values, SQLiteDatabase.CONFLICT_IGNORE);
+//            fbfeeds++;
+//        }
+//
+//        Util.log(TAG, feeds.size() + " news feeds inserted" + fbfeeds);
+//        if (db != null)
+//            db.close();
+//    }
 
     public void markAllAs(int state, int type) throws InvalidStateException, InvalidTypeException {
         if (state != DbConstants.State.READ && state != DbConstants.State.UNREAD)
@@ -184,8 +183,8 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public List<Item> getTopUnread() {
-        List<Item> unread = null;
-        unread = getNewsFeeds(true);
+        List<Item> unread = new ArrayList<>();
+//        unread = getNewsFeeds(true);
         unread.addAll(getFacebookFeeds(true));
         ListIterator<Item> it = unread.listIterator();
         Item item;

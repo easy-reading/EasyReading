@@ -32,7 +32,25 @@ public class ExpandedItemViewHolder extends ItemViewHolder {
         return new ExpandedItemViewHolder(parent, clickListener, actionClickListener);
     }
 
-    public void setItem(final Item item) {
+    public void setItem(Item item) {
+        if (item instanceof FacebookItem)
+            setItem((FacebookItem) item);
+        else if (item instanceof NewsItem)
+            setItem((NewsItem) item);
+    }
+
+    public void setItem(final NewsItem item) {
+        super.setItem(item);
+        itemDesc.setText(item.getAbstractt());
+        viewFullBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                actionClickListener.onFullStoryClick(item.getUrl());
+            }
+        });
+    }
+
+    public void setItem(final FacebookItem item) {
         super.setItem(item);
         itemDesc.setText(item.getDesc());
         viewFullBtn.setOnClickListener(new View.OnClickListener() {

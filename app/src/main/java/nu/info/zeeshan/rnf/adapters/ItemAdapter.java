@@ -30,6 +30,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private ActionClickListener actionClickListener;
     private int lastExpandedItem;
     public static int ADD_AFTER = 7;
+    public static String TAG = ItemAdapter.class.getSimpleName();
 
     public ItemAdapter(final List<Item> itemList, Context context, ActionClickListener
             actionClickListener) {
@@ -117,7 +118,6 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return position - position / ADD_AFTER;
     }
 
-    public static String TAG = "ItemAdapter";
 
     @Override
     public int getItemCount() {

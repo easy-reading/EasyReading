@@ -26,11 +26,11 @@ public class Util {
                 }
                 dbh.fillFacebookFeed(fbItems);
             } else if (tmpItem instanceof NewsItem) {
-                List<NewsItem> newsItems = new ArrayList<NewsItem>();
+                List<NewsItem> newsItems = new ArrayList<>();
                 for (Item i : items) {
                     newsItems.add((NewsItem) i);
                 }
-                dbh.fillNewsFeed(newsItems);
+//                dbh.fillNewsFeed(newsItems);
             }
         }
     }

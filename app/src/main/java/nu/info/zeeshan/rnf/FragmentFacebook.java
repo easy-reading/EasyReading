@@ -48,7 +48,7 @@ public class FragmentFacebook extends FragmentMain {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         callbackManager = CallbackManager.Factory.create();
-        permissions = new ArrayList<String>();
+        permissions = new ArrayList<>();
         permissions.addAll(Constants.FACEBOOK_PERMISSIONS);
 
         LoginManager.getInstance().registerCallback(callbackManager,
@@ -175,7 +175,6 @@ public class FragmentFacebook extends FragmentMain {
     public FragmentFacebook() {
     }
 
-    @Override
     protected void fillAdapter(List<Item> items) {
         Util.fillDb(getActivity().getApplicationContext(),items);
         DbHelper dbh = new DbHelper(getActivity());
@@ -186,7 +185,7 @@ public class FragmentFacebook extends FragmentMain {
             }
             dbh.fillFacebookFeed(fbItems);
         }
-        super.fillAdapter(dbh.getFacebookFeeds(false));
+        itemAdapter.addAll(dbh.getFacebookFeeds(false));
     }
 
     @Override

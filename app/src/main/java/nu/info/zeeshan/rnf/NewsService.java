@@ -170,63 +170,63 @@ public class NewsService extends Service {
         return requestQueue;
     }
     public void fetchNewsFeeds() {
-        Response.ErrorListener errorListener=new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Util.log(TAG, error + "");
-            }
-        };
-        Response.Listener<String> responseListener=new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                List<Item> feeds = new ArrayList<>();
-                try {
-                    JSONObject jobj = new JSONObject(response);
-                    jobj = jobj.optJSONObject("responseData");
-                    if(jobj!=null) {
-                        JSONArray jarr = jobj.optJSONArray("results");
-                        if(jarr!=null) {
-                            DateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
-                            String dateString;
-                            for (int i = 0; i < jarr.length(); i++) {
-                                jobj = jarr.getJSONObject(i);
-                                NewsItem item = new NewsItem();
-                                item.setTitle(Html.fromHtml(jobj.optString("title")).toString());
-                                item.setDesc(Html.fromHtml(jobj.optString("content")).toString());
-                                if (jobj.has("image"))
-                                    item.setImage_url(jobj.optJSONObject("image").optString("url"));
-
-                                dateString = jobj.optString("publishedDate");
-                                if (dateString != null) {
-                                    try {
-                                        Date date = dateFormat.parse(dateString);
-                                        item.setTime(date.getTime());
-                                    } catch (ParseException ex) {
-                                        Util.log(TAG, "invalid date format");
-                                    }
-                                }
-                                item.setLink(jobj.optString("unescapedUrl"));
-                                item.setPublisher(jobj.optString("publisher"));
-                                feeds.add(item);
-                            }
-                        }
-                    }
-                } catch (JSONException ex) {
-                    Util.log(TAG, "exp in response parsing" + ex.getLocalizedMessage());
-                }
-                Util.log(TAG, feeds.size() + " -> " + feeds);
-                Util.log(TAG, "news feeds done in service");
-                Util.fillDb(getApplicationContext(), feeds);
-                //summaryItems.addAll(feeds);
-                setNotification();
-            }
-        };
-        SharedPreferences spf=getApplicationContext().getSharedPreferences(getString(R.string.pref_filename), Context.MODE_PRIVATE);
-        Set<String> interests=spf.getStringSet(getString(R.string.pref_news_keywords), Constants.DEFAULT_NEWS_KEYWORDS);
-        for (String s:interests){
-            StringRequest strReq = new StringRequest(Constants.News.URL + "&q=india,"+s, responseListener, errorListener);
-            getRequestQueue().add(strReq);
-        }
+//        Response.ErrorListener errorListener=new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                Util.log(TAG, error + "");
+//            }
+//        };
+//        Response.Listener<String> responseListener=new Response.Listener<String>() {
+//            @Override
+//            public void onResponse(String response) {
+//                List<Item> feeds = new ArrayList<>();
+//                try {
+//                    JSONObject jobj = new JSONObject(response);
+//                    jobj = jobj.optJSONObject("responseData");
+//                    if(jobj!=null) {
+//                        JSONArray jarr = jobj.optJSONArray("results");
+//                        if(jarr!=null) {
+//                            DateFormat dateFormat = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
+//                            String dateString;
+//                            for (int i = 0; i < jarr.length(); i++) {
+//                                jobj = jarr.getJSONObject(i);
+//                                NewsItem item = new NewsItem();
+//                                item.setTitle(Html.fromHtml(jobj.optString("title")).toString());
+//                                item.setDesc(Html.fromHtml(jobj.optString("content")).toString());
+//                                if (jobj.has("image"))
+//                                    item.setImage_url(jobj.optJSONObject("image").optString("url"));
+//
+//                                dateString = jobj.optString("publishedDate");
+//                                if (dateString != null) {
+//                                    try {
+//                                        Date date = dateFormat.parse(dateString);
+//                                        item.setTime(date.getTime());
+//                                    } catch (ParseException ex) {
+//                                        Util.log(TAG, "invalid date format");
+//                                    }
+//                                }
+//                                item.setLink(jobj.optString("unescapedUrl"));
+//                                item.setPublisher(jobj.optString("publisher"));
+//                                feeds.add(item);
+//                            }
+//                        }
+//                    }
+//                } catch (JSONException ex) {
+//                    Util.log(TAG, "exp in response parsing" + ex.getLocalizedMessage());
+//                }
+//                Util.log(TAG, feeds.size() + " -> " + feeds);
+//                Util.log(TAG, "news feeds done in service");
+//                Util.fillDb(getApplicationContext(), feeds);
+//                //summaryItems.addAll(feeds);
+//                setNotification();
+//            }
+//        };
+//        SharedPreferences spf=getApplicationContext().getSharedPreferences(getString(R.string.pref_filename), Context.MODE_PRIVATE);
+//        Set<String> interests=spf.getStringSet(getString(R.string.pref_news_keywords), Constants.DEFAULT_NEWS_KEYWORDS);
+//        for (String s:interests){
+//            StringRequest strReq = new StringRequest(Constants.News.URL + "&q=india,"+s, responseListener, errorListener);
+//            getRequestQueue().add(strReq);
+//        }
 
     }
 
@@ -250,10 +250,10 @@ public class NewsService extends Service {
             if (size > 1) {
                 NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
                 inboxStyle.setBigContentTitle(getString(R.string.app_name));
-                for (Item feed : summaryItems) {
-                    if (feed.getTitle()!=null)
-                        inboxStyle.addLine(feed.getTitle().trim());
-                }
+//                for (Item feed : summaryItems) {
+//                    if (feed.getTitle()!=null)
+//                        inboxStyle.addLine(feed.getTitle().trim());
+//                }
                 inboxStyle.setSummaryText("New Stories");
                 builder.setStyle(inboxStyle);
             }
