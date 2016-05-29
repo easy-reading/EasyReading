@@ -70,6 +70,10 @@ public class NewsItem extends Item {
         this.publishedDate = publishedDate;
     }
 
+    public void setPublishedDate(long publishedDate) {
+        this.publishedDate = new Date(publishedDate);
+    }
+
     public List<MultimediaItem> getMultimedia() {
         return multimedia;
     }
@@ -95,10 +99,18 @@ public class NewsItem extends Item {
         if (multimedia == null || multimedia.isEmpty()) {
             return null;
         }
+        MultimediaItem media = null;
         for (MultimediaItem mi : multimedia) {
-            if (mi.getFormat().equals(type))
-                return mi;
+            if (mi.getFormat().equals(type)) {
+                media = mi;
+                break;
+            }
         }
-        return null;
+        return media;
     }
+
+    public MultimediaItem getMultiMediaItem() {
+        return getMultiMediaItem(MultimediaItem.TYPE.LARGE);
+    }
+
 }

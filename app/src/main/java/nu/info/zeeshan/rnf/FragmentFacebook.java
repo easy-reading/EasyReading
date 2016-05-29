@@ -2,50 +2,53 @@ package nu.info.zeeshan.rnf;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import nu.info.zeeshan.rnf.dao.DbConstants;
-import nu.info.zeeshan.rnf.dao.DbHelper;
-import nu.info.zeeshan.rnf.model.FacebookItem;
+import nu.info.zeeshan.rnf.data.FeedLoader;
 import nu.info.zeeshan.rnf.model.Item;
 import nu.info.zeeshan.rnf.util.Constants;
+import nu.info.zeeshan.rnf.util.FetchTaskUICallbacks;
 import nu.info.zeeshan.rnf.util.Util;
 
 /**
  * Created by Zeeshan Khan on 10/28/2015.
  */
-public class FragmentFacebook extends FragmentMain {
+public class FragmentFacebook extends FragmentMain implements LoaderManager
+        .LoaderCallbacks<List<Item>>, FetchTaskUICallbacks {
 
     public static String TAG = "FragmentFacebook";
     ArrayList<String> permissions;
     CallbackManager callbackManager;
+    private static final int FACEBOOK_FEED_LOADER_ID = 0;
+
+    public FragmentFacebook() {
+    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(FACEBOOK_FEED_LOADER_ID, null, this);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
+            savedInstanceState) {
 
         callbackManager = CallbackManager.Factory.create();
         permissions = new ArrayList<>();
@@ -57,6 +60,8 @@ public class FragmentFacebook extends FragmentMain {
                     public void onSuccess(LoginResult loginResult) {
                         Util.log(TAG, loginResult.toString());
                         Util.log(TAG, "login done");
+                        getLoaderManager().restartLoader(FACEBOOK_FEED_LOADER_ID, null,
+                                FragmentFacebook.this);
                     }
 
                     @Override
@@ -67,102 +72,18 @@ public class FragmentFacebook extends FragmentMain {
                     @Override
                     public void onError(FacebookException exception) {
                         Util.log(TAG, "error->" + exception.getLocalizedMessage() + "");
-                        Toast.makeText(getActivity().getApplicationContext(), "Error occured. Try again!!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity().getApplicationContext(), "Error occured. Try" +
+                                " again!!", Toast.LENGTH_SHORT).show();
                     }
                 });
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
+    /**
+     * this method will be called when onRefresh action is triggered in MainFragment
+     */
     public void startFetchingFeed() {
-        if (AccessToken.getCurrentAccessToken() != null) {
-            Bundle parameters = new Bundle();
-            parameters
-                    .putString("fields",
-                            Constants.FacebookFeed.PARAMS);
-            GraphRequest request = new GraphRequest(
-                    AccessToken.getCurrentAccessToken(), Constants.FacebookFeed.NODE, parameters,
-                    HttpMethod.GET, new GraphRequest.Callback() {
-
-                @Override
-                public void onCompleted(GraphResponse response) {
-                    JSONArray data;
-
-                    try {
-                        data = response.getJSONObject()
-                                .getJSONArray("data");
-                    } catch (JSONException ex) {
-                        data = new JSONArray();
-                    }
-                    // fill the data in db
-                    int len = data.length();
-                    JSONObject json_feed;
-                    ArrayList<Item> fb_feeds = new ArrayList<Item>();
-                    FacebookItem fb_feed;
-                    for (int i = 0; i < len; i++) {
-                        try {
-                            json_feed = data.getJSONObject(i);
-                            fb_feed = new FacebookItem();
-                            fb_feed.setId(json_feed.getString("id"));
-
-                            if (json_feed.has("story"))
-                                fb_feed.setTitle(json_feed
-                                        .getString("story"));
-
-                            else if (json_feed.has("name"))
-                                fb_feed.setTitle(json_feed
-                                        .getString("name"));
-
-                            if (json_feed.has("description"))
-                                fb_feed.setDesc(json_feed
-                                        .getString("description"));
-
-                            if (json_feed.has("message"))
-                                fb_feed.setDesc(json_feed
-                                        .getString("message"));
-
-                            if (json_feed.has("picture"))
-                                fb_feed.setImage_url(json_feed
-                                        .getString("picture"));
-                            fb_feed.setLink(json_feed.optString("link"));
-                            try {
-                                if (json_feed.has("created_time")) {
-                                    SimpleDateFormat format = new SimpleDateFormat(
-                                            "yyyy-MM-dd'T'HH:mm:ssZ");
-
-                                    fb_feed.setTime(format.parse(json_feed
-                                            .getString("created_time")).getTime());
-                                }
-                            } catch (ParseException e) {
-                                fb_feed.setTime(new Date().getTime());
-                                e.printStackTrace();
-                            }
-                            JSONObject tmp = json_feed.optJSONObject("likes");
-                            if (tmp != null) {
-                                JSONArray likes = tmp.optJSONArray("data");
-                                fb_feed.setLikes(likes.length());
-                            }
-
-                            fb_feeds.add(fb_feed);
-                        } catch (JSONException ex) {
-                            json_feed = null;
-                            Util.log(TAG, ex.getLocalizedMessage());
-                        }
-                    }
-                    fillAdapter(fb_feeds);
-                    stopRefresh();
-                }
-            });
-            request.executeAsync();
-        } else {
-            Snackbar.make(swipeRefreshLayout, "Login to facebook", Snackbar.LENGTH_LONG)
-                    .setAction("Login", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            LoginManager.getInstance().logInWithReadPermissions(FragmentFacebook.this, permissions);
-                        }
-                    }).show();
-            stopRefresh();
-        }
+        new FetchFacebookTask(getActivity(), this).execute();
     }
 
     @Override
@@ -172,30 +93,48 @@ public class FragmentFacebook extends FragmentMain {
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    public FragmentFacebook() {
-    }
-
-    protected void fillAdapter(List<Item> items) {
-        Util.fillDb(getActivity().getApplicationContext(),items);
-        DbHelper dbh = new DbHelper(getActivity());
-        if(items!=null && items.size()>0) {
-            List<FacebookItem> fbItems = new ArrayList<FacebookItem>();
-            for (Item i : items) {
-                fbItems.add((FacebookItem) i);
-            }
-            dbh.fillFacebookFeed(fbItems);
-        }
-        itemAdapter.addAll(dbh.getFacebookFeeds(false));
-    }
 
     @Override
     public void onStart() {
         super.onStart();
-        try {
-            new DbHelper(getContext()).markAllAs(DbConstants.State.READ, DbConstants.Type.FB);
-        } catch (Exception ex) {
-            Util.log(TAG, ex.getMessage() + "");
+        new MarkAllReadTask(getActivity()).execute();
+    }
+
+    @Override
+    public Loader<List<Item>> onCreateLoader(int id, Bundle args) {
+        return new FeedLoader(getActivity(), FeedLoader.TYPE.FACEBOOK);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Item>> loader, List<Item> data) {
+        itemAdapter.addAll(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Item>> loader) {
+        itemAdapter.addAll(null);
+    }
+
+    /**
+     * if this called with false that means facebook need to log in
+     *
+     * @param wasSuccessful
+     */
+    @Override
+    public void taskComplete(boolean wasSuccessful) {
+        if (wasSuccessful) {
+            getLoaderManager().restartLoader(FACEBOOK_FEED_LOADER_ID, null, this);
+        } else {
+            //login fb required
+            Snackbar.make(swipeRefreshLayout, "Login to facebook", Snackbar.LENGTH_LONG)
+                    .setAction("Login", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            LoginManager.getInstance().logInWithReadPermissions(FragmentFacebook
+                                    .this, permissions);
+                        }
+                    }).show();
         }
-        fillAdapter(null);
+        stopRefresh();
     }
 }

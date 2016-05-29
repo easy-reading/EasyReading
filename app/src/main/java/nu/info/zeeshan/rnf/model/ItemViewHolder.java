@@ -26,6 +26,29 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     private ImageView itemImage;
     private static DateFormat DATE_FORMAT = new SimpleDateFormat("dd, MMM");
     public static String TAG = ItemViewHolder.class.getSimpleName();
+    static DisplayImageOptions newsDisplayImageOptions = new
+            DisplayImageOptions.Builder()
+            .showImageForEmptyUri(R.drawable.default_news_background)
+            .showImageOnFail(R.drawable.default_news_background)
+            .bitmapConfig(Bitmap.Config.ARGB_8888)
+            .imageScaleType(ImageScaleType.EXACTLY_STRETCHED)
+            .showImageOnLoading(R.drawable.default_news_background)
+            .cacheInMemory(true)
+            .cacheOnDisk(true)
+            .build();
+    static DisplayImageOptions fbDisplayImageOptions = new
+            DisplayImageOptions.Builder()
+            .showImageForEmptyUri(R.drawable
+                    .default_facebook_background)
+            .showImageOnFail(R.drawable
+                    .default_facebook_background)
+            .bitmapConfig(Bitmap.Config.ARGB_8888)
+            .imageScaleType(ImageScaleType.EXACTLY_STRETCHED)
+            .showImageOnLoading(R.drawable
+                    .default_facebook_background)
+            .cacheInMemory(true)
+            .cacheOnDisk(true)
+            .build();
 
     public ItemViewHolder(final View parent, final ItemClickListener clickListener) {
         super(parent);
@@ -64,19 +87,8 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
             itemInfo.setText("Unspecified time");
         }
         if (item.getImage_url() != null)
-            ImageLoader.getInstance().displayImage(item.getImage_url(), itemImage, new
-                    DisplayImageOptions.Builder()
-                    .showImageForEmptyUri(R.drawable
-                            .default_facebook_background)
-                    .showImageOnFail(R.drawable
-                            .default_facebook_background)
-                    .bitmapConfig(Bitmap.Config.ARGB_8888)
-                    .imageScaleType(ImageScaleType.EXACTLY_STRETCHED)
-                    .showImageOnLoading(R.drawable
-                            .default_facebook_background)
-                    .cacheInMemory(true)
-                    .cacheOnDisk(true)
-                    .build());
+            ImageLoader.getInstance().displayImage(item.getImage_url(), itemImage,
+                    fbDisplayImageOptions);
         //for extra data
 
         //facebook likes
@@ -98,22 +110,12 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         } else {
             itemInfo.setText("Unspecified time");
         }
-        MultimediaItem multiItem = item.getMultiMediaItem(MultimediaItem.TYPE.NORMAL);
-        if (multiItem!=null) {
-            ImageLoader.getInstance().displayImage(multiItem.getUrl(), itemImage, new
-                    DisplayImageOptions.Builder()
-                    .showImageForEmptyUri(R.drawable.default_news_background)
-                    .showImageOnFail(R.drawable.default_news_background)
-                    .bitmapConfig(Bitmap.Config.ARGB_8888)
-                    .imageScaleType(ImageScaleType.EXACTLY_STRETCHED)
-                    .showImageOnLoading(R.drawable.default_news_background)
-                    .cacheInMemory(true)
-                    .cacheOnDisk(true)
-                    .build());
+        MultimediaItem multiItem = item.getMultiMediaItem(MultimediaItem.TYPE.MEDUIM);
+        if (multiItem != null) {
+            ImageLoader.getInstance().displayImage(multiItem.getUrl(), itemImage,
+                    newsDisplayImageOptions);
         }
         //for extra data
-
-
         if (item.getSubsection() != null)
             addInfoText(item.getSubsection());
         else
@@ -124,7 +126,7 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
     private void addInfoText(String text) {
         if (text != null && text.trim().length() > 0) {
             if (itemInfo.getText().toString().trim().length() > 0) {
-                itemInfo.setText(itemInfo.getText() + " | " + text);
+                itemInfo.setText(String.format("%s | %s", itemInfo.getText(), text));
             } else {
                 itemInfo.setText(text);
             }

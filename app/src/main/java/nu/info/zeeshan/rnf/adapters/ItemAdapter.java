@@ -29,7 +29,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private ItemClickListener clickListener;
     private ActionClickListener actionClickListener;
     private int lastExpandedItem;
-    public static int ADD_AFTER = 7;
+    public static int ADD_AFTER = 15;
     public static String TAG = ItemAdapter.class.getSimpleName();
 
     public ItemAdapter(final List<Item> itemList, Context context, ActionClickListener
@@ -131,10 +131,12 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public void addAll(List<Item> items) {
-        if (itemList == null)
-            itemList = new ArrayList<>();
-        itemList.clear();
-        itemList.addAll(items);
-        notifyDataSetChanged();
+        if (items != null) {
+            if (itemList == null)
+                itemList = new ArrayList<>();
+            itemList.clear();
+            itemList.addAll(items);
+            notifyDataSetChanged();
+        }
     }
 }

@@ -6,7 +6,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import nu.info.zeeshan.rnf.dao.DbHelper;
+import nu.info.zeeshan.rnf.data.FeedsDbHelper;
 import nu.info.zeeshan.rnf.model.FacebookItem;
 import nu.info.zeeshan.rnf.model.Item;
 import nu.info.zeeshan.rnf.model.NewsItem;
@@ -17,7 +17,7 @@ import nu.info.zeeshan.rnf.model.NewsItem;
 public class Util {
     public static void fillDb(Context context, List<Item> items) {
         if (items != null && items.size() > 0) {
-            DbHelper dbh = new DbHelper(context);
+            FeedsDbHelper dbh = new FeedsDbHelper(context);
             Item tmpItem = items.get(0);
             if (tmpItem instanceof FacebookItem) {
                 List<FacebookItem> fbItems = new ArrayList<FacebookItem>();
@@ -30,7 +30,7 @@ public class Util {
                 for (Item i : items) {
                     newsItems.add((NewsItem) i);
                 }
-//                dbh.fillNewsFeed(newsItems);
+                dbh.fillNewsFeed(newsItems);
             }
         }
     }

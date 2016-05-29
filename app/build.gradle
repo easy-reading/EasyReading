@@ -25,6 +25,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    buildTypes.each{
+        it.buildConfigField 'String','NYTIMES_API_KEY',NYTIMES_API_KEY
+    }
     productFlavors {
     }
 }

@@ -2,14 +2,8 @@ package nu.info.zeeshan.rnf;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.List;
 
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -22,7 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 /**
  * Created by Zeeshan Khan on 5/14/2016.
  */
-public class NYTClientGenerator {
+public class ClientGenerator {
     private static Gson gson = new GsonBuilder()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
 
@@ -32,7 +26,7 @@ public class NYTClientGenerator {
             public Response intercept(Chain chain) throws IOException {
                 Request request = chain.request();
                 HttpUrl url = request.url().newBuilder().addQueryParameter("api-key",
-                        "fa52b68775af4bfbaa56ff326c054eb2").build();
+                        BuildConfig.NYTIMES_API_KEY).build();
                 request = request.newBuilder().url(url).build();
                 return chain.proceed(request);
             }
@@ -43,5 +37,12 @@ public class NYTClientGenerator {
                 .client(client)
                 .build();
         return retrofit.create(NYTApiClient.class);
+    }
+
+    public static FacebookApiClient getFacebookClient() {
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://api.nytimes" +
+                ".com/svc/topstories/v2/").addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+        return retrofit.create(FacebookApiClient.class);
     }
 }

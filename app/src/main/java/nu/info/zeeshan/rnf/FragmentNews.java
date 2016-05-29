@@ -1,56 +1,65 @@
 package nu.info.zeeshan.rnf;
 
-import java.util.ArrayList;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+
 import java.util.List;
 
+import nu.info.zeeshan.rnf.data.FeedLoader;
 import nu.info.zeeshan.rnf.model.Item;
-import nu.info.zeeshan.rnf.model.NYTResult;
-import nu.info.zeeshan.rnf.model.NewsItem;
+import nu.info.zeeshan.rnf.util.FetchTaskUICallbacks;
 import nu.info.zeeshan.rnf.util.Util;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * FragmentNews
  * Created by Zeeshan Khan on 10/28/2015.
  */
-public class FragmentNews extends FragmentMain {
+public class FragmentNews extends FragmentMain implements LoaderManager
+        .LoaderCallbacks<List<Item>>, FetchTaskUICallbacks {
     public static String TAG = FragmentNews.class.getSimpleName();
+    public static final int NEWS_FEED_LOADER_ID = 1;
 
     public FragmentNews() {
-        Util.log(TAG, "fetching news constructor");
+
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(NEWS_FEED_LOADER_ID, null, this);
     }
 
     public void startFetchingFeed() {
         Util.log(TAG, "fetching news");
-        NYTApiClient client = NYTClientGenerator.getNYTClient();
-        client.home().enqueue(new Callback<NYTResult>() {
-            @Override
-            public void onResponse(Call<NYTResult> call, Response<NYTResult> response) {
-                if (response != null && response.isSuccessful()) {
-                    Util.log(TAG, "fetching news successful" + response.body().getResults());
-                    fillAdapter(response.body().getResults());
-                    stopRefresh();
-                } else {
-                    Util.log(TAG, "fetching news failed gracefully");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<NYTResult> call, Throwable t) {
-                Util.log(TAG, "fetching news failed " + t.getLocalizedMessage());
-            }
-        });
+        new FetchNewsTask(getActivity(), this).execute();
     }
 
-    private void fillAdapter(List<NewsItem> items) {
-        if (items != null && items.size() > 0) {
-            List<Item> iItems = new ArrayList<>();
-            for (Item i : items) {
-                iItems.add(i);
-            }
-            itemAdapter.addAll(iItems);
+    @Override
+    public Loader<List<Item>> onCreateLoader(int id, Bundle args) {
+        Util.log(TAG, "loader called");
+        return new FeedLoader(getActivity(), FeedLoader.TYPE.NEWS);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Item>> loader, List<Item> data) {
+        Util.log(TAG, "data loaded by loader: " + data);
+        itemAdapter.addAll(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Item>> loader) {
+        itemAdapter.addAll(null);
+    }
+
+    @Override
+    public void taskComplete(boolean wasSuccessful) {
+        stopRefresh();
+        if (wasSuccessful) {
+            getLoaderManager().restartLoader(NEWS_FEED_LOADER_ID, null, this);
+        } else {
+            Util.log(TAG, "fetch weather task failed ui update");
         }
     }
 }

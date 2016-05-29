@@ -1,12 +1,18 @@
 package nu.info.zeeshan.rnf.model;
 
 /**
+ * MultimediaItem
  * Created by Zeeshan Khan on 5/14/2016.
  */
 public class MultimediaItem {
-    public interface TYPE{
-        String NORMAL="normal";
+    public interface TYPE {
+        String THUMB = "Standard Thumbnail";
+        String THUMB_LARGE = "thumbLarge";
+        String NORMAL = "Normal";
+        String MEDUIM = "mediumThreeByTwo210";
+        String LARGE = "superJumbo";
     }
+
     String url;
     String format;
     int height;

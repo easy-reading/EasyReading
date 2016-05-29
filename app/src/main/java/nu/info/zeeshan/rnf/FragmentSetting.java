@@ -81,7 +81,10 @@ public class FragmentSetting extends PreferenceFragment implements
             Intent intent_ = new Intent(context, NewsService.class);
             PendingIntent pi = PendingIntent.getService(context, 0, intent_, 0);
             am.cancel(pi);
-            int minutes = Constants.DEBUG?1:Integer.parseInt(updateInterval)*60;
+            /**
+             * if DEBUG then treat input in minutes else treat it as hours
+             */
+            int minutes = Constants.DEBUG?Integer.parseInt(updateInterval):Integer.parseInt(updateInterval)*60;
             // by my own convention, minutes <= 0 means notifications are
             // disabled
             if (minutes > 0) {

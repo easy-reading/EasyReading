@@ -22,8 +22,6 @@ import com.nostra13.universalimageloader.utils.StorageUtils;
 import java.io.File;
 
 import nu.info.zeeshan.rnf.adapters.SectionsPagerAdapter;
-import nu.info.zeeshan.rnf.model.ActionClickListener;
-import nu.info.zeeshan.rnf.model.Item;
 
 public class MainActivity extends AppCompatActivity {
     /**
@@ -76,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder
                 (getApplicationContext())
                 .defaultDisplayImageOptions(defaultOptions)
-                .writeDebugLogs()
+//                .writeDebugLogs()
                 .diskCache(new UnlimitedDiskCache(cacheDir))
                 .build();
         ImageLoader.getInstance().init(config);

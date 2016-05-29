@@ -13,7 +13,7 @@ import nu.info.zeeshan.rnf.R;
 public class ExpandedItemViewHolder extends ItemViewHolder {
     private TextView itemDesc;
     private ImageButton shareBtn, likeBtn, viewFullBtn;
-    public static String TAG = "ItemViewHolder";
+    public static String TAG = ExpandedItemViewHolder.class.getSimpleName();
     private ActionClickListener actionClickListener;
 
     public ExpandedItemViewHolder(final View parent, final ItemClickListener clickListener,
