@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nu.info.zeeshan.rnf.R;
-import nu.info.zeeshan.rnf.model.ActionClickListener;
-import nu.info.zeeshan.rnf.model.AddItemViewHolder;
-import nu.info.zeeshan.rnf.model.ExpandedItemViewHolder;
+import nu.info.zeeshan.rnf.util.ActionClickListener;
+import nu.info.zeeshan.rnf.util.AddItemViewHolder;
+import nu.info.zeeshan.rnf.util.ExpandedItemViewHolder;
 import nu.info.zeeshan.rnf.model.Item;
-import nu.info.zeeshan.rnf.model.ItemClickListener;
-import nu.info.zeeshan.rnf.model.ItemViewHolder;
-import nu.info.zeeshan.rnf.model.ListEmptyViewHolder;
+import nu.info.zeeshan.rnf.util.ItemClickListener;
+import nu.info.zeeshan.rnf.util.ItemViewHolder;
+import nu.info.zeeshan.rnf.util.ListEmptyViewHolder;
 import nu.info.zeeshan.rnf.model.NewsItem;
 import nu.info.zeeshan.rnf.util.Constants;
 

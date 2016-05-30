@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * The initial result of API call to NY Times
  * Created by Zeeshan Khan on 5/14/2016.
  */
 public class NYTResult {

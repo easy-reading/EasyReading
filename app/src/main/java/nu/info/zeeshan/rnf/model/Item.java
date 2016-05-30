@@ -1,6 +1,7 @@
 package nu.info.zeeshan.rnf.model;
 
 /**
+ * Model to be extended by All type of Item so that they can used in a common way
  * Created by Zeeshan Khan on 10/29/2015.
  */
 public abstract class Item {

@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * NewItem
+ * NYTIMES item received by api call.
  * Created by Zeeshan Khan on 5/14/2016.
  */
 public class NewsItem extends Item {

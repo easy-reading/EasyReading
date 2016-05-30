@@ -1,10 +1,13 @@
-package nu.info.zeeshan.rnf.model;
+package nu.info.zeeshan.rnf.util;
 
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import nu.info.zeeshan.rnf.R;
+import nu.info.zeeshan.rnf.model.FacebookItem;
+import nu.info.zeeshan.rnf.model.Item;
+import nu.info.zeeshan.rnf.model.NewsItem;
 
 
 /**

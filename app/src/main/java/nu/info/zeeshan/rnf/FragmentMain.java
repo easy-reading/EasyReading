@@ -17,9 +17,9 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import nu.info.zeeshan.rnf.adapters.ItemAdapter;
-import nu.info.zeeshan.rnf.model.ActionClickListener;
+import nu.info.zeeshan.rnf.util.ActionClickListener;
 import nu.info.zeeshan.rnf.model.Item;
-import nu.info.zeeshan.rnf.model.MySwipeRefreshLayout;
+import nu.info.zeeshan.rnf.util.MySwipeRefreshLayout;
 import nu.info.zeeshan.rnf.util.Util;
 
 /**

@@ -1,7 +1,7 @@
 package nu.info.zeeshan.rnf.model;
 
 /**
- * MultimediaItem
+ * model required by NYTimes Item, as the api return a array of multimedia items within a item
  * Created by Zeeshan Khan on 5/14/2016.
  */
 public class MultimediaItem {

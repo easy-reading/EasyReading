@@ -1,6 +1,8 @@
 package nu.info.zeeshan.rnf.model;
 
 /**
+ * Model to store data received from Facebook Graph Api, it will also be used to retrive data
+ * from local SQLITE databse
  * Created by Zeeshan Khan on 10/29/2015.
  */
 public class FacebookItem extends Item {

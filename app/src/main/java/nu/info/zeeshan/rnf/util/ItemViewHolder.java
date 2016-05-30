@@ -1,4 +1,4 @@
-package nu.info.zeeshan.rnf.model;
+package nu.info.zeeshan.rnf.util;
 
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
@@ -15,7 +15,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import nu.info.zeeshan.rnf.R;
-import nu.info.zeeshan.rnf.util.Util;
+import nu.info.zeeshan.rnf.model.FacebookItem;
+import nu.info.zeeshan.rnf.model.Item;
+import nu.info.zeeshan.rnf.model.MultimediaItem;
+import nu.info.zeeshan.rnf.model.NewsItem;
 
 
 /**
@@ -86,9 +89,13 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         } else {
             itemInfo.setText("Unspecified time");
         }
-        if (item.getImage_url() != null)
+        if (item.getImage_url() != null) {
             ImageLoader.getInstance().displayImage(item.getImage_url(), itemImage,
                     fbDisplayImageOptions);
+            itemImage.setVisibility(View.VISIBLE);
+        } else {
+            itemImage.setVisibility(View.GONE);
+        }
         //for extra data
 
         //facebook likes
@@ -114,6 +121,9 @@ public class ItemViewHolder extends RecyclerView.ViewHolder {
         if (multiItem != null) {
             ImageLoader.getInstance().displayImage(multiItem.getUrl(), itemImage,
                     newsDisplayImageOptions);
+            itemImage.setVisibility(View.VISIBLE);
+        } else {
+            itemImage.setVisibility(View.GONE);
         }
         //for extra data
         if (item.getSubsection() != null)

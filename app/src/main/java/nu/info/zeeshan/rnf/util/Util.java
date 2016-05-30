@@ -12,6 +12,7 @@ import nu.info.zeeshan.rnf.model.Item;
 import nu.info.zeeshan.rnf.model.NewsItem;
 
 /**
+ *
  * Created by Zeeshan Khan on 11/6/2015.
  */
 public class Util {

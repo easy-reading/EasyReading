@@ -1,4 +1,4 @@
-package nu.info.zeeshan.rnf.model;
+package nu.info.zeeshan.rnf.util;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

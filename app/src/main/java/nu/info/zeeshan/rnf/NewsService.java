@@ -13,8 +13,6 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.v4.app.NotificationCompat;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.facebook.AccessToken;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
@@ -47,12 +45,10 @@ public class NewsService extends Service {
     private static String TAG = "nu.info.zeeshan.rnf.NewsService";
     private static int EASY_READING_NOTIFICATION_ID = 0;
     private List<Item> summaryItems;
-    private FeedsDbHelper dbHelper;
     private boolean fbFeedFetched, newsFeedFetched;
 
     public NewsService() {
         summaryItems = new ArrayList<>();
-        dbHelper = new FeedsDbHelper(getApplication());
         fbFeedFetched = false;
         newsFeedFetched = false;
     }
@@ -171,14 +167,6 @@ public class NewsService extends Service {
         }
     }
 
-    private RequestQueue requestQueue;
-
-    private RequestQueue getRequestQueue() {
-        if (requestQueue == null)
-            requestQueue = Volley.newRequestQueue(this);
-        return requestQueue;
-    }
-
     public void fetchNewsFeeds() {
         NYTApiClient client = ClientGenerator.getNYTClient();
         client.home().enqueue(new Callback<NYTResult>() {
@@ -195,17 +183,14 @@ public class NewsService extends Service {
                     setNotification();
                 } else {
                     Util.log(TAG, "fetching news failed gracefully");
-
                 }
             }
 
             @Override
             public void onFailure(Call<NYTResult> call, Throwable t) {
                 Util.log(TAG, "error occured while fetching news" + t.getLocalizedMessage());
-
             }
         });
-
     }
 
     private void collectNews() {
@@ -273,6 +258,7 @@ public class NewsService extends Service {
     }
 
     @Override
+    @Deprecated
     public void onStart(Intent intent, int startId) {
         handleIntent(intent);
     }

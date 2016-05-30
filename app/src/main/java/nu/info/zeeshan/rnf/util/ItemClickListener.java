@@ -1,4 +1,4 @@
-package nu.info.zeeshan.rnf.model;
+package nu.info.zeeshan.rnf.util;
 
 /**
  * Created by Zeeshan Khan on 1/15/2016.
